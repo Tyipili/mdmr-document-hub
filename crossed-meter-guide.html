@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crossed Meter Guide - MDM/R Synchronization</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .back-to-hub {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .back-to-hub:hover {
+            background: linear-gradient(135deg, #0052a3 0%, #003d7a 100%);
+            transform: translateX(-3px);
+        }
+
+        .back-to-hub::before {
+            content: "←";
+            font-size: 18px;
+            font-weight: bold;
+        }
+ 
+        .cover-page {
+            text-align: center;
+            padding: 60px 20px;
+            border-bottom: 4px solid #0066cc;
+            margin-bottom: 40px;
+        }
+        
+        .cover-page h1 {
+            color: #0066cc;
+            font-size: 42px;
+            margin-bottom: 20px;
+        }
+        
+        .cover-page .subtitle {
+            font-size: 22px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .cover-page .metadata {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            display: inline-block;
+            text-align: left;
+        }
+ 
+        .header {
+            background: linear-gradient(135deg, #0066cc 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 10px;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 18px;
+            opacity: 0.95;
+            margin-bottom: 20px;
+        }
+        
+        .metadata {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            background: rgba(255,255,255,0.1);
+            padding: 15px 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        
+        .metadata-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .metadata-item strong {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .toc {
+            background: #f8f9fa;
+            padding: 30px;
+            margin: 30px 0;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .toc h2 {
+            color: #0066cc;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .toc ul li {
+            padding: 10px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .toc ul li:last-child {
+            border-bottom: none;
+        }
+        
+        .toc ul li a {
+            color: #333;
+            text-decoration: none;
+            display: block;
+            transition: color 0.3s, padding-left 0.3s;
+        }
+        
+        .toc ul li a:hover {
+            color: #0066cc;
+            padding-left: 10px;
+        }
+        
+        .section {
+            margin-bottom: 50px;
+        }
+        
+        .section-header {
+            background: linear-gradient(to right, #0066cc, #667eea);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        
+        .section-header h2 {
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .report-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        h3 {
+            color: #0066cc;
+            margin: 30px 0 15px 0;
+            font-size: 22px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+        
+        h4 {
+            color: #333;
+            margin: 20px 0 10px 0;
+            font-size: 18px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        thead {
+            background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+            color: white;
+        }
+        
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+        }
+        
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .error-box {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .flowchart {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+        
+        .step {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 5px;
+            border-left: 4px solid #0066cc;
+        }
+        
+        .step-number {
+            background: #0066cc;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #d63384;
+        }
+        
+        ul, ol {
+            margin: 15px 0 15px 30px;
+        }
+        
+        li {
+            margin: 8px 0;
+        }
+        
+        strong {
+            color: #0066cc;
+        }
+        
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 2px solid #dee2e6;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        @media print {
+            .back-to-hub, .footer {
+                display: none;
+            }
+            
+            .section {
+                page-break-inside: avoid;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 28px;
+            }
+			
+			.cover-page h1 {
+                font-size: 32px;
+            }
+            
+            table {
+                font-size: 14px;
+            }
+            
+            th, td {
+                padding: 10px;
+            }
+
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-to-hub">Back to Documentation Hub</a>
+        
+        <div class="cover-page">
+            <h1>Crossed Meter Guide</h1>
+            <div class="subtitle">Data Correction Procedure for Crossed Meter Scenarios</div>
+            <div class="metadata">
+                <p><strong>Based on:</strong> Crossed Meter Data Correction Procedure<br>
+                Document ID: SME_PRO_0009, Version 4.0<br>
+                February 7, 2017</p>
+            </div>
+        </div>
+
+        <div class="toc">
+            <h2>Table of Contents</h2>
+            <ul>
+                <li><a href="#section1">1. Understanding Crossed Meters</a></li>
+                <li><a href="#section2">2. Why This Procedure is Critical</a></li>
+                <li><a href="#section3">3. The 4-Step Unwinding Process</a></li>
+                <li><a href="#section4">4. STEP A: End Incorrect SDP to Meter Relationships</a></li>
+                <li><a href="#section5">5. STEP B: Remove Incorrect Meter Read Data</a></li>
+                <li><a href="#section6">6. STEP C: Start Correct SDP to Meter Relationships</a></li>
+                <li><a href="#section7">7. STEP D: Load Correct Meter Data</a></li>
+                <li><a href="#section8">8. What Happens If You Skip Data Removal?</a></li>
+                <li><a href="#section9">9. Complete Workflow Summary</a></li>
+                <li><a href="#section10">10. Quick Reference Checklist</a></li>
+            </ul>
+        </div>
+
+        <h1 id="section1">1. Understanding Crossed Meters</h1>
+
+        <h2>1.1 What Are Crossed Meters?</h2>
+
+        <div class="scenario-box">
+            <h3>Definition</h3>
+            <p><strong>Crossed meters</strong> (also known as <strong>mixed meters</strong>) occur when two or more meters have been reported as installed on the <strong>incorrect Service Delivery Point (SDP)</strong> in your Local Distribution Company's system.</p>
+            
+            <p style="margin-top: 15px;">The meters have therefore been associated with the wrong SDP when the SDP to Meter Relationship was synchronized with the MDM/R.</p>
+        </div>
+
+        <h2>1.2 How Crossed Meters Happen</h2>
+
+        <p>Common causes of crossed meter scenarios:</p>
+
+        <ul style="padding-left: 20px; margin: 20px 0;">
+            <li><strong>Field Installation Errors:</strong> Technician installs meters at wrong addresses</li>
+            <li><strong>Data Entry Mistakes:</strong> Meter IDs transposed or entered incorrectly in billing system</li>
+            <li><strong>Address Confusion:</strong> Similar addresses cause meter assignment to wrong premise</li>
+            <li><strong>System Migration Issues:</strong> Data mapping errors during system conversions</li>
+            <li><strong>Communication Module Swaps:</strong> Incorrect AMCD ID assignments during replacements</li>
+        </ul>
+
+        <h2>1.3 Real-World Example</h2>
+
+        <div class="note">
+            <h4>Scenario: Two Residential Homes</h4>
+            
+            <p><strong>Correct Configuration (Should Be):</strong></p>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+                <li>SDP 00123456 (123 Main St) → Meter A</li>
+                <li>SDP 00123457 (125 Main St) → Meter B</li>
+            </ul>
+            
+            <p style="margin-top: 15px;"><strong>Crossed Configuration (What Actually Happened):</strong></p>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+                <li>SDP 00123456 (123 Main St) → <span style="color: #dc3545; font-weight: bold;">Meter B</span> ❌</li>
+                <li>SDP 00123457 (125 Main St) → <span style="color: #dc3545; font-weight: bold;">Meter A</span> ❌</li>
+            </ul>
+            
+            <p style="margin-top: 15px;"><strong>Result:</strong> Customers are being billed for each other's consumption!</p>
+        </div>
+
+        <h1 id="section2">2. Why This Procedure is Critical</h1>
+
+        <h2>2.1 The Temptation to Take Shortcuts</h2>
+
+        <div class="warning">
+            <strong>⚠️ Common Mistake:</strong><br>
+            LDCs might be tempted to resolve crossed meter scenarios by simply:
+            <ol style="padding-left: 20px; margin: 10px 0;">
+                <li>Ending the wrong SDP to Meter relationships via synchronization</li>
+                <li>Starting the correct SDP to Meter relationships via synchronization</li>
+                <li>Resubmitting meter read data</li>
+            </ol>
+            <p style="margin-top: 10px;"><strong>WITHOUT requesting the removal of incorrect meter read data from MDM/R.</strong></p>
+        </div>
+
+        <h2>2.2 Why Shortcuts Fail</h2>
+
+        <p>Skipping the Meter Read Data Removal step creates serious data anomalies:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 30%">Problem</th>
+                    <th style="width: 70%">Impact</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Message Sum Check Failures</strong></td>
+                    <td>Old register reads remain in MDM/R and get mixed with new data, causing validation failures and unexpected estimations</td>
+                </tr>
+                <tr>
+                    <td><strong>Incorrect Estimations</strong></td>
+                    <td>VEE system estimates based on register reads from different meters, producing wildly inaccurate values</td>
+                </tr>
+                <tr>
+                    <td><strong>Wrong Billing Quantities</strong></td>
+                    <td>Customers receive bills based on mixed data from multiple meters, leading to billing disputes</td>
+                </tr>
+                <tr>
+                    <td><strong>Data Processing Failures</strong></td>
+                    <td>Batch records contain mismatched register reads, causing processing exceptions</td>
+                </tr>
+                <tr>
+                    <td><strong>Additional Work Required</strong></td>
+                    <td>Eventually you'll need to remove the data anyway, after investigating why billing is wrong</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>2.3 The Correct Approach</h2>
+
+        <div class="tip">
+            <strong>✓ Follow This 4-Step Procedure:</strong><br>
+            Adherence to this procedure ensures that the accuracy of billing quantities is not compromised. The Meter Read Data Removal Request submitted to SME cleanly removes all incorrect data, preventing the data anomalies described above.
+        </div>
+
+        <h2>2.4 Timeline</h2>
+
+        <div class="note">
+            <strong>Processing Time:</strong> A properly formatted Meter Read Data Removal Request is processed within <strong>5 business days</strong> from the date it is submitted by the LDC or their Authorized Agent.
+        </div>
+
+        <h1 id="section3">3. The 4-Step Unwinding Process</h1>
+
+        <div class="flowchart">
+            <h3>Complete Crossed Meter Correction Workflow</h3>
+            
+            <div class="flowchart-box-step">
+                <strong>STEP A</strong><br>
+                End Incorrect<br>
+                SDP-Meter Relationship
+            </div>
+            
+            <div class="flowchart-arrow">↓</div>
+            
+            <div class="flowchart-box-purple">
+                <strong>STEP B</strong><br>
+                Removal of Incorrect Data<br>
+                in the MDM/R
+            </div>
+            
+            <div class="flowchart-arrow">↓</div>
+            
+            <div class="flowchart-box-step">
+                <strong>STEP C</strong><br>
+                Start Correct<br>
+                SDP-Meter Relationship
+            </div>
+            
+            <div class="flowchart-arrow">↓</div>
+            
+            <div class="flowchart-box-purple">
+                <strong>STEP D</strong><br>
+                Load Meter Data<br>
+                in the MDM/R
+            </div>
+        </div>
+
+        <h2>3.1 Process Overview</h2>
+
+        <p>The crossed meter correction process is a multi-step effort involving:</p>
+
+        <ul style="padding-left: 20px; margin: 20px 0;">
+            <li>Synchronizations to end and start relationships</li>
+            <li>Removal of incorrect meter read data via Service Desk request</li>
+            <li>Re-loading of correct meter read data</li>
+        </ul>
+
+        <p><strong>All steps are required</strong> to obtain correct billing quantities.</p>
+
+        <div class="tip">
+            <strong>🧪 Practice First:</strong><br>
+            LDCs are encouraged to practice in the Sandbox environment to customize these steps according to internal system and process requirements before performing in production.
+        </div>
+
+        <h1 id="section4">4. STEP A: End Incorrect SDP to Meter Relationships</h1>
+
+        <div class="step-box">
+            <h3>STEP A Overview</h3>
+            <p><strong>Responsible:</strong> LDC</p>
+            <p><strong>Purpose:</strong> End the existing incorrect SDP to Meter relationships via synchronization</p>
+            <p><strong>Result:</strong> Relationships are terminated in MDM/R, preparing for data removal</p>
+        </div>
+
+        <h2>4.1 Procedure</h2>
+
+        <h3>Step A.1: Generate Synchronization File Set</h3>
+
+        <ul class="checklist">
+            <li>Follow your internal process to generate an incremental synchronization</li>
+            <li>End the existing SDP to Meter relationships (meter removal scenario)</li>
+            <li>Include all associated elements</li>
+        </ul>
+
+        <div class="critical">
+            <strong>CRITICAL RULE: Relationship End Date/Time</strong><br>
+            The End Date/Time of the SDP to Meter Relationship must be <strong>equal to or later than</strong> the Start Date/Time for each relationship.
+            
+            <p style="margin-top: 10px;"><strong>If dates are equal, this is known as a "crush"</strong> (ending and starting on the same date/time).</p>
+        </div>
+
+        <h3>Step A.2: Submit Synchronization</h3>
+
+        <ul class="checklist">
+            <li>Submit the file set via FTS</li>
+            <li>Wait for MDM/R to process</li>
+        </ul>
+
+        <h3>Step A.3: Confirm Success</h3>
+
+        <ul class="checklist">
+            <li>Check the <strong>IR06 Report</strong> to ensure each SDP to Meter Relationship has been updated</li>
+            <li>If SDP is NOT listed on IR06, check the <strong>IR07 Report</strong> for errors</li>
+            <li>Resolve any issues and repeat from Step A.1</li>
+            <li>When SDP is listed on IR06, confirm in the <strong>MDM/R GUI</strong> that each SDP to Meter Relationship has been end-dated</li>
+        </ul>
+
+        <h2>4.2 Example File Records</h2>
+
+        <p><strong>Situation:</strong> Ending incorrect relationship for SDP 00123456 with Meter B</p>
+
+        <h3>File 05: Relationship File</h3>
+        <div class="code-block">
+&lt;FTSFN&gt;ORG12345.ORG12345.4000.00.20250116080000.CROSS1.05.01.DAT&lt;/FTSFN&gt;
+H|ORG12345|IncrementalSync|Relationship|20250116080000
+
+<span style="color: #cc0000;">// End the INCORRECT SDP to Meter relationship</span>
+Relationship|00123456|SDP|MTR-B|METER|20240101100000|20250115150000
+
+<span style="color: #000099;">// Keep Meter to Comm Module (do NOT end this)</span>
+Relationship|MTR-B|METER|AMCD-B|COMMUNICATION MODULE|20240101100000|
+        </div>
+
+        <div class="warning">
+            <strong>⚠️ Remember:</strong> Do NOT end the Meter to Communication Module relationship when removing a meter (Business Rule 20).
+        </div>
+
+        <h1 id="section5">5. STEP B: Remove Incorrect Meter Read Data</h1>
+
+        <div class="step-box">
+            <h3>STEP B Overview</h3>
+            <p><strong>Responsible:</strong> LDC or Authorized Agent (submits request), SME (processes request)</p>
+            <p><strong>Purpose:</strong> Permanently remove incorrect meter read data from MDM/R</p>
+            <p><strong>File Type:</strong> 7900 (Request)</p>
+            <p><strong>Processing Time:</strong> 5 business days</p>
+        </div>
+
+        <h2>5.1 Two Methods for Creating Requests</h2>
+
+        <p>You can create the Meter Read Data Removal Request in two ways:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 30%">Method</th>
+                    <th style="width: 70%">Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Method 1: Service Desk Generated</strong></td>
+                    <td>Easiest option. Service Desk Tool automatically creates the required files. Maximum 10 SDPs per request.</td>
+                </tr>
+                <tr>
+                    <td><strong>Method 2: LDC/Agent Generated</strong></td>
+                    <td>Manual creation following Meter Read Data Removal Request/Response TIS. Provides more control and flexibility.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>5.2 Method 1: Service Desk Generated Files (Recommended)</h2>
+
+        <h3>Step B.1: Access Service Desk Tool</h3>
+
+        <ul class="checklist">
+            <li>Log into the MDM/R Service Desk Tool</li>
+            <li>Create a new ticket: <strong>"MRD Removal Request - System Gen Files"</strong></li>
+        </ul>
+
+        <h3>Step B.2: Enter Required Information</h3>
+
+        <ul class="checklist">
+            <li>Select the environment (Production, UAT, Sandbox)</li>
+            <li>Enter Universal SDP IDs (maximum 10 per request)</li>
+            <li>Enter Meter IDs</li>
+            <li>Specify time range start date/time</li>
+            <li>If you're an Authorized Agent, specify the LDC</li>
+        </ul>
+
+        <div class="note">
+            <strong>Time Range:</strong> Data from the specified TIME_RANGE_START to the current date/time (when SME processes the file) will be disassociated from the SDP.
+        </div>
+
+        <h3>Step B.3: Submit Request</h3>
+
+        <ul class="checklist">
+            <li>Review all information for accuracy</li>
+            <li>Submit the request</li>
+            <li>Note the ticket number for tracking</li>
+        </ul>
+
+        <p>The system automatically creates the required file and assigns it for processing. <strong>Proceed to Section 5.4 (Processing the Request).</strong></p>
+
+        <h2>5.3 Method 2: LDC/Agent Generated Files</h2>
+
+        <h3>Step B.1: Create Request File</h3>
+
+        <ul class="checklist">
+            <li>Follow business rules and specifications in the Meter Read Data Removal Request/Response TIS</li>
+            <li>Use File Type 7900</li>
+            <li>Include all required fields</li>
+        </ul>
+
+        <h3>Step B.2: Generate MD5 Hash</h3>
+
+        <ul class="checklist">
+            <li>Use an MD5 Message-Digest Algorithm tool</li>
+            <li>Generate a 128-bit (16-byte) hash value as specified in RFC 1321</li>
+            <li>Save the MD5 hash-code for inclusion in the Service Desk ticket</li>
+        </ul>
+
+        <div class="note">
+            <strong>MD5 Purpose:</strong> The MD5 checksum validation ensures the integrity of submitted files and protects against file corruption during transfer.
+        </div>
+
+        <h3>Step B.3: Submit via Service Desk</h3>
+
+        <ul class="checklist">
+            <li>Create a new ticket: <strong>"MRD Removal Request - LDC Gen Files"</strong></li>
+            <li>Select the environment</li>
+            <li>If Authorized Agent, specify the LDC</li>
+            <li>Select number of SDP-Meter request records (max 10)</li>
+            <li>Include the MD5 Hash Code in the Description field</li>
+            <li>Attach the request file (only one file per ticket)</li>
+            <li>Submit</li>
+        </ul>
+
+        <h3>File Name Validation Requirements</h3>
+
+        <p>The following requirements must be met before the ticket can be submitted:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Requirement</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Organization</strong></td>
+                    <td>Requesting organization must be an LDC or Authorized Agent</td>
+                </tr>
+                <tr>
+                    <td><strong>ORG_ID Matching (LDC)</strong></td>
+                    <td>If LDC submits: ORG_ID of user, ORG_ID_1, and ORG_ID_2 in file name must be the same</td>
+                </tr>
+                <tr>
+                    <td><strong>ORG_ID Matching (Agent)</strong></td>
+                    <td>If Agent submits: ORG_ID_2 must match Agent ORG_ID; Service Desk request must specify LDC ORG_ID</td>
+                </tr>
+                <tr>
+                    <td><strong>Unique File Name</strong></td>
+                    <td>DATE_TIME element must be unique across all requests submitted by an LDC</td>
+                </tr>
+                <tr>
+                    <td><strong>ORG_ID in File</strong></td>
+                    <td>ORG_ID_1 in file name must match LDC ORG_ID on each record inside the file</td>
+                </tr>
+                <tr>
+                    <td><strong>SDP Count</strong></td>
+                    <td>Number of SDPs must be ≤ 10</td>
+                </tr>
+                <tr>
+                    <td><strong>Field Lengths</strong></td>
+                    <td>Universal SDP ID (8 digits), SDP ID (50 chars), Meter ID (50 chars)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>5.4 Processing the Request</h2>
+
+        <h3>What SME Does</h3>
+
+        <ol style="padding-left: 20px; margin: 20px 0;">
+            <li>SME processes the Meter Read Data Removal according to specifications</li>
+            <li>All specified data is permanently removed (cannot be undone)</li>
+            <li>SME sends notification when request state is updated to "Resolved"</li>
+            <li>Resolution Code is set to "Standard Service Request Completed"</li>
+        </ol>
+
+        <div class="critical">
+            <strong>⚠️ PERMANENT REMOVAL:</strong><br>
+            The data removal is permanent and cannot be undone by the SME. You MUST resubmit the correct meter read data after removal.
+        </div>
+
+        <h3>Output Files</h3>
+
+        <p>The completed ticket includes three output files plus their MD5 validation files:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 20%">File Type</th>
+                    <th style="width: 40%">File Name Example</th>
+                    <th style="width: 40%">Contents</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>7901</strong></td>
+                    <td>ORG_ID_1.ORG_ID_2.7901.00.yyyyMMddHHmmss.00.DAT</td>
+                    <td>Register read data that was removed</td>
+                </tr>
+                <tr>
+                    <td><strong>7902</strong></td>
+                    <td>ORG_ID_1.ORG_ID_2.7902.00.yyyyMMddHHmmss.00.DAT</td>
+                    <td>Interval data that was removed</td>
+                </tr>
+                <tr>
+                    <td><strong>7903</strong></td>
+                    <td>ORG_ID_1.ORG_ID_2.7903.00.yyyyMMddHHmmss.00.DAT</td>
+                    <td>Error report (any errors encountered)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Step B.4: Validate Output Files</h3>
+
+        <ul class="checklist">
+            <li>Download the three output files and their corresponding .MD5 files</li>
+            <li>Validate files for non-repudiation by checking MD5 hash-codes</li>
+            <li>If there's a mismatch, notify SME within 14 calendar days using the same ticket</li>
+        </ul>
+
+        <h3>Step B.5: Review Error Report</h3>
+
+        <ul class="checklist">
+            <li>Review the error report output file (7903)</li>
+            <li>Review ticket notes</li>
+            <li>Refer to Meter Read Data Removal Request/Response TIS Section 2.11.3 for error descriptions</li>
+        </ul>
+
+        <h3>Step B.6: Handle Errors (If Any)</h3>
+
+        <p>If errors are encountered:</p>
+
+        <ul class="checklist">
+            <li>Correct the error in your source data</li>
+            <li>Create a NEW meter read data removal request</li>
+            <li>Generate NEW request files (use unique DATE_TIME in file name)</li>
+            <li>Submit as a new ticket</li>
+        </ul>
+
+        <h3>Step B.7: Verify Data Removal</h3>
+
+        <ul class="checklist">
+            <li>Access the MDM/R GUI</li>
+            <li>Search for the affected SDPs</li>
+            <li>Verify that the incorrect meter read data has been removed</li>
+            <li>Check the date range to ensure all specified data is gone</li>
+        </ul>
+
+        <h1 id="section6">6. STEP C: Start Correct SDP to Meter Relationships</h1>
+
+        <div class="step-box">
+            <h3>STEP C Overview</h3>
+            <p><strong>Responsible:</strong> LDC</p>
+            <p><strong>Purpose:</strong> Start the correct SDP to Meter relationships via synchronization</p>
+            <p><strong>Result:</strong> Meters are now properly associated with correct SDPs</p>
+        </div>
+
+        <h2>6.1 Procedure</h2>
+
+        <h3>Step C.1: Generate Synchronization File Set</h3>
+
+        <ul class="checklist">
+            <li>Follow your internal process to generate an incremental synchronization</li>
+            <li>Start the CORRECT SDP to Meter relationships (meter installation scenario)</li>
+            <li>Include all associated elements</li>
+        </ul>
+
+        <div class="warning">
+            <strong>Important Timing Rule:</strong><br>
+            If you did NOT submit a "crush" in Step A (i.e., the End Date/Time was NOT equal to the Start Date/Time), then the Start Date/Time of the new SDP to Meter Relationship must not overlap with a period where the meter was in-effect at any other SDP.
+        </div>
+
+        <h3>Step C.2: Submit Synchronization</h3>
+
+        <ul class="checklist">
+            <li>Submit the file set via FTS</li>
+            <li>Wait for MDM/R to process</li>
+        </ul>
+
+        <h3>Step C.3: Confirm Success</h3>
+
+        <ul class="checklist">
+            <li>Check the <strong>IR06 Report</strong> to ensure each SDP to Meter Relationship has been updated</li>
+            <li>If SDP is NOT listed on IR06, check the <strong>IR07 Report</strong> for errors</li>
+            <li>Resolve any issues and repeat from Step C.1</li>
+            <li>Confirm in the <strong>MDM/R GUI</strong> that the correct SDP to Meter Relationships are now Active</li>
+        </ul>
+
+        <h2>6.2 Example File Records</h2>
+
+        <p><strong>Situation:</strong> Starting correct relationship for SDP 00123456 with Meter A (the correct meter)</p>
+
+        <h3>File 05: Relationship File</h3>
+        <div class="code-block">
+&lt;FTSFN&gt;ORG12345.ORG12345.4000.00.20250117080000.CROSS2.05.01.DAT&lt;/FTSFN&gt;
+H|ORG12345|IncrementalSync|Relationship|20250117080000
+
+<span style="color: #007700;">// Start the CORRECT SDP to Meter relationship</span>
+Relationship|00123456|SDP|MTR-A|METER|20250116100000|
+
+<span style="color: #007700;">// Start the Meter to Comm Module relationship</span>
+Relationship|MTR-A|METER|AMCD-A|COMMUNICATION MODULE|20250116100000|
+        </div>
+
+        <h1 id="section7">7. STEP D: Load Correct Meter Data</h1>
+
+        <div class="step-box">
+            <h3>STEP D Overview</h3>
+            <p><strong>Responsible:</strong> LDC</p>
+            <p><strong>Purpose:</strong> Resubmit the CORRECT meter read data for the affected SDPs</p>
+            <p><strong>Result:</strong> MDM/R now has accurate data for billing quantity generation</p>
+        </div>
+
+        <h2>7.1 Critical Timing Requirement</h2>
+
+        <div class="critical">
+            <strong>⏰ WAIT ONE DAY:</strong><br>
+            Load the meter read data <strong>the day after</strong> the synchronization (Step C) has been completed.
+            
+            <p style="margin-top: 10px;">This ensures that no timing discrepancies occur between updating master data and all applicable tables in MDM/R and the processing of meter read data.</p>
+        </div>
+
+        <h2>7.2 Procedure</h2>
+
+        <h3>Step D.1: Obtain Correct Meter Read Data</h3>
+
+        <ul class="checklist">
+            <li>Retrieve interval data AND register reading data for each meter</li>
+            <li>Data must be for the CORRECT SDP to Meter relationships</li>
+            <li>Start from the Start Date/Time of the SDP to Meter Relationship</li>
+            <li>Ensure data matches the actual meter that should have been at the SDP</li>
+        </ul>
+
+        <h3>Step D.2: Wait for Sync Completion</h3>
+
+        <ul class="checklist">
+            <li>Ensure Step C synchronization completed successfully (IR06 confirmation)</li>
+            <li>Wait until the next day (24 hours after sync completion)</li>
+        </ul>
+
+        <h3>Step D.3: Resubmit Meter Read Data</h3>
+
+        <ul class="checklist">
+            <li>Submit meter read data files for each affected SDP</li>
+            <li>Follow standard Meter Read submission procedures</li>
+            <li>Include both interval data and register reads</li>
+        </ul>
+
+        <h3>Step D.4: Verify Data Loading</h3>
+
+        <ul class="checklist">
+            <li>Access the MDM/R GUI</li>
+            <li>Search for the affected SDPs</li>
+            <li>Verify that meter read data has been loaded</li>
+            <li>Check date ranges to ensure all data is present</li>
+            <li>Verify VEE processing status</li>
+        </ul>
+
+        <h3>Step D.5: Request Billing Quantities</h3>
+
+        <p>Once meter read data is loaded:</p>
+
+        <ul class="checklist">
+            <li>Submit an off-cycle Billing Quantity Request</li>
+            <li>Review the billing quantities for accuracy</li>
+            <li>Compare to expected consumption patterns</li>
+            <li>Verify no unexpected estimations occurred</li>
+        </ul>
+
+        <h1 id="section8">8. What Happens If You Skip Data Removal?</h1>
+
+        <p>This section explains the data anomalies that occur when LDCs attempt to resolve crossed meters WITHOUT requesting meter read data removal.</p>
+
+        <h2>8.1 Scenario 1: Message Sum Check Failures</h2>
+
+        <div class="scenario-box">
+            <h3>The Problem</h3>
+            <p><strong>What LDC Does (Incorrectly):</strong></p>
+            <ul style="padding-left: 20px; margin: 10px 0;">
+                <li>Ends/starts SDP to Meter relationships via sync</li>
+                <li>Resubmits ALL meter read data aligned with existing timestamps</li>
+                <li>Does NOT request data removal</li>
+            </ul>
+            
+            <p style="margin-top: 15px;"><strong>Unexpected Result:</strong> Message Sum Check fails and unexpected estimations occur</p>
+        </div>
+
+        <h3>Why This Happens</h3>
+
+        <p>The MDM/R performs a sum check on Meter Read Blocks submitted for an SDP. If the absolute value of the sum check difference exceeds the VEE service threshold, the check fails and interval data is estimated.</p>
+
+        <div class="note">
+            <strong>Technical Explanation:</strong>
+            <ol style="padding-left: 20px; margin: 10px 0;">
+                <li>When meter read data is submitted, there's no guarantee it's inserted in chronological order</li>
+                <li>Old (incorrect) register reads remain in MDM/R</li>
+                <li>System may use an old register read as the Start Register Read for Message Sum Check</li>
+                <li>Mismatch between old and new register reads causes validation failure</li>
+                <li>Estimations are triggered based on mixed register reads from different meters</li>
+                <li>Billing quantities become inaccurate</li>
+            </ol>
+        </div>
+
+        <h3>Visual Example</h3>
+
+        <div class="code-block" style="white-space: pre-wrap;">
+<strong>Day 1         Day 2         Day 3</strong>
+
+OLD DATA (Incorrect Meter B at SDP 1):
+Register: 100 -----> 150 -----> 200
+
+NEW DATA (Correct Meter A at SDP 1):  
+Register: 100 -----> 120 -----> 150
+
+<strong>What Should Happen:</strong>
+Day 3 interval sum = 150 - 120 = 30 kWh ✓
+
+<strong>What Actually Happens (without data removal):</strong>
+System uses OLD register (150) + NEW register (150)
+Day 3 sum check: 150 - 150 = 0 kWh ❌
+Result: Estimations triggered, billing quantities wrong!
+        </div>
+
+        <h2>8.2 Scenario 2: Wrong Billing Quantities</h2>
+
+        <div class="scenario-box">
+            <h3>The Problem</h3>
+            <p><strong>What Happens:</strong> The presence of previously estimated register readings leads to calculation of register reading values that have NO relation to actual meter readings.</p>
+        </div>
+
+        <h3>Example</h3>
+
+        <div class="code-block" style="white-space: pre-wrap;">
+<strong>Before Detecting Crossed Meters:</strong>
+
+SDP 1: Meter A data stored (actually should be Meter B)
+  Day 1: 100, Day 2: EST, Day 3: 300
+
+SDP 2: Meter B data stored (actually should be Meter A)  
+  Day 1: 100, Day 2: 150, Day 3: 200
+
+<strong>After "Fixing" Without Data Removal:</strong>
+
+SDP 1: Has BOTH Meter A and Meter B register reads
+  Meter A: 100, EST, 300
+  Meter B: 100, 120, 150
+  
+Result: Billing calculations use mixed register reads
+→ Completely incorrect billing quantities!
+        </div>
+
+        <h2>8.3 The Solution</h2>
+
+        <div class="tip">
+            <strong>✓ Always Follow the 4-Step Procedure:</strong>
+            <ol style="padding-left: 20px; margin: 10px 0;">
+                <li>End incorrect relationships (Step A)</li>
+                <li><strong>Request data removal from SME (Step B)</strong> ← Critical!</li>
+                <li>Start correct relationships (Step C)</li>
+                <li>Load correct meter data (Step D)</li>
+            </ol>
+            
+            <p style="margin-top: 15px;">This cleanly removes ALL incorrect data and prevents the anomalies described above.</p>
+        </div>
+
+        <h1 id="section9">9. Complete Workflow Summary</h1>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 15%">Step</th>
+                    <th style="width: 30%">Action</th>
+                    <th style="width: 25%">Responsible</th>
+                    <th style="width: 30%">Key Deliverable</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>STEP A</strong></td>
+                    <td>End incorrect SDP to Meter relationships</td>
+                    <td>LDC</td>
+                    <td>Synchronization file set, IR06 confirmation</td>
+                </tr>
+                <tr>
+                    <td><strong>STEP B</strong></td>
+                    <td>Remove incorrect meter read data</td>
+                    <td>LDC/Agent (request)<br>SME (processing)</td>
+                    <td>Service Desk ticket, 3 output files (7901/7902/7903)</td>
+                </tr>
+                <tr>
+                    <td><strong>STEP C</strong></td>
+                    <td>Start correct SDP to Meter relationships</td>
+                    <td>LDC</td>
+                    <td>Synchronization file set, IR06 confirmation</td>
+                </tr>
+                <tr>
+                    <td><strong>STEP D</strong></td>
+                    <td>Load correct meter data</td>
+                    <td>LDC</td>
+                    <td>Meter read files, GUI verification, billing quantities</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>9.1 Timeline</h2>
+
+        <div class="flowchart">
+            <div class="flowchart-box">
+                <strong>Day 1</strong><br>
+                STEP A: End incorrect relationships<br>
+                Submit synchronization
+            </div>
+            
+            <div class="flowchart-arrow">↓</div>
+            
+            <div class="flowchart-box">
+                <strong>Day 1-2</strong><br>
+                Verify STEP A success (IR06)<br>
+                Submit STEP B: Data removal request
+            </div>
+            
+            <div class="flowchart-arrow">↓</div>
+            
+            <div class="flowchart-box">
+                <strong>Days 3-7</strong><br>
+                SME processes data removal<br>
+                (5 business days)
+            </div>
+            
+            <div class="flowchart-arrow">↓</div>
+            
+            <div class="flowchart-box">
+                <strong>Day 8</strong><br>
+                Receive output files, verify removal<br>
+                STEP C: Submit correct relationships
+            </div>
+            
+            <div class="flowchart-arrow">↓</div>
+            
+            <div class="flowchart-box">
+                <strong>Day 9</strong><br>
+                Verify STEP C success (IR06)<br>
+                STEP D: Resubmit correct meter data
+            </div>
+            
+            <div class="flowchart-arrow">↓</div>
+            
+            <div class="flowchart-box" style="background: #e8f5e9; border-color: #4caf50;">
+                <strong>Day 10</strong><br>
+                Verify data loaded<br>
+                Request billing quantities<br>
+                ✓ Resolution Complete
+            </div>
+        </div>
+
+        <h1 id="section10">10. Quick Reference Checklist</h1>
+
+        <h2>10.1 Pre-Work</h2>
+
+        <ul class="checklist">
+            <li>Crossed meter scenario identified and confirmed</li>
+            <li>Know which meters are crossed (Meter IDs)</li>
+            <li>Know which SDPs are affected (Universal SDP IDs)</li>
+            <li>Know date/time range of incorrect data</li>
+            <li>Have access to correct meter read data</li>
+            <li>Consider practicing in Sandbox environment first</li>
+        </ul>
+
+        <h2>10.2 STEP A Checklist</h2>
+
+        <ul class="checklist">
+            <li>Generate synchronization to end incorrect relationships</li>
+            <li>End Date/Time ≥ Start Date/Time</li>
+            <li>Do NOT end Meter to Comm Module relationships</li>
+            <li>Submit file set via FTS</li>
+            <li>Check IR06 for success</li>
+            <li>Verify in GUI that relationships are end-dated</li>
+        </ul>
+
+        <h2>10.3 STEP B Checklist</h2>
+
+        <ul class="checklist">
+            <li>Choose method: Service Desk generated OR LDC generated</li>
+            <li>Create Meter Read Data Removal Request</li>
+            <li>Maximum 10 SDPs per request</li>
+            <li>If LDC generated: create MD5 hash</li>
+            <li>Submit via Service Desk ticket</li>
+            <li>Wait 5 business days for processing</li>
+            <li>Download and validate output files (7901/7902/7903)</li>
+            <li>Review error report (7903)</li>
+            <li>Verify data removal in GUI</li>
+        </ul>
+
+        <h2>10.4 STEP C Checklist</h2>
+
+        <ul class="checklist">
+            <li>Generate synchronization to start correct relationships</li>
+            <li>Ensure no overlap with incorrect relationship period</li>
+            <li>Submit file set via FTS</li>
+            <li>Check IR06 for success</li>
+            <li>Verify in GUI that correct relationships are Active</li>
+        </ul>
+
+        <h2>10.5 STEP D Checklist</h2>
+
+        <ul class="checklist">
+            <li>Wait one day after STEP C completion</li>
+            <li>Obtain correct meter read data for affected SDPs</li>
+            <li>Data from SDP to Meter relationship Start Date/Time</li>
+            <li>Include both interval data and register reads</li>
+            <li>Submit meter read files</li>
+            <li>Verify data loaded in GUI</li>
+            <li>Request off-cycle billing quantities</li>
+            <li>Review billing quantities for accuracy</li>
+        </ul>
+
+        <h2>10.6 Common Pitfalls to Avoid</h2>
+
+        <div class="warning">
+            <strong>❌ DO NOT:</strong>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+                <li>Skip the Meter Read Data Removal request (Step B)</li>
+                <li>End Meter to Communication Module relationships</li>
+                <li>Submit Step D data before Step C is complete</li>
+                <li>Submit Step D data on the same day as Step C</li>
+                <li>Include more than 10 SDPs in a single removal request</li>
+                <li>Forget to verify data removal in GUI</li>
+                <li>Skip MD5 validation of output files</li>
+            </ul>
+        </div>
+
+        <h2>10.7 Key Resources</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Resource</th>
+                    <th>Purpose</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>MDM/R Service Desk</strong></td>
+                    <td>Submit data removal requests, get support</td>
+                </tr>
+                <tr>
+                    <td><strong>Meter Read Data Removal TIS</strong></td>
+                    <td>Technical specifications for File Type 7900</td>
+                </tr>
+                <tr>
+                    <td><strong>MDM/R GUI</strong></td>
+                    <td>Verify relationships and data presence</td>
+                </tr>
+                <tr>
+                    <td><strong>Sandbox Environment</strong></td>
+                    <td>Practice the procedure before production</td>
+                </tr>
+                <tr>
+                    <td><strong>IR06/IR07 Reports</strong></td>
+                    <td>Verify synchronization success</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="section-break"></div>
+
+        <h2>Summary</h2>
+
+        <div class="tip">
+            <strong>Key Takeaways:</strong>
+            
+            <p><strong>Definition:</strong> Crossed meters occur when meters are synchronized to the wrong SDPs</p>
+            
+            <p><strong>Critical Step:</strong> ALWAYS request Meter Read Data Removal from SME (Step B)</p>
+            
+            <p><strong>Why:</strong> Skipping data removal causes message sum check failures, wrong estimations, and incorrect billing</p>
+            
+            <p><strong>Process:</strong> End incorrect relationships → Remove data → Start correct relationships → Load correct data</p>
+            
+            <p><strong>Timeline:</strong> Approximately 10 days from start to completion</p>
+            
+            <p><strong>Practice:</strong> Use Sandbox environment to test before production</p>
+        </div>
+
+        <div class="footer">
+            <p><a href="index.html" class="back-to-hub" style="margin: 0 auto 15px auto;"> Back to Documentation Hub</a></p>
+            <p><strong>Support:</strong> MDM/R Service Desk - <a href="https://mdmrsupport.service-now.com" style="color: #dc3545;">https://mdmrsupport.service-now.com</a></p>
+            <p><strong>Reference:</strong> SME_PRO_0009 Version 4.0 | February 7, 2017</p>
+        </div>
+    </div>
+</body>
+</html>

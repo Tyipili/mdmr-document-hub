@@ -1,0 +1,1640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MDM/R BQ Request & Response Guide - XML Format</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+			padding: 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .cover-page {
+            text-align: center;
+            padding: 60px 20px;
+            border-bottom: 4px solid #0066cc;
+            margin-bottom: 40px;
+        }
+        
+        .cover-page h1 {
+            color: #0066cc;
+            font-size: 42px;
+            margin-bottom: 20px;
+        }
+        
+        .cover-page .subtitle {
+            font-size: 22px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .cover-page .metadata {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            display: inline-block;
+            text-align: left;
+        }
+        
+        .subtitle {
+            font-size: 20px;
+            margin-bottom: 30px;
+            font-weight: 300;
+            line-height: 1.8;
+        }
+        
+        .metadata {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 5px;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+        
+        .metadata p {
+            margin: 5px 0;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        /* Back to Hub Button Styles */
+        .back-to-hub {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: background 0.3s, transform 0.2s;
+            margin-bottom: 20px;
+        }
+
+        .back-to-hub:hover {
+            background: linear-gradient(135deg, #0052a3 0%, #003d7a 100%);
+            transform: translateX(-3px);
+        }
+
+        .back-to-hub::before {
+            content: "←";
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .toc {
+            background: #f8f9fa;
+            padding: 30px;
+            margin: 30px 0;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .toc h2 {
+            color: #0066cc;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .toc ul li {
+            padding: 10px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .toc ul li:last-child {
+            border-bottom: none;
+        }
+        
+        .toc ul li a {
+            color: #333;
+            text-decoration: none;
+            display: block;
+            transition: color 0.3s, padding-left 0.3s;
+        }
+        
+        .toc ul li a:hover {
+            color: #0066cc;
+            padding-left: 10px;
+        }
+        
+        h1 {
+            color: #0066cc;
+            font-size: 32px;
+            margin: 40px 0 20px 0;
+            padding-top: 20px;
+            border-top: 3px solid #0066cc;
+        }
+        
+        h2 {
+            color: #0066cc;
+            font-size: 24px;
+            margin: 30px 0 15px 0;
+        }
+        
+        h3 {
+            color: #0066cc;
+            font-size: 20px;
+            margin: 20px 0 10px 0;
+        }
+        
+        h4 {
+            color: #333;
+            font-size: 16px;
+            margin: 15px 0 10px 0;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+        
+        ul, ol {
+            margin: 15px 0 15px 30px;
+        }
+        
+        li {
+            margin-bottom: 10px;
+            line-height: 1.8;
+        }
+        
+        ul.checklist {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        ul.checklist li {
+            padding: 8px 0 8px 30px;
+            position: relative;
+        }
+        
+        ul.checklist li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #28a745;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+        
+        thead {
+            background: #0066cc;
+            color: white;
+        }
+        
+        th {
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        tbody tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        tbody tr:hover {
+            background: #e9ecef;
+        }
+        
+        .note {
+            background: #e7f3ff;
+            border-left: 4px solid #0066cc;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .critical {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .tip {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .code-block {
+            background: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            margin: 15px 0;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            line-height: 1.5;
+        }
+        
+        .section-break {
+            border-top: 2px dashed #ccc;
+            margin: 40px 0;
+        }
+        
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 2px solid #dee2e6;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .container {
+                box-shadow: none;
+            }
+            
+            .back-to-hub {
+                display: none;
+            }
+            
+            .page-break {
+                page-break-before: always;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+            
+            .cover-page h1 {
+                font-size: 32px;
+            }
+            
+            table {
+                font-size: 12px;
+            }
+            
+            th, td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-to-hub" style="display: inline-flex; margin: 20px 0 0 40px;">Back to Documentation Hub</a>
+        
+        <div class="cover-page">
+            <h1>MDM/R Billing Quantity (BQ) Request & Response Guide</h1>
+            <div class="subtitle">XML Billing Service Interface - Troubleshooting Guide</div>
+            <div class="metadata">
+                <p><strong>Based on:</strong> MDM/R Billing Service Standard Technical Interface Specification</p>
+                <p><strong>File IDs:</strong> 5500 (Request) | 6500 (Response)</p>
+                <p><strong>Format:</strong> XML</p>
+            </div>
+        </div>
+
+        <div class="content">
+            
+            <div class="toc">
+                <h2>Table of Contents</h2>
+                <ul>
+                    <li><a href="#overview">1. Overview</a></li>
+                    <li><a href="#prerequisites">2. Prerequisites</a></li>
+                    <li><a href="#request-structure">3. XML Request File Structure (FILE_ID 5500)</a></li>
+                    <li><a href="#request-types">4. Request Types: ReadsForBilling vs ReadsForBillingInformational</a></li>
+                    <li><a href="#request-examples">5. XML Request Examples</a></li>
+                    <li><a href="#response-structure">6. Understanding XML Response Files (FILE_ID 6500)</a></li>
+                    <li><a href="#reading-types">7. Response Reading Types Explained</a></li>
+                    <li><a href="#quality-codes">8. Quality Codes and Validation Status</a></li>
+                    <li><a href="#troubleshooting">9. Troubleshooting Common Issues</a></li>
+                    <li><a href="#error-codes">10. Error Codes and Resolution</a></li>
+                    <li><a href="#validation-checklist">11. Validation Checklist</a></li>
+                    <li><a href="#best-practices">12. Best Practices</a></li>
+                </ul>
+            </div>
+
+            <h1 id="overview">1. Overview</h1>
+
+            <h2>What is a BQ Request?</h2>
+            <p>A Billing Quantity (BQ) Request is an XML-formatted file submitted by LDCs or their authorized Billing Agents to retrieve billing quantities from the MDM/R. These billing quantities are consumption data that have been through VEE (Validation, Estimating, and Editing) and framing processes, making them ready for billing purposes.</p>
+
+            <h2>Key Concepts</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 25%">Term</th>
+                        <th style="width: 75%">Definition</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>FILE_ID 5500</strong></td>
+                        <td>XML Billing Request file identifier</td>
+                    </tr>
+                    <tr>
+                        <td><strong>FILE_ID 6500</strong></td>
+                        <td>XML Billing Reply file identifier</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Billing Quantity (BQ)</strong></td>
+                        <td>Consumption data that has been through VEE and Framing, ready for use in billing</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Framing Structure</strong></td>
+                        <td>Method by which meter reads are assembled into billing quantities (TOU, Hourly, Periodic)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>ReadsForBilling</strong></td>
+                        <td>Standard billing request that affects billing records</td>
+                    </tr>
+                    <tr>
+                        <td><strong>ReadsForBillingInformational</strong></td>
+                        <td>Informational request that does not affect billing records</td>
+                    </tr>
+                    <tr>
+                        <td><strong>messageID</strong></td>
+                        <td>Mandatory unique identifier for each request (typically SDP_ID.BatchID)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>externalBatchId</strong></td>
+                        <td>Mandatory batch identifier for grouping related requests</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>Process Flow</h2>
+            <ol>
+                <li>LDC or Billing Agent prepares XML Billing Request file (5500) with SDPs and date ranges</li>
+                <li>Request file is transmitted to MDM/R via FTS (File Transfer Service)</li>
+                <li>MDM/R validates the XML structure and content</li>
+                <li>MDM/R processes the request and retrieves billing quantities</li>
+                <li>MDM/R generates XML Billing Reply file (6500) with billing data</li>
+                <li>Reply file is returned via FTS to the requesting organization</li>
+                <li>If errors occur, replyCode indicates the issue in the response</li>
+            </ol>
+
+            <div class="section-break"></div>
+
+            <h1 id="prerequisites">2. Prerequisites</h1>
+
+            <h2>2.1 Organization Registration</h2>
+            <ul class="checklist">
+                <li>LDC or Billing Agent must be enrolled with MDM/R</li>
+                <li>Organization must have assigned ORG_ID</li>
+                <li>AS2 client must be configured for file transfers</li>
+                <li>Organization must be registered in MDM/R FTS configuration</li>
+            </ul>
+
+            <h2>2.2 SDP Configuration in MDM/R</h2>
+            <p>Before requesting billing quantities for an SDP, ensure the following elements have been properly synchronized:</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 35%">Required Element</th>
+                        <th style="width: 65%">Why It's Needed</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>SDP Asset</strong></td>
+                        <td>Basic SDP must exist in MDM/R Master Directory</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Meter Asset</strong></td>
+                        <td>Meter must be defined with correct interval length and channel configuration</td>
+                    </tr>
+                    <tr>
+                        <td><strong>SDP to Meter Relationship</strong></td>
+                        <td>Active relationship must exist for the requested date range</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Framing Structure</strong></td>
+                        <td>Determines what type of billing quantities are returned (TOU, Hourly, Periodic)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>VEE Service</strong></td>
+                        <td>Defines which VEE rule set applies to the SDP</td>
+                    </tr>
+                    <tr>
+                        <td><strong>SDP to Billing Agent Relationship</strong></td>
+                        <td>Only the organization in this relationship can submit BQ requests for the SDP</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="critical">
+                <h3>⚠ Authorization Rule</h3>
+                <p><strong>Only the organization with the ORG_ID in the currently in-effect SDP to Billing Agent relationship may submit BQ requests on behalf of the LDC.</strong></p>
+                <p>If you receive authorization errors, verify the SDP to Billing Agent relationship is active and contains the correct ORG_ID.</p>
+            </div>
+
+            <h2>2.3 Data Availability</h2>
+            <ul class="checklist">
+                <li>Meter read data must have been submitted to MDM/R for the requested date range</li>
+                <li>VEE processing must be complete for the period</li>
+                <li>Framing process must have run for the requested billing period</li>
+                <li>Allow 24-48 hours after period end for all processing to complete</li>
+            </ul>
+
+            <div class="section-break"></div>
+
+            <h1 class="page-break" id="request-structure">3. XML Request File Structure (FILE_ID 5500)</h1>
+
+            <h2>3.1 File Naming Convention</h2>
+            <p>XML Billing Request files must follow the MDM/R file naming standard:</p>
+
+            <div class="code-block">&lt;ORG_ID_1&gt;.&lt;ORG_ID_2&gt;.5500.&lt;REQ_VER&gt;.&lt;DATE_TIME&gt;.DAT
+
+Example:
+ORG70000.ORG70000.5500.00.20190222090000.DAT</div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 25%">Element</th>
+                        <th style="width: 75%">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>ORG_ID_1</strong></td>
+                        <td>Sending organization's ID (e.g., ORG70000)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>ORG_ID_2</strong></td>
+                        <td>Receiving organization's ID (typically same as ORG_ID_1)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>5500</strong></td>
+                        <td>FILE_ID for XML Billing Request</td>
+                    </tr>
+                    <tr>
+                        <td><strong>REQ_VER</strong></td>
+                        <td>Request version (00 for current)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>DATE_TIME</strong></td>
+                        <td>File creation timestamp in YYYYMMDDHHMMSS format (EST)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>3.2 XML File Structure</h2>
+            <p>Every XML Billing Request file contains:</p>
+
+            <ol>
+                <li><strong>File Name Record:</strong> &lt;FTSFN&gt; embedded filename for AS2 compatibility</li>
+                <li><strong>XML Declaration:</strong> Standard XML version and encoding</li>
+                <li><strong>Messages Container:</strong> Root element containing one or more RequestMessage elements</li>
+                <li><strong>RequestMessage(s):</strong> Individual SDP billing requests</li>
+            </ol>
+
+            <h2>3.3 Mandatory XML Elements</h2>
+
+            <h3>Header Elements (per RequestMessage)</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 25%">Element</th>
+                        <th style="width: 20%">Value</th>
+                        <th style="width: 55%">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>&lt;verb&gt;</strong></td>
+                        <td>create</td>
+                        <td>Always "create" for billing requests</td>
+                    </tr>
+                    <tr>
+                        <td><strong>&lt;noun&gt;</strong></td>
+                        <td>ReadsForBilling OR ReadsForBillingInformational</td>
+                        <td>Type of request (see section 4)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>&lt;revision&gt;</strong></td>
+                        <td>2</td>
+                        <td>Interface revision number</td>
+                    </tr>
+                    <tr>
+                        <td><strong>&lt;dateTime&gt;</strong></td>
+                        <td>ISO format</td>
+                        <td>Request timestamp (e.g., 2019-02-22T09:00:00-05:00)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>&lt;source&gt;</strong></td>
+                        <td>Text</td>
+                        <td>Source system identifier</td>
+                    </tr>
+                    <tr>
+                        <td><strong>&lt;messageID&gt;</strong></td>
+                        <td>Unique ID</td>
+                        <td><strong>MANDATORY</strong>: Unique per request (e.g., 571733.Tech_Panel_01)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Request Elements</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30%">Element</th>
+                        <th style="width: 15%">Required</th>
+                        <th style="width: 55%">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>&lt;startTime&gt;</strong></td>
+                        <td>Yes</td>
+                        <td>Billing period start in ISO format (inclusive)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>&lt;endTime&gt;</strong></td>
+                        <td>Yes</td>
+                        <td>Billing period end in ISO format (exclusive)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>&lt;externalBatchId&gt;</strong></td>
+                        <td>Yes</td>
+                        <td><strong>MANDATORY</strong>: Batch identifier for grouping requests</td>
+                    </tr>
+                    <tr>
+                        <td><strong>&lt;objectIdType&gt;</strong></td>
+                        <td>Yes</td>
+                        <td>Always "SDP_X_UNIVERSAL_ID"</td>
+                    </tr>
+                    <tr>
+                        <td><strong>&lt;objectIdNameSpace&gt;</strong></td>
+                        <td>Yes</td>
+                        <td>Organization ID (e.g., ORG70000)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>&lt;objectId&gt;</strong></td>
+                        <td>Yes</td>
+                        <td>Universal SDP ID (8 digits, e.g., 05701733)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>&lt;offcycle&gt;</strong></td>
+                        <td>Yes</td>
+                        <td>true = off-cycle, false = on-cycle</td>
+                    </tr>
+                    <tr>
+                        <td><strong>&lt;utilityName&gt;</strong></td>
+                        <td>Yes</td>
+                        <td>LDC organization ID</td>
+                    </tr>
+                    <tr>
+                        <td><strong>&lt;billingAgentId&gt;</strong></td>
+                        <td>Yes</td>
+                        <td>Billing Agent organization ID</td>
+                    </tr>
+                    <tr>
+                        <td><strong>&lt;processStartDate&gt;</strong></td>
+                        <td>No</td>
+                        <td>Optional: Processing window start (for off-cycle with custom window)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>&lt;processEndDate&gt;</strong></td>
+                        <td>No</td>
+                        <td>Optional: Processing window end (for off-cycle with custom window)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="warning">
+                <h3>⚠ Important Notes</h3>
+                <ul style="padding-left: 20px; margin-top: 10px;">
+                    <li><strong>messageID</strong> and <strong>externalBatchId</strong> became mandatory after EIP 8.6 upgrade (January 2016)</li>
+                    <li>All timestamps must be in Eastern Standard Time (EST) with timezone offset (-05:00)</li>
+                    <li>&lt;startTime&gt; is <strong>inclusive</strong> (first moment included)</li>
+                    <li>&lt;endTime&gt; is <strong>exclusive</strong> (first moment NOT included)</li>
+                    <li>SDP IDs must be 8 digits with leading zeros (e.g., 05701733 not 5701733)</li>
+                </ul>
+            </div>
+
+            <div class="section-break"></div>
+
+            <h1 class="page-break" id="request-types">4. Request Types: ReadsForBilling vs ReadsForBillingInformational</h1>
+
+            <h2>4.1 ReadsForBilling (Standard Billing Request)</h2>
+            <div class="note">
+                <h3>When to Use</h3>
+                <p>Use <strong>ReadsForBilling</strong> for actual billing purposes where the data will be used to generate customer bills.</p>
+                
+                <h4>Characteristics:</h4>
+                <ul style="padding-left: 20px; margin-top: 10px;">
+                    <li>Creates billing records in MDM/R</li>
+                    <li>Includes CustomerAccount information in response</li>
+                    <li>Includes CT/PT adjusted values (CR Adj readings)</li>
+                    <li>Standard billing data for invoicing customers</li>
+                    <li>Most common request type</li>
+                </ul>
+            </div>
+
+            <h2>4.2 ReadsForBillingInformational (Informational Request)</h2>
+            <div class="note">
+                <h3>When to Use</h3>
+                <p>Use <strong>ReadsForBillingInformational</strong> when you need billing data for analysis, verification, or reporting purposes but NOT for actual customer billing.</p>
+                
+                <h4>Characteristics:</h4>
+                <ul style="padding-left: 20px; margin-top: 10px;">
+                    <li>Does NOT create billing records in MDM/R</li>
+                    <li>May NOT include CustomerAccount information</li>
+                    <li>Includes raw register readings and usage calculations</li>
+                    <li>Used for audits, reconciliation, or preliminary analysis</li>
+                    <li>No impact on billing history</li>
+                </ul>
+            </div>
+
+            <h2>4.3 Comparison Table</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30%">Aspect</th>
+                        <th style="width: 35%">ReadsForBilling</th>
+                        <th style="width: 35%">ReadsForBillingInformational</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Creates Billing Record</strong></td>
+                        <td>Yes</td>
+                        <td>No</td>
+                    </tr>
+                    <tr>
+                        <td><strong>CustomerAccount in Response</strong></td>
+                        <td>Yes (if synchronized)</td>
+                        <td>May be omitted</td>
+                    </tr>
+                    <tr>
+                        <td><strong>CT/PT Adjusted Values</strong></td>
+                        <td>Yes (CR Adj readings)</td>
+                        <td>Yes (CR Adj readings)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Use Case</strong></td>
+                        <td>Actual customer billing</td>
+                        <td>Analysis, audit, reconciliation</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Billing History Impact</strong></td>
+                        <td>Creates history record</td>
+                        <td>No history record</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Response Format</strong></td>
+                        <td>Same structure</td>
+                        <td>Same structure</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="tip">
+                <h3>💡 Best Practice</h3>
+                <p>Use <strong>ReadsForBillingInformational</strong> first when testing or validating data before submitting the actual <strong>ReadsForBilling</strong> request. This prevents creating unwanted billing records during testing.</p>
+            </div>
+
+            <div class="section-break"></div>
+
+            <h1 class="page-break" id="request-examples">5. XML Request Examples</h1>
+
+            <h2>5.1 Basic ReadsForBilling Request (Single SDP)</h2>
+            <div class="code-block">&lt;FTSFN&gt;ORG70000.ORG70000.5500.00.20190222090000.DAT&lt;/FTSFN&gt;
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;Messages xmlns="http://www.emeter.com/energyip/readsforbillinginterface2"&gt;
+   &lt;RequestMessage&gt;
+      &lt;Header&gt;
+         &lt;verb&gt;create&lt;/verb&gt;
+         &lt;noun&gt;ReadsForBilling&lt;/noun&gt;
+         &lt;revision&gt;2&lt;/revision&gt;
+         &lt;dateTime&gt;2019-02-22T09:00:00-05:00&lt;/dateTime&gt;
+         &lt;source&gt;Billing_Import_Adapter_IESO&lt;/source&gt;
+         &lt;messageID&gt;571733.Tech_Panel_01&lt;/messageID&gt;
+      &lt;/Header&gt;
+      &lt;Request&gt;
+         &lt;startTime&gt;2018-10-23T00:00:00-05:00&lt;/startTime&gt;
+         &lt;endTime&gt;2018-10-27T00:00:00-05:00&lt;/endTime&gt;
+         &lt;externalBatchId&gt;Tech_Panel_01&lt;/externalBatchId&gt;
+         &lt;objectIdType&gt;SDP_X_UNIVERSAL_ID&lt;/objectIdType&gt;
+         &lt;objectIdNameSpace&gt;ORG70000&lt;/objectIdNameSpace&gt;
+         &lt;objectId&gt;05701733&lt;/objectId&gt;
+         &lt;offcycle&gt;true&lt;/offcycle&gt;
+         &lt;utilityName&gt;ORG70000&lt;/utilityName&gt;
+         &lt;billingAgentId&gt;ORG70000&lt;/billingAgentId&gt;
+         &lt;processStartDate&gt;2019-02-22T00:00:00-05:00&lt;/processStartDate&gt;
+         &lt;processEndDate&gt;2019-02-22T23:30:00-05:00&lt;/processEndDate&gt;
+      &lt;/Request&gt;
+   &lt;/RequestMessage&gt;
+&lt;/Messages&gt;</div>
+
+            <h2>5.2 ReadsForBillingInformational Request</h2>
+            <div class="code-block">&lt;RequestMessage&gt;
+      &lt;Header&gt;
+         &lt;verb&gt;create&lt;/verb&gt;
+         &lt;noun&gt;ReadsForBillingInformational&lt;/noun&gt;
+         &lt;revision&gt;2&lt;/revision&gt;
+         &lt;dateTime&gt;2019-02-22T09:00:00-05:00&lt;/dateTime&gt;
+         &lt;source&gt;Billing_Import_Adapter_IESO&lt;/source&gt;
+         &lt;messageID&gt;572201.Tech_Panel_01&lt;/messageID&gt;
+      &lt;/Header&gt;
+      &lt;Request&gt;
+         &lt;startTime&gt;2018-10-22T00:00:00-05:00&lt;/startTime&gt;
+         &lt;endTime&gt;2018-10-29T00:00:00-05:00&lt;/endTime&gt;
+         &lt;externalBatchId&gt;Tech_Panel_01&lt;/externalBatchId&gt;
+         &lt;objectIdType&gt;SDP_X_UNIVERSAL_ID&lt;/objectIdType&gt;
+         &lt;objectIdNameSpace&gt;ORG70000&lt;/objectIdNameSpace&gt;
+         &lt;objectId&gt;05702201&lt;/objectId&gt;
+         &lt;offcycle&gt;true&lt;/offcycle&gt;
+         &lt;utilityName&gt;ORG70000&lt;/utilityName&gt;
+         &lt;billingAgentId&gt;ORG70000&lt;/billingAgentId&gt;
+      &lt;/Request&gt;
+   &lt;/RequestMessage&gt;</div>
+
+            <h2>5.3 Multiple SDPs in One Request File</h2>
+            <div class="code-block">&lt;FTSFN&gt;ORG70000.ORG70000.5500.00.20190222090000.DAT&lt;/FTSFN&gt;
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;Messages xmlns="http://www.emeter.com/energyip/readsforbillinginterface2"&gt;
+   &lt;RequestMessage&gt;
+      &lt;Header&gt;
+         &lt;verb&gt;create&lt;/verb&gt;
+         &lt;noun&gt;ReadsForBilling&lt;/noun&gt;
+         &lt;revision&gt;2&lt;/revision&gt;
+         &lt;dateTime&gt;2019-02-22T09:00:00-05:00&lt;/dateTime&gt;
+         &lt;source&gt;Billing_Import_Adapter_IESO&lt;/source&gt;
+         &lt;messageID&gt;571733.Tech_Panel_01&lt;/messageID&gt;
+      &lt;/Header&gt;
+      &lt;Request&gt;
+         &lt;startTime&gt;2018-10-23T00:00:00-05:00&lt;/startTime&gt;
+         &lt;endTime&gt;2018-10-27T00:00:00-05:00&lt;/endTime&gt;
+         &lt;externalBatchId&gt;Tech_Panel_01&lt;/externalBatchId&gt;
+         &lt;objectIdType&gt;SDP_X_UNIVERSAL_ID&lt;/objectIdType&gt;
+         &lt;objectIdNameSpace&gt;ORG70000&lt;/objectIdNameSpace&gt;
+         &lt;objectId&gt;05701733&lt;/objectId&gt;
+         &lt;offcycle&gt;true&lt;/offcycle&gt;
+         &lt;utilityName&gt;ORG70000&lt;/utilityName&gt;
+         &lt;billingAgentId&gt;ORG70000&lt;/billingAgentId&gt;
+      &lt;/Request&gt;
+   &lt;/RequestMessage&gt;
+   &lt;RequestMessage&gt;
+      &lt;Header&gt;
+         &lt;verb&gt;create&lt;/verb&gt;
+         &lt;noun&gt;ReadsForBilling&lt;/noun&gt;
+         &lt;revision&gt;2&lt;/revision&gt;
+         &lt;dateTime&gt;2019-02-22T09:00:00-05:00&lt;/dateTime&gt;
+         &lt;source&gt;Billing_Import_Adapter_IESO&lt;/source&gt;
+         &lt;messageID&gt;570668.Tech_Panel_01&lt;/messageID&gt;
+      &lt;/Header&gt;
+      &lt;Request&gt;
+         &lt;startTime&gt;2018-09-29T00:00:00-05:00&lt;/startTime&gt;
+         &lt;endTime&gt;2018-10-29T00:00:00-05:00&lt;/endTime&gt;
+         &lt;externalBatchId&gt;Tech_Panel_01&lt;/externalBatchId&gt;
+         &lt;objectIdType&gt;SDP_X_UNIVERSAL_ID&lt;/objectIdType&gt;
+         &lt;objectIdNameSpace&gt;ORG70000&lt;/objectIdNameSpace&gt;
+         &lt;objectId&gt;05700668&lt;/objectId&gt;
+         &lt;offcycle&gt;true&lt;/offcycle&gt;
+         &lt;utilityName&gt;ORG70000&lt;/utilityName&gt;
+         &lt;billingAgentId&gt;ORG70000&lt;/billingAgentId&gt;
+      &lt;/Request&gt;
+   &lt;/RequestMessage&gt;
+&lt;/Messages&gt;</div>
+
+            <div class="tip">
+                <h3>💡 Key Points</h3>
+                <ul style="padding-left: 20px; margin-top: 10px;">
+                    <li>Each RequestMessage must have a unique messageID</li>
+                    <li>All requests in the same file can share the same externalBatchId</li>
+                    <li>Use same externalBatchId to group related billing requests</li>
+                    <li>Processing window (processStartDate/processEndDate) is optional for off-cycle requests</li>
+                </ul>
+            </div>
+
+            <div class="section-break"></div>
+
+            <h1 class="page-break" id="response-structure">6. Understanding XML Response Files (FILE_ID 6500)</h1>
+
+            <h2>6.1 Response File Naming</h2>
+            <p>MDM/R returns response files with FILE_ID 6500:</p>
+
+            <div class="code-block">ORG70000.ORG70000.6500.01.20190222100600.DAT</div>
+
+            <h2>6.2 Response Structure</h2>
+            <p>XML Billing Reply files contain:</p>
+
+            <ol>
+                <li><strong>File Name Record:</strong> &lt;FTSFN&gt; embedded filename</li>
+                <li><strong>Messages Container:</strong> Root element containing ReplyMessage(s)</li>
+                <li><strong>ReplyMessage(s):</strong> One per RequestMessage, containing:
+                    <ul style="margin-top: 10px;">
+                        <li>Header with reply timestamp</li>
+                        <li>Reply with status codes and correlation info</li>
+                        <li>MeterReadings with billing data (if successful)</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h2>6.3 Reply Elements</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30%">Element</th>
+                        <th style="width: 70%">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>&lt;correlationId&gt;</strong></td>
+                        <td>Matches the messageID from the request for tracking</td>
+                    </tr>
+                    <tr>
+                        <td><strong>&lt;replyCode&gt;</strong></td>
+                        <td>Status code: 0=success, 2=partial data, 11=exception (see section 10)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>&lt;replyText&gt;</strong></td>
+                        <td>Human-readable status description (added in EIP 8.6)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>&lt;requestId&gt;</strong></td>
+                        <td>MDM/R internal request ID</td>
+                    </tr>
+                    <tr>
+                        <td><strong>&lt;offcycle&gt;</strong></td>
+                        <td>Echoes the request's offcycle flag</td>
+                    </tr>
+                    <tr>
+                        <td><strong>&lt;externalBatchId&gt;</strong></td>
+                        <td>Echoes the request's batch ID</td>
+                    </tr>
+                    <tr>
+                        <td><strong>&lt;billingAgentId&gt;</strong></td>
+                        <td>Echoes the request's billing agent ID</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>6.4 MeterReading Structure</h2>
+            <p>Each MeterReading in the response contains:</p>
+
+            <ul>
+                <li><strong>ServicePoint:</strong> SDP identification</li>
+                <li><strong>Meter:</strong> Meter identification</li>
+                <li><strong>Premise:</strong> Premise identification</li>
+                <li><strong>CustomerAccount:</strong> Account ID (for ReadsForBilling only)</li>
+                <li><strong>Reading(s):</strong> Multiple reading records (see section 7)</li>
+                <li><strong>startTime/endTime:</strong> Billing period boundaries</li>
+                <li><strong>retailerId:</strong> Billing agent/retailer ID</li>
+                <li><strong>segmentReason:</strong> If bill is segmented (e.g., "Rate Change")</li>
+            </ul>
+
+            <div class="note">
+                <h3>📋 EIP 8.6 Changes (Post-January 2016)</h3>
+                <p>Important changes in response format:</p>
+                <ul style="padding-left: 20px; margin-top: 10px;">
+                    <li><strong>&lt;transformerRatio&gt;</strong> now appears in EACH &lt;Reading&gt; section (not at end)</li>
+                    <li><strong>&lt;endTime&gt;</strong> now appears for EVERY measurement</li>
+                    <li><strong>&lt;replyText&gt;</strong> added to provide text description of error codes</li>
+                    <li><strong>ReadsForBillingInformational</strong> response has NO space (was "ReadsForBilling Informational")</li>
+                </ul>
+            </div>
+
+            <div class="section-break"></div>
+
+            <h1 class="page-break" id="reading-types">7. Response Reading Types Explained</h1>
+
+            <h2>7.1 Reading Type Categories</h2>
+            <p>Each Reading in the response has a <strong>readingTypeId</strong> that indicates what type of data it contains. Readings are categorized as:</p>
+
+            <h3>Register Readings (RR)</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 40%">Reading Type</th>
+                        <th style="width: 60%">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>KWH RR Cum BC Start Register</strong></td>
+                        <td>Cumulative register reading at START of billing period</td>
+                    </tr>
+                    <tr>
+                        <td><strong>KWH RR Cum BC</strong></td>
+                        <td>Cumulative register reading at END of billing period</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Usage Readings (Calculated from intervals)</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 40%">Reading Type</th>
+                        <th style="width: 60%">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>KWH Usage BC</strong></td>
+                        <td>Total consumption for billing period (from interval data)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>KWH Off Peak Usage BC</strong></td>
+                        <td>Off-peak consumption (TOU only)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>KWH Mid Peak Usage BC</strong></td>
+                        <td>Mid-peak consumption (TOU only)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>KWH On Peak Usage BC</strong></td>
+                        <td>On-peak consumption (TOU only)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Calculated Register (CR) Readings</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 40%">Reading Type</th>
+                        <th style="width: 60%">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>KWH CR Register Read Diff BC</strong></td>
+                        <td>Difference between end and start register readings</td>
+                    </tr>
+                    <tr>
+                        <td><strong>KWH CR Adj Usage BC</strong></td>
+                        <td>CT/PT adjusted total usage (for billing)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>KWH CR Adj Off Peak Usage BC</strong></td>
+                        <td>CT/PT adjusted off-peak usage (for billing)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>KWH CR Adj Mid Peak Usage BC</strong></td>
+                        <td>CT/PT adjusted mid-peak usage (for billing)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>KWH CR Adj On Peak Usage BC</strong></td>
+                        <td>CT/PT adjusted on-peak usage (for billing)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>7.2 Transformer Ratio (CT/PT Multiplier)</h2>
+            <p>The <strong>&lt;transformerRatio&gt;</strong> element appears in EACH Reading and shows the CT/PT multiplier applied:</p>
+
+            <ul>
+                <li><strong>1.0</strong> = Unity (no CT/PT, typical for residential)</li>
+                <li><strong>Other values</strong> = CT/PT multiplier (e.g., 2.0, 100.0 for commercial/industrial)</li>
+            </ul>
+
+            <div class="tip">
+                <h3>💡 Understanding CR Adj Readings</h3>
+                <p>The "CR Adj" readings are the ones you should use for billing:</p>
+                <ul style="padding-left: 20px; margin-top: 10px;">
+                    <li>They include CT/PT adjustments</li>
+                    <li>They represent actual consumption at the premise</li>
+                    <li>For unity CT/PT (1.0), CR Adj values = Usage BC values</li>
+                    <li>For non-unity CT/PT, CR Adj values = Usage BC values × transformerRatio</li>
+                </ul>
+            </div>
+
+            <h2>7.3 Measurement Source</h2>
+            <p>The <strong>&lt;measurementSource&gt;</strong> indicates where the data originated:</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 25%">Source</th>
+                        <th style="width: 75%">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Trilliant</strong></td>
+                        <td>Data from Trilliant AMI system (raw meter reads)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Sensus</strong></td>
+                        <td>Data from Sensus AMI system</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Itron</strong></td>
+                        <td>Data from Itron AMI system</td>
+                    </tr>
+                    <tr>
+                        <td><strong>eMeter</strong></td>
+                        <td>Data estimated by MDM/R VEE process</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Framer</strong></td>
+                        <td>Data calculated/framed by MDM/R framing process</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="section-break"></div>
+
+            <h1 class="page-break" id="quality-codes">8. Quality Codes and Validation Status</h1>
+
+            <h2>8.1 Quality Element Structure</h2>
+            <p>Each Reading includes a Quality element with validation information:</p>
+
+            <div class="code-block">&lt;Quality&gt;
+    &lt;versionTime&gt;2018-11-23T18:27:00.000-05:00&lt;/versionTime&gt;
+    &lt;validationStatus&gt;VAL&lt;/validationStatus&gt;
+    &lt;estimatedUsage&gt;0.000000&lt;/estimatedUsage&gt;
+    &lt;changeMethod&gt;C&lt;/changeMethod&gt;
+&lt;/Quality&gt;</div>
+
+            <h2>8.2 Validation Status Codes</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 15%">Code</th>
+                        <th style="width: 20%">Status</th>
+                        <th style="width: 65%">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>VAL</strong></td>
+                        <td>Valid</td>
+                        <td>Data passed VEE validation - highest quality</td>
+                    </tr>
+                    <tr>
+                        <td><strong>EST</strong></td>
+                        <td>Estimated</td>
+                        <td>Data was estimated by VEE process due to missing/invalid reads</td>
+                    </tr>
+                    <tr>
+                        <td><strong>MISS</strong></td>
+                        <td>Missing</td>
+                        <td>No data available, unable to estimate</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>8.3 Change Method Codes</h2>
+            <p>The <strong>&lt;changeMethod&gt;</strong> appears when data has been modified:</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 15%">Code</th>
+                        <th style="width: 85%">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>C</strong></td>
+                        <td>Changed/Corrected - data was manually corrected or adjusted</td>
+                    </tr>
+                    <tr>
+                        <td><strong>EC</strong></td>
+                        <td>Estimated and Corrected - estimated data that was subsequently corrected</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>8.4 Estimated Usage</h2>
+            <p>For Usage BC readings, the <strong>&lt;estimatedUsage&gt;</strong> element shows how much of the total was estimated:</p>
+
+            <ul>
+                <li><strong>0.000000</strong> = No estimation, all actual data</li>
+                <li><strong>Other value</strong> = Amount of kWh that was estimated</li>
+            </ul>
+
+            <div class="warning">
+                <h3>⚠ Data Quality Considerations</h3>
+                <ul style="padding-left: 20px; margin-top: 10px;">
+                    <li>VAL status with estimatedUsage=0 is ideal for billing</li>
+                    <li>EST status indicates gaps in meter read data</li>
+                    <li>High estimated usage may indicate AMI communication issues</li>
+                    <li>Review EST readings with your AMI Operator to improve data quality</li>
+                    <li>versionTime shows when the data was last updated in MDM/R</li>
+                </ul>
+            </div>
+
+            <div class="section-break"></div>
+
+            <h1 class="page-break" id="troubleshooting">9. Troubleshooting Common Issues</h1>
+
+            <h2>Issue 1: Malformed XML File Rejected</h2>
+
+            <div class="critical">
+                <h3>Symptom</h3>
+                <p>Service Desk ticket received: "MDM/R received a malformed Billing Request file"</p>
+                
+                <h4>Common Causes:</h4>
+                <ul style="padding-left: 20px; margin-top: 10px;">
+                    <li>XML file is incomplete or truncated (missing closing tags)</li>
+                    <li>File was built in AS2 send directory (should only be used for sending, not building)</li>
+                    <li>File transfer interrupted</li>
+                    <li>Invalid XML structure</li>
+                </ul>
+                
+                <h4>Resolution:</h4>
+                <ol style="padding-left: 20px;">
+                    <li>Validate XML structure - ensure all opening tags have closing tags</li>
+                    <li>Verify final &lt;/Messages&gt; tag is present</li>
+                    <li>Build files outside AS2 directory, then copy to send directory</li>
+                    <li>Use XML validator tool to check syntax</li>
+                    <li>Review file generation process for issues</li>
+                    <li>Correct file and resubmit</li>
+                </ol>
+            </div>
+
+            <h2>Issue 2: Missing &lt;messageID&gt; or &lt;externalBatchId&gt;</h2>
+
+            <div class="critical">
+                <h3>Symptom</h3>
+                <p>Request rejected with validation error (affects all files processed after January 8, 2016)</p>
+                
+                <h4>Root Cause:</h4>
+                <p>These fields became MANDATORY after EIP 8.6 upgrade. Older request templates may not include them.</p>
+                
+                <h4>Resolution:</h4>
+                <ol style="padding-left: 20px;">
+                    <li>Add &lt;messageID&gt; to each RequestMessage Header (make it unique per request)</li>
+                    <li>Add &lt;externalBatchId&gt; to each Request section (can be same for batch)</li>
+                    <li>Recommended format for messageID: {SDP_ID}.{BatchID} (e.g., 571733.JAN2025)</li>
+                    <li>Update your request generation templates permanently</li>
+                </ol>
+            </div>
+
+            <h2>Issue 3: Request &lt;startTime&gt; Before Archive Date</h2>
+
+            <div class="warning">
+                <h3>Symptom</h3>
+                <p>Request processed but error reported on IR08 report. Request &lt;startTime&gt; was set equal to &lt;endTime&gt;.</p>
+                
+                <h4>Root Cause:</h4>
+                <p>The request &lt;startTime&gt; is earlier than the MDM/R archive date. MDM/R automatically sets &lt;startTime&gt; = &lt;endTime&gt; to prevent processing.</p>
+                
+                <h4>Resolution:</h4>
+                <ol style="padding-left: 20px;">
+                    <li>Verify the archive date for your LDC</li>
+                    <li>Ensure request &lt;startTime&gt; is after the archive date</li>
+                    <li>If you need historical data beyond archive date, contact MDM/R Service Desk</li>
+                    <li>Correct the date range and resubmit</li>
+                </ol>
+            </div>
+
+            <h2>Issue 4: No Data Returned (replyCode 2)</h2>
+
+            <div class="warning">
+                <h3>Symptom</h3>
+                <p>Response received with replyCode=2 and &lt;noData&gt; elements instead of values</p>
+                
+                <h4>Common Causes:</h4>
+                <ul style="padding-left: 20px; margin-top: 10px;">
+                    <li>No meter reads received for the requested period</li>
+                    <li>VEE processing not complete</li>
+                    <li>Framing has not run for the period</li>
+                    <li>SDP to Meter relationship not active during the requested period</li>
+                    <li>Requested date range is in the future</li>
+                </ul>
+                
+                <h4>Resolution:</h4>
+                <ol style="padding-left: 20px;">
+                    <li>Check MDM/R GUI for meter read data in the requested period</li>
+                    <li>Verify SDP to Meter relationship covers the billing period</li>
+                    <li>Confirm VEE processing has completed (check processing status)</li>
+                    <li>Ensure daily framing has run (typically after midnight)</li>
+                    <li>Wait 24-48 hours after period end before requesting</li>
+                    <li>If data should exist, investigate with AMI Operator</li>
+                </ol>
+            </div>
+
+            <h2>Issue 5: Segmented Bill with Partial Data</h2>
+
+            <div class="note">
+                <h3>Symptom</h3>
+                <p>Response contains multiple MeterReading sections (segments) but some segments have &lt;noData&gt;</p>
+                
+                <h4>Understanding Segmentation:</h4>
+                <p>Bills are segmented when changes occur mid-billing period:</p>
+                <ul style="padding-left: 20px; margin-top: 5px;">
+                    <li>Framing Structure change (e.g., TOU/EST to TOU/CST)</li>
+                    <li>Account change (move in/move out)</li>
+                    <li>Meter change</li>
+                    <li>CT/PT multiplier change</li>
+                </ul>
+                
+                <h4>Resolution:</h4>
+                <p>Check the &lt;segmentReason&gt; element to understand why segmented. Common values:</p>
+                <ul style="padding-left: 20px;">
+                    <li><strong>"Rate Change"</strong>: Framing structure changed</li>
+                    <li><strong>"Account Change"</strong>: Customer account relationship changed</li>
+                </ul>
+                <p>If one segment has data and another doesn't, investigate the period with missing data separately.</p>
+            </div>
+
+            <h2>Issue 6: Authorization Error</h2>
+
+            <div class="critical">
+                <h3>Symptom</h3>
+                <p>Request rejected with authorization error or replyCode indicating no permission</p>
+                
+                <h4>Root Cause:</h4>
+                <p>The requesting organization's ORG_ID is not in the SDP to Billing Agent relationship.</p>
+                
+                <h4>Resolution:</h4>
+                <ol style="padding-left: 20px;">
+                    <li>Query MDM/R GUI for the SDP's Billing Agent relationship</li>
+                    <li>Verify the relationship shows your ORG_ID</li>
+                    <li>Ensure relationship is active (no end date or end date in future)</li>
+                    <li>If missing or incorrect:
+                        <ul style="margin-top: 5px;">
+                            <li>Submit synchronization with SDP to Billing Agent relationship</li>
+                            <li>Use correct ORG_ID in the relationship</li>
+                            <li>Wait for sync to process (by midnight if submitted before 16:00 EST)</li>
+                        </ul>
+                    </li>
+                    <li>Resubmit BQ request after relationship is confirmed</li>
+                </ol>
+            </div>
+
+            <div class="section-break"></div>
+
+            <h1 class="page-break" id="error-codes">10. Error Codes and Resolution</h1>
+
+            <h2>10.1 Reply Codes</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 15%">replyCode</th>
+                        <th style="width: 30%">replyText (typical)</th>
+                        <th style="width: 55%">Meaning & Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>0</strong></td>
+                        <td>Request Processing successful</td>
+                        <td>✓ Success - all billing quantities provided. Review data and proceed with billing.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>2</strong></td>
+                        <td>Not all data available</td>
+                        <td>⚠ Partial data - some billing determinants present, others show &lt;noData&gt;. Check which readings are missing and investigate cause.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>11</strong></td>
+                        <td>Exception during processing</td>
+                        <td>✗ Processing error - MDM/R encountered exception (e.g., register read calculation error). Review response details and contact Service Desk if needed.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>10.2 Handling replyCode 0 (Success)</h2>
+            <div class="tip">
+                <h3>✓ Success - Next Steps</h3>
+                <ul style="padding-left: 20px;">
+                    <li>Verify all expected Reading types are present</li>
+                    <li>Check validation status (prefer VAL over EST)</li>
+                    <li>Review estimatedUsage values (lower is better)</li>
+                    <li>Use CR Adj readings for billing calculations</li>
+                    <li>Verify consumption is reasonable for the customer</li>
+                    <li>Proceed with billing process</li>
+                </ul>
+            </div>
+
+            <h2>10.3 Handling replyCode 2 (Partial Data)</h2>
+            <div class="warning">
+                <h3>⚠ Partial Data - Investigation Steps</h3>
+                <ol style="padding-left: 20px;">
+                    <li>Identify which billing determinants are missing (&lt;noData&gt; elements)</li>
+                    <li>Check if register readings are present but usage is missing (or vice versa)</li>
+                    <li>If register readings exist: Framing may not have completed</li>
+                    <li>If all readings missing: Meter read data not received</li>
+                    <li>Review segmented bills - one segment may have data, another may not</li>
+                    <li>Options:
+                        <ul style="margin-top: 5px;">
+                            <li>Wait and resubmit request (if framing pending)</li>
+                            <li>Investigate meter read submission with AMI Operator</li>
+                            <li>Use available data with estimation flag in billing</li>
+                            <li>Contact customer if extended data gap</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+
+            <h2>10.4 Handling replyCode 11 (Exception)</h2>
+            <div class="critical">
+                <h3>✗ Exception - Resolution Process</h3>
+                <ol style="padding-left: 20px;">
+                    <li>Review the replyText for specific error description</li>
+                    <li>Common exception: "register read calculation" error
+                        <ul style="margin-top: 5px;">
+                            <li>May indicate meter rollover or register issue</li>
+                            <li>Check register readings for anomalies</li>
+                            <li>Verify meter configuration in MDM/R (dials, multiplier)</li>
+                        </ul>
+                    </li>
+                    <li>Review any response data that was returned</li>
+                    <li>Check MDM/R GUI for SDP status and recent changes</li>
+                    <li>If unable to resolve:
+                        <ul style="margin-top: 5px;">
+                            <li>Document the issue (messageID, SDP ID, date range)</li>
+                            <li>Contact MDM/R Service Desk with details</li>
+                            <li>Provide copy of request and response files</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+
+            <h2>10.5 IR08 Report (Billing Request Exception Report)</h2>
+            <p>In addition to replyCode in the response, check IR08 report for:</p>
+
+            <ul class="checklist">
+                <li>Request validation errors (missing required fields)</li>
+                <li>Archive date violations (startTime before archive date)</li>
+                <li>Authorization issues</li>
+                <li>SDP not found errors</li>
+                <li>Processing exceptions not caught in response</li>
+            </ul>
+
+            <div class="tip">
+                <h3>💡 Best Practice</h3>
+                <p>Always review both the XML response (replyCode) and IR08 report for complete error information. Some validation errors only appear in IR08.</p>
+            </div>
+
+            <div class="section-break"></div>
+
+            <h1 class="page-break" id="validation-checklist">11. Validation Checklist</h1>
+
+            <h2>Before Submitting XML Request</h2>
+
+            <h3>✓ File Structure Validation</h3>
+            <ul class="checklist">
+                <li>File name follows convention: ORG_ID.ORG_ID.5500.00.YYYYMMDDHHMMSS.DAT</li>
+                <li>First line is &lt;FTSFN&gt; with complete filename</li>
+                <li>XML declaration present: &lt;?xml version="1.0" encoding="UTF-8"?&gt;</li>
+                <li>Root element is &lt;Messages&gt; with correct namespace</li>
+                <li>All XML tags properly opened and closed</li>
+                <li>File ends with &lt;/Messages&gt; tag</li>
+            </ul>
+
+            <h3>✓ Request Message Validation (per SDP)</h3>
+            <ul class="checklist">
+                <li>Header &lt;verb&gt; is "create"</li>
+                <li>Header &lt;noun&gt; is "ReadsForBilling" or "ReadsForBillingInformational"</li>
+                <li>Header &lt;revision&gt; is "2"</li>
+                <li>Header &lt;messageID&gt; is present and unique</li>
+                <li>&lt;startTime&gt; is in ISO format with timezone (-05:00)</li>
+                <li>&lt;endTime&gt; is in ISO format and after startTime</li>
+                <li>&lt;externalBatchId&gt; is present</li>
+                <li>&lt;objectIdType&gt; is "SDP_X_UNIVERSAL_ID"</li>
+                <li>&lt;objectId&gt; is 8 digits with leading zeros</li>
+                <li>&lt;offcycle&gt; is "true" or "false"</li>
+                <li>&lt;utilityName&gt; matches your ORG_ID</li>
+                <li>&lt;billingAgentId&gt; matches your ORG_ID</li>
+            </ul>
+
+            <h3>✓ Authorization Validation</h3>
+            <ul class="checklist">
+                <li>Your ORG_ID is in SDP to Billing Agent relationship for all requested SDPs</li>
+                <li>Billing Agent relationships are active (not ended)</li>
+                <li>Relationships cover the entire requested date range</li>
+            </ul>
+
+            <h3>✓ Data Availability Validation</h3>
+            <ul class="checklist">
+                <li>Request date range is not in the future</li>
+                <li>Request startTime is after archive date</li>
+                <li>Meter reads have been received for the period</li>
+                <li>VEE processing has completed</li>
+                <li>Framing has run (wait 24-48 hours after period end)</li>
+                <li>SDP to Meter relationships active during requested period</li>
+            </ul>
+
+            <h2>After Receiving Response</h2>
+
+            <h3>✓ Response File Checks</h3>
+            <ul class="checklist">
+                <li>Response file received via FTS</li>
+                <li>File is valid XML (not truncated)</li>
+                <li>correlationId matches your request messageID</li>
+                <li>replyCode indicates success or partial/error condition</li>
+            </ul>
+
+            <h3>✓ Data Quality Checks</h3>
+            <ul class="checklist">
+                <li>All requested SDPs have response data</li>
+                <li>Date ranges match request</li>
+                <li>Majority of readings show validationStatus="VAL"</li>
+                <li>estimatedUsage is low (ideally 0)</li>
+                <li>transformerRatio is correct for each SDP</li>
+                <li>No excessive &lt;noData&gt; elements</li>
+                <li>Consumption values are reasonable</li>
+            </ul>
+
+            <h3>✓ Segmented Bill Checks (if applicable)</h3>
+            <ul class="checklist">
+                <li>segmentReason makes sense for the SDP</li>
+                <li>Segment boundaries align with known changes</li>
+                <li>All segments have required data</li>
+                <li>Total consumption across segments is reasonable</li>
+            </ul>
+
+            <div class="section-break"></div>
+
+            <h1 class="page-break" id="best-practices">12. Best Practices</h1>
+
+            <h2>12.1 Request Generation</h2>
+
+            <div class="tip">
+                <h3>Recommended Practices</h3>
+                <ul style="padding-left: 20px;">
+                    <li><strong>Use Template:</strong> Create validated XML template with all required fields</li>
+                    <li><strong>Unique messageID:</strong> Use format {SDP_ID}.{BatchID} for easy tracking</li>
+                    <li><strong>Consistent externalBatchId:</strong> Group related requests with same batch ID</li>
+                    <li><strong>XML Validation:</strong> Validate XML structure before submitting</li>
+                    <li><strong>Test First:</strong> Use ReadsForBillingInformational to test before ReadsForBilling</li>
+                    <li><strong>Build Outside AS2:</strong> Create files outside AS2 directory, then copy to send</li>
+                </ul>
+            </div>
+
+            <h2>12.2 Timing and Scheduling</h2>
+
+            <ul class="checklist">
+                <li>Wait 24-48 hours after period end for VEE and framing to complete</li>
+                <li>Submit requests after daily framing process (typically after midnight EST)</li>
+                <li>For month-end billing, wait until 2nd or 3rd day of following month</li>
+                <li>Schedule batch requests during off-peak hours</li>
+                <li>Avoid submitting near MDM/R maintenance windows</li>
+            </ul>
+
+            <h2>12.3 Error Prevention</h2>
+
+            <div class="note">
+                <h3>Top 10 Ways to Avoid Errors</h3>
+                <ol>
+                    <li>Always include messageID and externalBatchId (mandatory since 2016)</li>
+                    <li>Validate XML structure before submission</li>
+                    <li>Use 8-digit SDP IDs with leading zeros</li>
+                    <li>Ensure dates are in correct ISO format with timezone</li>
+                    <li>Verify Billing Agent relationships before billing cycles</li>
+                    <li>Build files outside AS2 send directory</li>
+                    <li>Test with small batches before large submissions</li>
+                    <li>Monitor IR08 reports regularly</li>
+                    <li>Keep SDP configuration current in MDM/R</li>
+                    <li>Maintain communication with AMI Operator on meter read issues</li>
+                </ol>
+            </div>
+
+            <h2>12.4 Data Quality Management</h2>
+
+            <ul class="checklist">
+                <li>Review validation status regularly (track VAL vs EST ratios)</li>
+                <li>Investigate SDPs with high estimation rates</li>
+                <li>Monitor meter read success rates with AMI Operator</li>
+                <li>Track systematic data issues by AMI system or geographic area</li>
+                <li>Follow up on replyCode 2 responses promptly</li>
+                <li>Keep synchronization data accurate and current</li>
+            </ul>
+
+            <h2>12.5 Documentation</h2>
+
+            <ul class="checklist">
+                <li>Archive all request and response files for audit trail</li>
+                <li>Document your XML generation process</li>
+                <li>Maintain records of synchronization changes affecting billing</li>
+                <li>Log error patterns and resolutions</li>
+                <li>Track messageIDs and correlationIDs for troubleshooting</li>
+                <li>Keep contact list for MDM/R Service Desk and internal teams</li>
+            </ul>
+
+            <h2>12.6 Troubleshooting Resources</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30%">Resource</th>
+                        <th style="width: 70%">When to Use</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>MDM/R GUI</strong></td>
+                        <td>Verify SDP configurations, check relationships, review VEE status, view billing history</td>
+                    </tr>
+                    <tr>
+                        <td><strong>IR08 Report</strong></td>
+                        <td>Review detailed billing request exceptions and validation errors</td>
+                    </tr>
+                    <tr>
+                        <td><strong>XML Response File</strong></td>
+                        <td>Check replyCode, replyText, data quality, and specific reading issues</td>
+                    </tr>
+                    <tr>
+                        <td><strong>TIS Documentation</strong></td>
+                        <td>Reference file formats, business rules, reading type definitions</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Service Desk Knowledge Base</strong></td>
+                        <td>Sample files, bulletins, known issues, upgrade information</td>
+                    </tr>
+                    <tr>
+                        <td><strong>MDM/R Service Desk</strong></td>
+                        <td>Unresolved issues, system problems, malformed file assistance</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>12.7 Quick Reference Summary</h2>
+
+            <div class="critical">
+                <h3>Essential Points to Remember</h3>
+                <ul style="padding-left: 20px; margin-top: 10px;">
+                    <li>FILE_ID for BQ Request is <strong>5500</strong> (XML format)</li>
+                    <li>FILE_ID for BQ Response is <strong>6500</strong> (XML format)</li>
+                    <li><strong>messageID</strong> and <strong>externalBatchId</strong> are MANDATORY (since Jan 2016)</li>
+                    <li>All timestamps must be in <strong>EST with timezone</strong> (-05:00)</li>
+                    <li>End time is <strong>exclusive</strong> (first moment NOT in period)</li>
+                    <li>SDP IDs must be <strong>8 digits</strong> with leading zeros</li>
+                    <li>Only the <strong>Billing Agent</strong> in active relationship can request BQ</li>
+                    <li>Build files <strong>outside AS2 directory</strong>, then copy to send</li>
+                    <li>Wait for <strong>VEE and framing</strong> to complete (24-48 hours)</li>
+                    <li>Use <strong>CR Adj readings</strong> for billing (includes CT/PT adjustments)</li>
+                    <li>Review both <strong>replyCode</strong> and <strong>IR08 report</strong> for errors</li>
+                    <li><strong>transformerRatio</strong> appears in EACH Reading (since EIP 8.6)</li>
+                </ul>
+            </div>
+
+            <div class="section-break"></div>
+
+            <div class="footer">
+                <p><a href="index.html" class="back-to-hub">Back to Documentation Hub</a></p>
+                <p><strong>MDM/R Service Desk:</strong> <a href="https://mdmrsupport.service-now.com">https://mdmrsupport.service-now.com</a></p>
+                <p><strong>Related Bulletins:</strong> SME Bulletin #9 (XML Billing Request Validation Update - December 16, 2015)</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

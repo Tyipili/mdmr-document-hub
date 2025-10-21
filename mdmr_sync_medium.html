@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MDM/R Synchronization - Medium Priority Parameters</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .back-to-hub {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .back-to-hub:hover {
+            background: linear-gradient(135deg, #0052a3 0%, #003d7a 100%);
+            transform: translateX(-3px);
+        }
+
+        .back-to-hub::before {
+            content: "←";
+            font-size: 18px;
+            font-weight: bold;
+        }
+ 
+        .cover-page {
+            text-align: center;
+            padding: 60px 20px;
+            border-bottom: 4px solid #0066cc;
+            margin-bottom: 40px;
+        }
+        
+        .cover-page h1 {
+            color: #0066cc;
+            font-size: 42px;
+            margin-bottom: 20px;
+        }
+        
+        .cover-page .subtitle {
+            font-size: 22px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .cover-page .metadata {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            display: inline-block;
+            text-align: left;
+        }
+        
+        .header {
+            border-bottom: 4px solid #0066cc;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #0066cc;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .header .subtitle {
+            font-size: 20px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .metadata {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 10px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .metadata-item {
+            display: flex;
+        }
+        
+        .metadata-item strong {
+            min-width: 120px;
+            color: #0066cc;
+        }
+        
+        .toc {
+            background: #f8f9fa;
+            padding: 30px;
+            margin: 30px 0;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .toc h2 {
+            color: #0066cc;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .toc ul li {
+            padding: 10px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .toc ul li:last-child {
+            border-bottom: none;
+        }
+        
+        .toc ul li a {
+            color: #333;
+            text-decoration: none;
+            display: block;
+            transition: color 0.3s, padding-left 0.3s;
+        }
+        
+        .toc ul li a:hover {
+            color: #0066cc;
+            padding-left: 10px;
+        }
+        
+        .section {
+            margin: 40px 0;
+            padding-top: 20px;
+        }
+        
+        .section-header {
+            background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+            color: white;
+            padding: 15px 20px;
+            margin: 30px 0 20px 0;
+            border-radius: 5px;
+        }
+        
+        .section-header h2 {
+            font-size: 26px;
+            margin-bottom: 5px;
+        }
+        
+        .section-header .definition {
+            font-size: 14px;
+            opacity: 0.95;
+            font-style: italic;
+        }
+        
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #0066cc;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .info-box h3 {
+            color: #0066cc;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .warning-box h3 {
+            color: #856404;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        .critical-box {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .critical-box h3 {
+            color: #721c24;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+        
+        thead {
+            background: #0066cc;
+            color: white;
+        }
+        
+        th {
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        tbody tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        tbody tr:hover {
+            background: #e9ecef;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin: 0 5px;
+        }
+        
+        .badge-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .badge-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .badge-warning {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .badge-info {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        .code {
+            background: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            padding: 2px 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+        
+        ul.checklist {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        ul.checklist li {
+            padding: 8px 0 8px 30px;
+            position: relative;
+        }
+        
+        ul.checklist li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #28a745;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .tips-section {
+            background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+            color: white;
+            padding: 25px;
+            margin: 40px 0;
+            border-radius: 8px;
+        }
+        
+        .tips-section h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .tips-section ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .tips-section li {
+            padding: 10px 0 10px 35px;
+            position: relative;
+        }
+        
+        .tips-section li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+            font-size: 20px;
+        }
+        
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 2px solid #dee2e6;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        /* Back to Hub Button Styles */
+        .back-to-hub {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: background 0.3s, transform 0.2s;
+            margin-bottom: 20px;
+        }
+
+        .back-to-hub:hover {
+            background: linear-gradient(135deg, #0052a3 0%, #003d7a 100%);
+            transform: translateX(-3px);
+        }
+
+        .back-to-hub::before {
+            content: "←";
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        h3 {
+            color: #0066cc;
+            margin: 20px 0 10px 0;
+            font-size: 20px;
+        }
+        
+        h4 {
+            color: #333;
+            margin: 15px 0 10px 0;
+            font-size: 16px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            table {
+                font-size: 12px;
+            }
+            
+            th, td {
+                padding: 8px;
+            }
+			
+		}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-to-hub">Back to Documentation Hub</a>
+        
+        <div class="cover-page">
+            <h1>MDM/R Synchronization Quick Reference Guide</h1>
+            <div class="subtitle">Medium Priority Parameters - Technical Implementation Guide</div>
+            <div class="metadata">
+                    <p><strong>Reference: </strong>Synchronization Technical Interface Specification (SME-SPEC-40) Issue 1.10.1</p>
+            </div>
+        </div>
+
+        <div class="toc">
+            <h2>TABLE OF CONTENTS</h2>
+            <ul>
+                <li><a href="#channel-config">1. Channel Configuration Set Parameter</a></li>
+                <li><a href="#net-metering">2. Net Metering Configuration</a></li>
+                <li><a href="#interval-length">3. Interval Length Parameter</a></li>
+                <li><a href="#advanced-params">4. Advanced Parameters</a></li>
+                <li><a href="#reports">5. Related Reports Reference</a></li>
+            </ul>
+        </div>
+
+        <div id="channel-config" class="section page-break">
+            <div class="section-header">
+                <h2>1. CHANNEL CONFIGURATION SET PARAMETER</h2>
+                <div class="definition">Defines the channel mapping and configuration for meter data collection</div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Attribute</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>TIS Reference</strong></td>
+                        <td>Section 2.2.6.5, Table 2.2.6.5-1</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Parameter Type</strong></td>
+                        <td>Meter Parameter (configuration-specific)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Future Dating</strong></td>
+                        <td><span class="badge badge-danger">✗ NOT ALLOWED</span> - Must change with meter</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Mandatory</strong></td>
+                        <td><span class="badge badge-danger">YES</span> - Required for interval meter processing</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>When Changes Are Required (Business Triggers)</h3>
+            <ul>
+                <li>Physical meter change to meter with different channel configuration</li>
+                <li>Meter configuration update requiring different channel mappings</li>
+                <li>Change in metering requirements (e.g., adding demand channels)</li>
+                <li>Net metering installation or removal</li>
+                <li>Advanced metering feature activation</li>
+            </ul>
+
+            <div class="critical-box">
+                <h3>⚠ CRITICAL RULE: Channel Config Changes Require Meter Changes</h3>
+                <p>Channel Configuration Set can only be changed when performing a physical or logical meter change. You cannot update this parameter in isolation - it must coincide with ending the old meter relationship and starting a new one.</p>
+            </div>
+
+            <h3>Common Channel Configuration Sets</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30%">Configuration Set</th>
+                        <th style="width: 70%">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Standard Residential</strong></td>
+                        <td>Single channel for consumption (kWh), typically for residential customers</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Small General Service</strong></td>
+                        <td>Consumption (kWh) with optional demand channels</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Large General Service</strong></td>
+                        <td>Multiple channels including consumption, demand (kW), and power factor</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Net Metering</strong></td>
+                        <td>Separate channels for delivered and received energy</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Time-of-Use (TOU)</strong></td>
+                        <td>Separate channels for on-peak and off-peak periods</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Synchronization Process</h3>
+            <div class="info-box">
+                <h3>Meter Change with Different Channel Config</h3>
+                <p><strong>Scenario B (2 Syncs Required):</strong></p>
+                <ol style="padding-left: 20px;">
+                    <li><strong>Sync 1:</strong> End old meter with old channel config</li>
+                    <li><strong>Sync 2:</strong> Start new meter with new channel config</li>
+                </ol>
+                <p>This two-sync approach ensures clean data separation between different channel configurations.</p>
+            </div>
+
+            <h3>Required Synchronization Files & Fields</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>File</th>
+                        <th>Field/Element</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>File 01</strong></td>
+                        <td>Meter Asset with Channel Config Set</td>
+                        <td>Specify the channel configuration set code</td>
+                    </tr>
+                    <tr>
+                        <td><strong>File 05</strong></td>
+                        <td>Meter Relationships</td>
+                        <td>End old meter, start new meter with new config</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="net-metering" class="section page-break">
+            <div class="section-header">
+                <h2>2. NET METERING CONFIGURATION</h2>
+                <div class="definition">Special configuration for bidirectional energy measurement in net metering scenarios</div>
+            </div>
+
+            <div class="info-box">
+                <h3>What is Net Metering?</h3>
+                <p>Net metering allows customers with generation facilities (e.g., solar panels) to receive credit for excess electricity delivered back to the grid. The meter must track both delivered energy (from grid) and received energy (to grid).</p>
+            </div>
+
+            <h3>Net Metering Requirements</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Component</th>
+                        <th>Requirement</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Channel Configuration</strong></td>
+                        <td>Must use approved net metering channel config set</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Framing Structure</strong></td>
+                        <td>Must use compatible framing structure (certain framing structures support net metering)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Meter Capability</strong></td>
+                        <td>Meter must support bidirectional measurement</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Data Channels</strong></td>
+                        <td>Separate channels for delivered and received energy</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="warning-box">
+                <h3>⚠ Compatibility Check Required</h3>
+                <p>Not all Channel Configuration Sets are compatible with all Framing Structures. Verify compatibility before submitting synchronization, especially for net metering scenarios. Reference TIS Section 2.3.10 for compatibility matrix.</p>
+            </div>
+
+            <h3>Net Metering Setup Process</h3>
+            <ol style="padding-left: 20px; margin: 20px 0;">
+                <li>Verify customer eligibility for net metering program</li>
+                <li>Select appropriate net metering channel configuration set</li>
+                <li>Verify framing structure compatibility</li>
+                <li>Perform meter change (if existing meter doesn't support net metering)</li>
+                <li>Update channel configuration in synchronization</li>
+                <li>Verify proper data flow for both delivered and received channels</li>
+            </ol>
+        </div>
+
+        <div id="interval-length" class="section page-break">
+            <div class="section-header">
+                <h2>3. INTERVAL LENGTH PARAMETER</h2>
+                <div class="definition">Defines the time interval for meter data collection (e.g., 15-minute, 60-minute)</div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Attribute</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>TIS Reference</strong></td>
+                        <td>Section 2.2.3, Meter Asset Configuration</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Parameter Type</strong></td>
+                        <td>Meter Configuration (hardware-specific)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Future Dating</strong></td>
+                        <td><span class="badge badge-danger">✗ NOT ALLOWED</span> - Must change with meter</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Mandatory</strong></td>
+                        <td><span class="badge badge-danger">YES</span> - Required for all interval meters</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Common Interval Lengths</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 25%">Interval Length</th>
+                        <th style="width: 40%">Typical Usage</th>
+                        <th style="width: 35%">Data Volume</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>15 minutes</strong></td>
+                        <td>Large general service, detailed load profiling</td>
+                        <td>96 intervals per day</td>
+                    </tr>
+                    <tr>
+                        <td><strong>60 minutes</strong></td>
+                        <td>Most common for residential and small commercial</td>
+                        <td>24 intervals per day</td>
+                    </tr>
+                    <tr>
+                        <td><strong>5 minutes</strong></td>
+                        <td>Specialized applications, high-resolution monitoring</td>
+                        <td>288 intervals per day</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="critical-box">
+                <h3>⚠ CRITICAL: Interval Length Must Match Physical Meter</h3>
+                <p>The Interval Length specified in synchronization MUST exactly match what the physical meter is configured to report. A mismatch will cause meter read processing failures and Business Rule violations (Business Rule 25).</p>
+            </div>
+
+            <h3>Changing Interval Length</h3>
+            <p>Like Channel Configuration Set, Interval Length can only be changed during a meter change operation:</p>
+            <ul class="checklist">
+                <li>Perform physical meter change to meter with different interval length</li>
+                <li>Use Scenario B (2 syncs) to properly end old configuration and start new</li>
+                <li>Ensure clean data separation between different interval lengths</li>
+                <li>Verify AMCC is configured to expect new interval length</li>
+            </ul>
+        </div>
+
+        <div id="advanced-params" class="section page-break">
+            <div class="section-header">
+                <h2>4. ADVANCED PARAMETERS</h2>
+                <div class="definition">Additional specialized parameters for specific metering scenarios</div>
+            </div>
+
+            <h3>Load Profile Configuration</h3>
+            <div class="info-box">
+                <p>Controls how meter data is collected, stored, and transmitted to the MDM/R for load profiling purposes.</p>
+            </div>
+
+            <h3>Demand Configuration</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Demand Window</strong></td>
+                        <td>Time period for demand calculation (e.g., 15-minute block)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Demand Reset</strong></td>
+                        <td>How often demand values are reset (monthly, billing period)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Peak Demand Tracking</strong></td>
+                        <td>Whether to track and report peak demand occurrences</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Power Quality Parameters</h3>
+            <ul>
+                <li>Voltage monitoring thresholds</li>
+                <li>Power factor measurement configuration</li>
+                <li>Harmonic distortion tracking</li>
+                <li>Event logging parameters</li>
+            </ul>
+
+            <div class="warning-box">
+                <h3>⚠ Advanced Parameters Require Specialized Knowledge</h3>
+                <p>These parameters typically require consultation with metering engineering staff and careful validation before synchronization. Incorrect configuration can impact data quality and billing accuracy.</p>
+            </div>
+        </div>
+
+        <div id="reports" class="section page-break">
+            <div class="section-header">
+                <h2>5. RELATED REPORTS REFERENCE</h2>
+                <div class="definition">Understanding the synchronization report outputs for successful implementation</div>
+            </div>
+
+            <h3>IR06 - Business Rule Exception Report</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 25%">Attribute</th>
+                        <th style="width: 75%">Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Purpose</strong></td>
+                        <td>Lists synchronization submissions that violate MDM/R business rules</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Key Rules for Medium Priority</strong></td>
+                        <td>Business Rule 25 (Interval Length), Business Rule 18 (Meter Reuse), Business Rule 20 (Relationship Management)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Action Required</strong></td>
+                        <td>Review exceptions, correct data, resubmit synchronization</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>IR07 - Synchronization Processing Exception Report</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 25%">Attribute</th>
+                        <th style="width: 75%">Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Purpose</strong></td>
+                        <td>Provides detailed information on exceptions during synchronization processing</td>
+                    </tr>
+                    <tr>
+                        <td><strong>When Generated</strong></td>
+                        <td>After staging table loader completes, during business rule validation</td>
+                    </tr>
+                    <tr>
+                        <td><strong>TIS Reference</strong></td>
+                        <td>Section 2.3.2.4</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>IR14 - Staging Table Loader Exception Report</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 25%">Attribute</th>
+                        <th style="width: 75%">Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Purpose</strong></td>
+                        <td>Reports file validation errors before synchronization processing begins</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Check First</strong></td>
+                        <td>Always review IR14 first - if it has errors, IR06 and IR07 may not be generated</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Common Issues</strong></td>
+                        <td>Formatting errors, invalid codes, missing required fields, data type mismatches</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="tips-section page-break">
+            <h2>QUICK TIPS FOR SUCCESS</h2>
+            <ul class="checklist">
+                <li>Channel Configuration Sets can only change with meter changes - never in isolation</li>
+                <li>Verify Channel Config Set and Framing Structure compatibility before synchronization</li>
+                <li>Interval Length must exactly match the physical meter configuration</li>
+                <li>Net metering requires specific channel configurations and compatible framing structures</li>
+                <li>Use Scenario B (2 syncs) when changing channel configuration or interval length</li>
+                <li>Always check IR14 report first for validation errors</li>
+                <li>Review Business Rules 18, 20, and 25 for meter and relationship management</li>
+                <li>Test configuration changes in non-production environment when available</li>
+                <li>Document all configuration changes for future reference and troubleshooting</li>
+                <li>Consult with metering engineering for advanced parameter configurations</li>
+            </ul>
+        </div>
+
+        <div class="footer">
+            <p><a href="index.html" class="back-to-hub" style="margin: 0 auto 15px auto;"> Back to Documentation Hub</a></p>
+            <p><strong>Support:</strong> MDM/R Service Desk - <a href="https://mdmrsupport.service-now.com" style="color: #0066cc;">https://mdmrsupport.service-now.com</a></p>
+        </div>
+    </div>
+</body>
+</html>

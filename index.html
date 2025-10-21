@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MDM/R Synchronization Documentation Hub</title>
+    <style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.header {
+    background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+    color: white;
+    padding: 60px 40px;
+    text-align: center;
+    border-radius: 10px;
+    margin: 20px 40px 30px 40px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+.header h1 {
+    font-size: 48px;
+    margin-bottom: 15px;
+}
+
+.subtitle {
+    font-size: 24px;
+    margin-bottom: 20px;
+    font-weight: 300;
+}
+
+.version-info {
+    background: rgba(255,255,255,0.1);
+    padding: 10px 20px;
+    border-radius: 5px;
+    display: inline-block;
+}
+
+.intro-section {
+    padding: 40px;
+    background: white;
+    margin: 0 40px 30px 40px;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+.intro-section h2 {
+    color: #0066cc;
+    margin-bottom: 15px;
+    font-size: 28px;
+}
+
+.guide-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin: 0 40px 40px 40px;
+}
+
+.guide-card {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+}
+
+.guide-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+}
+
+.guide-card-header {
+    background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+    color: white;
+    padding: 25px;
+    text-align: center;
+}
+
+.guide-card-header h3 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.guide-card-header .priority {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 5px;
+}
+
+.guide-card-body {
+    padding: 25px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.guide-card-body p {
+    color: #666;
+    margin-bottom: 15px;
+    line-height: 1.8;
+}
+
+.guide-card-body ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+    flex: 1;
+}
+
+.guide-card-body ul li {
+    padding: 8px 0 8px 25px;
+    position: relative;
+    color: #444;
+}
+
+.guide-card-body ul li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: #0066cc;
+    font-weight: bold;
+}
+
+.guide-card-footer {
+    padding: 0 25px 25px 25px;
+    margin-top: auto;
+}
+
+.guide-link {
+    display: block;
+    background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+    color: white;
+    text-align: center;
+    padding: 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background 0.3s;
+}
+
+.guide-link:hover {
+    background: linear-gradient(135deg, #0052a3 0%, #003d7a 100%);
+}
+
+.support-section {
+    background: white;
+    padding: 30px 40px;
+    margin: 40px 40px;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+.support-section h2 {
+    color: #0066cc;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.support-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.support-card {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #0066cc;
+}
+
+.support-card h3 {
+    color: #0066cc;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.support-card p {
+    color: #666;
+    font-size: 14px;
+}
+
+.support-card a {
+    color: #0066cc;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.support-card a:hover {
+    text-decoration: underline;
+}
+
+.footer {
+    text-align: center;
+    padding: 30px;
+    background: #0066cc;
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .header h1 {
+        font-size: 32px;
+    }
+    
+    .guide-grid {
+        grid-template-columns: 1fr;
+        margin: 0 20px 20px 20px;
+    }
+    
+    .intro-section {
+        padding: 20px;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>MDM/R Documentation Hub</h1>
+            <div class="subtitle">Technical Documentation & Guides</div>
+            <div class="version-info">
+                <strong>Reference:</strong> SME-SPEC-40, Issue 1.10.1 (December 16, 2024)
+            </div>
+        </div>
+        
+        <div class="intro-section">
+            <h2>Welcome to the MDM/R Documentation Hub</h2>
+            <p>This comprehensive documentation suite provides end-to-end technical guidance for all aspects of MDM/R operations. From foundational concepts to advanced troubleshooting, our guides cover the complete lifecycle of meter data management including:</p>
+            
+            <ul style="margin: 15px 0; padding-left: 40px; line-height: 1.8;">
+                <li><strong>Foundational Knowledge:</strong> Understanding synchronization fundamentals, file types, and the MDM/R ecosystem</li>
+                <li><strong>Universal SDP ID Management:</strong> Requesting and assigning unique identifiers for service delivery points</li>
+                <li><strong>Meter Operations:</strong> New installations, meter changes (physical and logical), and configuration updates</li>
+                <li><strong>Parameter Configuration:</strong> Setting up critical parameters including VEE Service, CT/PT Multipliers, rate classes, and framing structures</li>
+                <li><strong>Data Synchronization:</strong> Transmitting assets, relationships, parameters, and service agreements to MDM/R</li>
+                <li><strong>Billing Processes:</strong> Requesting and interpreting billing quantities through XML-based interfaces</li>
+                <li><strong>Troubleshooting:</strong> Resolving synchronization errors, IR reports, and correcting crossed meter scenarios</li>
+            </ul>
+            
+            <p>Each guide is designed to help you successfully complete specific scenarios while maintaining compliance with MDM/R Technical Interface Specifications (SME-SPEC-40, SME-SPEC-42). Whether you're performing routine operations or resolving complex data issues, you'll find detailed procedures, checklists, examples, and best practices tailored to your needs.</p>
+            
+            <p><strong>Select a guide below to get started.</strong> New users should begin with the foundational guides to build core understanding before progressing to operational and troubleshooting procedures.</p>
+        </div>
+        
+        <div class="guide-grid">
+			<div class="guide-card">
+                <div class="guide-card-header foundational">
+                    <h3>Universal SDP ID Assignment Guide</h3>
+                    <span class="priority">FOUNDATIONAL</span>
+                </div>
+                <div class="guide-card-body">
+                    <p>Complete process guide for requesting and receiving Universal SDP IDs - a prerequisite for creating new SDPs in MDM/R.</p>
+                    <ul>
+                        <li>File Type 1000 (Request) Creation</li>
+                        <li>File Type 2000 (Response) Interpretation</li>
+                        <li>IR01 Report Analysis</li>
+                        <li>Complete Workflow & Examples</li>
+                        <li>Troubleshooting Common Issues</li>
+                    </ul>
+                </div>
+                <div class="guide-card-footer">
+                    <a href="usdp-assignment-guide.html" class="guide-link">View Assignment Guide →</a>
+                </div>
+			</div>
+			
+			<div class="guide-card">
+                <div class="guide-card-header foundational">
+                    <h3>Intro to MDM/R Synchronization</h3>
+                    <span class="priority">FOUNDATIONAL</span>
+                </div>
+                <div class="guide-card-body">
+                    <p>Essential primer on MDM/R synchronization fundamentals. Start here to understand the what, why, and how of master data synchronization.</p>
+                    <ul>
+                        <li>What is Synchronization?</li>
+                        <li>8 File Types Explained</li>
+                        <li>Incremental vs Full Sync</li>
+                        <li>File Naming Conventions</li>
+                        <li>Complete Workflow Process</li>
+                    </ul>
+                </div>
+                <div class="guide-card-footer">
+                    <a href="synchronization-intro-guide.html" class="guide-link">View Synchronization Guide →</a>
+                </div>
+			</div>
+			
+			<div class="guide-card">
+                <div class="guide-card-header">
+                    <h3>Synchronization Errors (IR Reports)</h3>
+                    <span class="priority">TROUBLESHOOTING</span>
+                </div>
+                <div class="guide-card-body">
+                    <p>Comprehensive troubleshooting reference for all MDM/R synchronization reports, error codes, and resolution strategies.</p>
+                    <ul>
+                        <li>IR17 - FTS Processing Failures</li>
+                        <li>IR10 - Incomplete File Sets</li>
+                        <li>IR14 - Validation Errors</li>
+                        <li>IR07 - Business Rule Exceptions</li>
+                        <li>IR06 - Successful Updates</li>
+                    </ul>
+                </div>
+                <div class="guide-card-footer">
+                    <a href="ir-reports-troubleshooting.html" class="guide-link">View Error Resolution Guide →</a>
+				</div>
+            </div>
+			
+			<div class="guide-card">
+                <div class="guide-card-header">
+                    <h3>Crossed Meter Synchronization Guide</h3>
+                    <span class="priority">TROUBLESHOOTING</span>
+                </div>
+                <div class="guide-card-body">
+                    <p>Complete procedure for correcting data conditions when meters are synchronized to incorrect SDPs. Critical 4-step unwinding process.</p>
+                    <ul>
+                        <li>Understanding Crossed Meters</li>
+                        <li>Meter Read Data Removal Process</li>
+                        <li>4-Step Unwinding Procedure</li>
+                        <li>Service Desk Request Creation</li>
+                        <li>Data Anomaly Prevention</li>
+                    </ul>
+                </div>
+                <div class="guide-card-footer">
+                    <a href="crossed-meter-guide.html" class="guide-link">View Correction Guide →</a>
+				</div>
+            </div>
+
+			<div class="guide-card">
+                <div class="guide-card-header">
+                    <h3>High Priority Parameters</h3>
+                    <span class="priority">CRITICAL</span>
+                </div>
+                <div class="guide-card-body">
+                    <p>Essential parameters that directly impact billing and data processing. Master these fundamental configurations first.</p>
+                    <ul>
+                        <li>VEE Service Parameter</li>
+                        <li>CT/PT Multiplier Parameter</li>
+                        <li>Distributor Rate Class (DRC)</li>
+                        <li>Commodity Rate Class (CRR)</li>
+                        <li>Framing Structure Parameter</li>
+                    </ul>
+                </div>
+                <div class="guide-card-footer">
+                    <a href="mdmr_sync_high.html" class="guide-link">View High Priority Guide →</a>
+                </div>
+            </div>
+            
+            <div class="guide-card">
+                <div class="guide-card-header">
+                    <h3>Medium Priority Parameters</h3>
+                    <span class="priority">IMPORTANT</span>
+                </div>
+                <div class="guide-card-body">
+                    <p>Configuration parameters for specialized scenarios and advanced meter setups requiring detailed synchronization.</p>
+                    <ul>
+                        <li>Channel Configuration Sets</li>
+                        <li>Net Metering Configurations</li>
+                        <li>Advanced Meter Settings</li>
+                        <li>Specialized Rate Structures</li>
+                    </ul>
+                </div>
+                <div class="guide-card-footer">
+                    <a href="mdmr_sync_medium.html" class="guide-link">View Medium Priority Guide →</a>
+                </div>
+            </div>
+            
+            <div class="guide-card">
+                <div class="guide-card-header">
+                    <h3>New Meter Installation</h3>
+                    <span class="priority">FOUNDATIONAL</span>
+                </div>
+                <div class="guide-card-body">
+                    <p>Complete step-by-step procedures for synchronizing brand new Service Delivery Points (SDPs) with first-time meter installations.</p>
+                    <ul>
+                        <li>Pre-requisites Checklist</li>
+                        <li>Mandatory Element Setup</li>
+                        <li>Complete File Set Structure</li>
+                        <li>Common Mistakes to Avoid</li>
+                    </ul>
+                </div>
+                <div class="guide-card-footer">
+                    <a href="meter_install_guide.html" class="guide-link">View Installation Guide →</a>
+                </div>
+            </div>
+            
+            <div class="guide-card">
+                <div class="guide-card-header">
+                    <h3>Meter Change Procedures</h3>
+                    <span class="priority">OPERATIONAL</span>
+                </div>
+                <div class="guide-card-body">
+                    <p>Comprehensive procedures for all meter change scenarios including physical replacements and logical changes.</p>
+                    <ul>
+                        <li>Same Configuration Changes</li>
+                        <li>Different Configuration Changes</li>
+                        <li>Logical Meter Changes</li>
+                        <li>CT/PT Multiplier Updates</li>
+                    </ul>
+                </div>
+                <div class="guide-card-footer">
+                    <a href="meter-change-guide.html" class="guide-link">View Change Guide →</a>
+                </div>
+            </div>
+            
+            <div class="guide-card">
+                <div class="guide-card-header">
+                    <h3>Billing Quantity (BQ) Request & Response</h3>
+                    <span class="priority">OPERATIONAL</span>
+                </div>
+                <div class="guide-card-body">
+                    <p>XML-based billing request interface troubleshooting guide for LDC technical staff. Master the BQ request and response process.</p>
+                    <ul>
+                        <li>XML Request Format (FILE_ID 5500)</li>
+                        <li>Response Analysis (FILE_ID 6500)</li>
+                        <li>Error Code Resolution</li>
+                        <li>Data Quality Validation</li>
+                        <li>Reading Types & Quality Codes</li>
+                    </ul>
+                </div>
+                <div class="guide-card-footer">
+                    <a href="bq_request_guide.html" class="guide-link">View BQ Request Guide →</a>
+                </div>
+            </div>
+			
+			</div>
+        </div>
+        
+        <div class="support-section">
+            <h2>Support & Resources</h2>
+            <div class="support-grid">
+                <div class="support-card">
+                    <h3>📋 Technical Specifications</h3>
+					
+                    <p><a href="Documents/MDM_R Synchronization TIS_1.10.1 CLEAN.pdf" target="_blank" rel="noopener noreferrer">All guides are based on MDM/R Technical Interface Specifications (SME-SPEC-40, SME-SPEC-42)</a></p>
+                </div>
+                
+                <div class="support-card">
+                    <h3>🔧 Service Desk</h3>
+                    <p>For technical support and questions:<br>
+                    <a href="https://mdmrsupport.service-now.com">MDM/R Service Desk</a></p>
+                </div>
+                
+                <div class="support-card">
+                    <h3>📚 Documentation</h3>
+                    <p>Each guide includes detailed examples, checklists, and troubleshooting tips for successful implementation</p>
+                </div>
+                
+                <div class="support-card">
+                    <h3>✅ Best Practices</h3>
+                    <p>All guides follow industry best practices and include common mistake prevention strategies</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p><strong>MDM/R Documentation Hub</strong></p>
+        </div>
+    </div>
+</body>
+</html>

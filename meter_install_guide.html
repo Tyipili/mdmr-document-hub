@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Meter Installation Guide - MDM/R Synchronization</title>
+    <style>
+        @media print {
+            body { margin: 0; }
+            .page-break { page-break-before: always; }
+            @page { margin: 2cm; }
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            border-bottom: 4px solid #0066cc;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            color: #0066cc;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .header .subtitle {
+            font-size: 20px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .metadata {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        
+        .toc {
+            background: #f8f9fa;
+            padding: 30px;
+            margin: 30px 0;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .toc h2 {
+            color: #0066cc;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .toc ul li {
+            padding: 10px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .toc ul li:last-child {
+            border-bottom: none;
+        }
+        
+        .toc ul li a {
+            color: #333;
+            text-decoration: none;
+            display: block;
+            transition: color 0.3s, padding-left 0.3s;
+        }
+        
+        .toc ul li a:hover {
+            color: #0066cc;
+            padding-left: 10px;
+        }
+        
+        .section {
+            margin: 40px 0;
+            padding-top: 20px;
+        }
+        
+        .section-header {
+            background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+            color: white;
+            padding: 15px 20px;
+            margin: 30px 0 20px 0;
+            border-radius: 5px;
+        }
+        
+        .section-header h2 {
+            font-size: 26px;
+            margin-bottom: 5px;
+        }
+        
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #0066cc;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .info-box h3 {
+            color: #0066cc;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .warning-box h3 {
+            color: #856404;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        .critical-box {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .critical-box h3 {
+            color: #721c24;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+        
+        thead {
+            background: #0066cc;
+            color: white;
+        }
+        
+        th {
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        tbody tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        tbody tr:hover {
+            background: #e9ecef;
+        }
+        
+        .code-block {
+            background: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        
+        ul.checklist {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        ul.checklist li {
+            padding: 8px 0 8px 30px;
+            position: relative;
+        }
+        
+        ul.checklist li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #28a745;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .tips-section {
+            background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+            color: white;
+            padding: 25px;
+            margin: 40px 0;
+            border-radius: 8px;
+        }
+        
+        .tips-section h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .tips-section ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .tips-section li {
+            padding: 10px 0 10px 35px;
+            position: relative;
+        }
+        
+        .tips-section li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+            font-size: 20px;
+        }
+        
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 2px solid #dee2e6;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        /* Back to Hub Button Styles */
+        .back-to-hub {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: background 0.3s, transform 0.2s;
+            margin-bottom: 20px;
+        }
+
+        .back-to-hub:hover {
+            background: linear-gradient(135deg, #0052a3 0%, #003d7a 100%);
+            transform: translateX(-3px);
+        }
+
+        .back-to-hub::before {
+            content: "←";
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        h3 {
+            color: #0066cc;
+            margin: 20px 0 10px 0;
+            font-size: 20px;
+        }
+        
+        h4 {
+            color: #333;
+            margin: 15px 0 10px 0;
+            font-size: 16px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            table {
+                font-size: 12px;
+            }
+            
+            th, td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-to-hub">Back to Documentation Hub</a>
+        
+        <div class="header">
+            <h1>MDM/R Synchronization Guide</h1>
+            <div class="subtitle">New Meter Installation<br>Scenario A: Brand New SDP + New Meter</div>
+            <div class="metadata">
+                <strong>Based on:</strong> MDM/R Synchronization Technical Interface Specification<br>
+                Document ID: SME-SPEC-40, Issue 1.10.1 | December 16, 2024
+            </div>
+        </div>
+
+        <div class="toc">
+            <h2>Table of Contents</h2>
+            <ul>
+                <li><a href="#overview">1. Overview</a></li>
+                <li><a href="#prerequisites">2. Pre-Requisites</a></li>
+                <li><a href="#mandatory">3. Mandatory Elements</a></li>
+                <li><a href="#optional">4. Optional Elements</a></li>
+                <li><a href="#fileset">5. Complete File Set Structure</a></li>
+                <li><a href="#examples">6. Example Records</a></li>
+                <li><a href="#mistakes">7. Common Mistakes to Avoid</a></li>
+                <li><a href="#postsync">8. Post-Synchronization</a></li>
+                <li><a href="#validation">9. Validation Checklist</a></li>
+                <li><a href="#checklist">10. Quick Reference Checklist</a></li>
+                <li><a href="#summary">11. Summary</a></li>
+            </ul>
+        </div>
+
+        <div id="overview" class="section">
+            <div class="section-header">
+                <h2>1. OVERVIEW</h2>
+            </div>
+
+            <p>This guide provides comprehensive instructions for synchronizing a <strong>brand new Service Delivery Point (SDP) with a new meter installation</strong> to the MDM/R system.</p>
+
+            <div class="info-box">
+                <h3>Scenario A Definition:</h3>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>The SDP has never been synchronized to MDM/R before</li>
+                    <li>This is the first meter ever at this location</li>
+                    <li>Universal SDP ID was just assigned</li>
+                    <li>Complete new setup required</li>
+                </ul>
+            </div>
+
+            <h3>When to Use This Guide</h3>
+            <p>Use this guide when:</p>
+            <ul class="checklist">
+                <li>Installing meter at a brand new location (new construction)</li>
+                <li>First-time synchronization of an SDP to MDM/R</li>
+                <li>Setting up all mandatory elements from scratch</li>
+                <li>No previous meter history exists at this SDP</li>
+            </ul>
+
+            <div class="warning-box">
+                <h3>Not Covered in This Guide:</h3>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>Meter changes (replacing existing meter) - see Meter Change Guide</li>
+                    <li>Updates to existing SDP parameters</li>
+                    <li>Meter removals without replacement</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="prerequisites" class="section page-break">
+            <div class="section-header">
+                <h2>2. PRE-REQUISITES</h2>
+            </div>
+
+            <h3>Before You Begin</h3>
+            <p>Ensure you have all the following information and setup completed before creating synchronization files:</p>
+
+            <h4>Site Information</h4>
+            <ul class="checklist">
+                <li>Universal SDP ID assigned (10-character)</li>
+                <li>Physical address verified</li>
+                <li>Premise details (postal code, municipal ID if applicable)</li>
+                <li>Geocode coordinates (if available)</li>
+            </ul>
+
+            <h4>Meter Information</h4>
+            <ul class="checklist">
+                <li>Meter ID (unique identifier)</li>
+                <li>Meter type and manufacturer</li>
+                <li>Interval length (15-minute, 60-minute, etc.)</li>
+                <li>Channel configuration set</li>
+                <li>Number of dials</li>
+                <li>Meter installation date/time (in EST)</li>
+            </ul>
+
+            <h4>Communication Module Information</h4>
+            <ul class="checklist">
+                <li>Communication module ID (AMCD ID)</li>
+                <li>Module type</li>
+                <li>Installation date/time (in EST)</li>
+            </ul>
+
+            <h4>Business Information</h4>
+            <ul class="checklist">
+                <li>Customer rate class determined</li>
+                <li>Commodity type identified (electricity)</li>
+                <li>Framing structure determined</li>
+                <li>Billing Agent and AMI Operator ORG IDs known</li>
+            </ul>
+
+            <div class="critical-box">
+                <h3>⚠ CRITICAL: Date/Time Requirements</h3>
+                <p>All date/time values in synchronization files MUST be in Eastern Standard Time (EST), not Eastern Daylight Time (EDT). This applies year-round, even during daylight saving time periods.</p>
+            </div>
+        </div>
+
+        <div id="mandatory" class="section page-break">
+            <div class="section-header">
+                <h2>3. MANDATORY ELEMENTS</h2>
+            </div>
+
+            <div class="info-box">
+                <p>From Business Scenario 1 (Table 2.3.10-1, page 71): "Create a New SDP with all of the Mandatory Elements Required to Produce Billing Quantities"</p>
+            </div>
+
+            <h3>3.1 File 01: Asset Data File</h3>
+
+            <h4>Element 1: SDP Asset</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30%">Field</th>
+                        <th style="width: 35%">Value/Options</th>
+                        <th style="width: 35%">Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Record Indicator</strong></td>
+                        <td>SDP</td>
+                        <td>Required - exact text</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Universal SDP ID</strong></td>
+                        <td>[Your 10-char SDP ID]</td>
+                        <td>Must be unique, never used before</td>
+                    </tr>
+                    <tr>
+                        <td><strong>LDC Account Number</strong></td>
+                        <td>[Your account number]</td>
+                        <td>Optional but recommended</td>
+                    </tr>
+                    <tr>
+                        <td><strong>ESA ID</strong></td>
+                        <td>[ESA ID if applicable]</td>
+                        <td>Required for safety authority tracking</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>Element 2: Meter Asset</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30%">Field</th>
+                        <th style="width: 35%">Value/Options</th>
+                        <th style="width: 35%">Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Record Indicator</strong></td>
+                        <td>Meter</td>
+                        <td>Required</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Meter ID</strong></td>
+                        <td>[Your unique meter identifier]</td>
+                        <td>Must match physical meter</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Interval Length</strong></td>
+                        <td>15, 60 (minutes)</td>
+                        <td>Must match meter configuration</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Channel Config Set</strong></td>
+                        <td>01, 02, etc.</td>
+                        <td>Defines channel mapping</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Install Status</strong></td>
+                        <td>I (Installed)</td>
+                        <td>Set to 'I' for new installation</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Load Status</strong></td>
+                        <td>Y or N</td>
+                        <td>Is meter booted/sleeved?</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>Element 3: Communication Module Asset</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30%">Field</th>
+                        <th style="width: 35%">Value/Options</th>
+                        <th style="width: 35%">Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Record Indicator</strong></td>
+                        <td>Communication Module</td>
+                        <td>Required</td>
+                    </tr>
+                    <tr>
+                        <td><strong>UDC ID</strong></td>
+                        <td>[Module ID]</td>
+                        <td>The AMCD identifier</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Install Status</strong></td>
+                        <td>I (Installed)</td>
+                        <td>Set to 'I' for new installation</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>3.2 File 02: Premise Data File</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30%">Field</th>
+                        <th style="width: 35%">Value/Options</th>
+                        <th style="width: 35%">Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Universal SDP ID</strong></td>
+                        <td>[Your SDP ID]</td>
+                        <td>Must match File 01</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Address</strong></td>
+                        <td>[Street address]</td>
+                        <td>Physical location</td>
+                    </tr>
+                    <tr>
+                        <td><strong>City</strong></td>
+                        <td>[City name]</td>
+                        <td>Required</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Postal Code</strong></td>
+                        <td>[A1A 1A1]</td>
+                        <td>Canadian format</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Geocode</strong></td>
+                        <td>[Lat/Long if available]</td>
+                        <td>Optional but helpful</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>3.3 File 03: Service Agreement Data File</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30%">Field</th>
+                        <th style="width: 35%">Value/Options</th>
+                        <th style="width: 35%">Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Record Indicator</strong></td>
+                        <td>Service Agreement</td>
+                        <td>Required</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Universal SDP ID</strong></td>
+                        <td>[Your SDP ID]</td>
+                        <td>Must match other files</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Framing Structure</strong></td>
+                        <td>Code from approved list</td>
+                        <td>Determines billing framing</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Start Date/Time</strong></td>
+                        <td>[YYYYMMDDHHMMSS in EST]</td>
+                        <td>When framing becomes effective</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Commodity Type</strong></td>
+                        <td>Electricity</td>
+                        <td>Always "Electricity"</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="warning-box">
+                <h3>⚠ Framing Structure Midnight Rule</h3>
+                <p>Framing Structure changes must be synchronized with Start Date/Time at midnight EST (00:00:00) of the effective date. This ensures proper daily framing boundaries.</p>
+            </div>
+
+            <h3>3.4 File 04: Parameter Data File</h3>
+
+            <h4>Element 1: VEE Service Parameter</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30%">Field</th>
+                        <th style="width: 70%">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Parameter Type</strong></td>
+                        <td>VEE Service</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Universal SDP ID</strong></td>
+                        <td>Links parameter to SDP</td>
+                    </tr>
+                    <tr>
+                        <td><strong>VEE Service Code</strong></td>
+                        <td>Defines validation/estimation rules (e.g., RES01 for residential)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Start Date/Time</strong></td>
+                        <td>When VEE service becomes effective (typically meter install time)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>Element 2: Dials Parameter</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30%">Field</th>
+                        <th style="width: 70%">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Parameter Type</strong></td>
+                        <td>Meter Parameter - Dials</td>
+                    </tr>
+                    <tr>
+                        <td><strong>UDC ID</strong></td>
+                        <td>Meter ID this applies to</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Number of Dials</strong></td>
+                        <td>Must match physical meter (e.g., 5 or 6 dials)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Start Date/Time</strong></td>
+                        <td>Same as meter installation time</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="critical-box">
+                <h3>⚠ CRITICAL: Dials Must Match Meter</h3>
+                <p>The number of dials specified MUST exactly match what the physical meter reports. Mismatch causes Business Rule 25b violations and VEE processing errors.</p>
+            </div>
+
+            <h3>3.5 File 05: Relationship Data File</h3>
+
+            <h4>Relationship 1: SDP to Meter</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30%">Field</th>
+                        <th style="width: 70%">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Record Indicator</strong></td>
+                        <td>Meter</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Object 1</strong></td>
+                        <td>[Meter ID]</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Relationship ID 1</strong></td>
+                        <td>SDP</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Object 2</strong></td>
+                        <td>[SDP ID]</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Start Date/Time</strong></td>
+                        <td>Actual meter installation time (EST)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>End Date/Time</strong></td>
+                        <td>Leave null (relationship ongoing)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>Relationship 2: Meter to Communication Module</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30%">Field</th>
+                        <th style="width: 70%">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Record Indicator</strong></td>
+                        <td>Meter</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Object 1</strong></td>
+                        <td>[Meter ID]</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Relationship ID 1</strong></td>
+                        <td>Communication Module</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Object 2</strong></td>
+                        <td>[Comm Module ID]</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Start Date/Time</strong></td>
+                        <td>Same as SDP to Meter start</td>
+                    </tr>
+                    <tr>
+                        <td><strong>End Date/Time</strong></td>
+                        <td>Leave null (relationship ongoing)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>Relationship 3: SDP to Billing Agent</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30%">Field</th>
+                        <th style="width: 70%">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Record Indicator</strong></td>
+                        <td>Organization</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Object 1</strong></td>
+                        <td>[SDP ID]</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Relationship ID 1</strong></td>
+                        <td>BA (Billing Agent)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Object 2</strong></td>
+                        <td>[Billing Agent ORG ID]</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Start Date/Time</strong></td>
+                        <td>When billing agent relationship begins</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>Relationship 4: SDP to AMI Operator</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30%">Field</th>
+                        <th style="width: 70%">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Record Indicator</strong></td>
+                        <td>Organization</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Object 1</strong></td>
+                        <td>[SDP ID]</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Relationship ID 1</strong></td>
+                        <td>MO (Meter Operator/AMI Operator)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Object 2</strong></td>
+                        <td>[AMI Operator ORG ID]</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Start Date/Time</strong></td>
+                        <td>When AMI operator relationship begins</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="optional" class="section page-break">
+            <div class="section-header">
+                <h2>4. OPTIONAL ELEMENTS</h2>
+            </div>
+
+            <p>While not mandatory for producing billing quantities, these elements may be required based on your business processes:</p>
+
+            <h3>CT/PT Multiplier (File 04)</h3>
+            <p>Required only for meters with current transformers (CT) or potential transformers (PT):</p>
+            <ul class="checklist">
+                <li>Most residential meters: No CT/PT required (multiplier = 1)</li>
+                <li>Large commercial/industrial: CT/PT multiplier required</li>
+                <li>Must start at same time as SDP to Meter relationship</li>
+            </ul>
+
+            <div class="info-box">
+                <h3>Default CT/PT Behavior</h3>
+                <p>If no CT/PT multiplier is provided, MDM/R assumes unity (1.0). Only provide CT/PT parameter when the multiplier is NOT equal to 1.</p>
+            </div>
+
+            <h3>Distributor Rate Class - DRC (File 04)</h3>
+            <p>May be required depending on settlement and billing requirements.</p>
+
+            <h3>Commodity Rate Class - CRR (File 04)</h3>
+            <p>Required for retail energy contract customers.</p>
+
+            <h3>SDP to Energy Service Provider (File 05)</h3>
+            <p>For customers with retail energy contracts.</p>
+
+            <h3>SDP to CCA Service Provider (File 05)</h3>
+            <p>For Community Choice Aggregation services.</p>
+        </div>
+
+        <div id="fileset" class="section page-break">
+            <div class="section-header">
+                <h2>5. COMPLETE FILE SET STRUCTURE</h2>
+            </div>
+
+            <h3>Required Files (All 7 Must Be Present)</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 10%">File #</th>
+                        <th style="width: 30%">File Name</th>
+                        <th style="width: 60%">Required Content</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>00</td>
+                        <td>Manifest File</td>
+                        <td>File Name Record + Header + List of all files</td>
+                    </tr>
+                    <tr>
+                        <td>01</td>
+                        <td>Asset Data File</td>
+                        <td>File Name Record + Header + Detail Records (SDP, Meter, Comm Module)</td>
+                    </tr>
+                    <tr>
+                        <td>02</td>
+                        <td>Premise Data File</td>
+                        <td>File Name Record + Header + Detail Records (Premise data)</td>
+                    </tr>
+                    <tr>
+                        <td>03</td>
+                        <td>Service Agreement Data File</td>
+                        <td>File Name Record + Header + Detail Records (Framing Structure)</td>
+                    </tr>
+                    <tr>
+                        <td>04</td>
+                        <td>Parameter Data File</td>
+                        <td>File Name Record + Header + Detail Records (VEE Service, Dials, etc.)</td>
+                    </tr>
+                    <tr>
+                        <td>05</td>
+                        <td>Relationship Data File</td>
+                        <td>File Name Record + Header + Detail Records (All relationships)</td>
+                    </tr>
+                    <tr>
+                        <td>07</td>
+                        <td>Component SDP File</td>
+                        <td>File Name Record + Header only (not loaded by MDM/R)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="critical-box">
+                <h3>Important: File Set Completeness</h3>
+                <p>All six mandatory files (plus Component SDP) must be present in the sync set. Even if a file has no detail records, it must contain File Name Record and Header Record.</p>
+            </div>
+
+            <h3>Record Count Summary</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30%">Setup Level</th>
+                        <th style="width: 40%">Elements Required</th>
+                        <th style="width: 30%">Estimated Records</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Minimum Mandatory</strong></td>
+                        <td>All required for billing quantities</td>
+                        <td>~15-20 records</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Typical Residential</strong></td>
+                        <td>Mandatory + common optional</td>
+                        <td>~20-25 records</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Commercial with CT/PT</strong></td>
+                        <td>Mandatory + CT/PT + DRC</td>
+                        <td>~25-30 records</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="examples" class="section page-break">
+            <div class="section-header">
+                <h2>6. EXAMPLE RECORDS</h2>
+            </div>
+
+            <h3>Complete Example: Minimal New SDP Setup</h3>
+            <p>Example for creating a new residential SDP with TOU pricing:</p>
+
+            <h4>File 00: Manifest File</h4>
+            <div class="code-block">
+&lt;FTSFN&gt;ORG12345.ORG12345.4000.00.20250116120000.NEWSDP.00.01.DAT&lt;/FTSFN&gt;
+H|ORG12345|IncrementalSync|Manifest|20250116120000|000100
+ORG12345.ORG12345.4000.00.20250116120000.NEWSDP.00.01.DAT
+ORG12345.ORG12345.4000.00.20250116120000.NEWSDP.01.01.DAT
+ORG12345.ORG12345.4000.00.20250116120000.NEWSDP.02.01.DAT
+ORG12345.ORG12345.4000.00.20250116120000.NEWSDP.03.01.DAT
+ORG12345.ORG12345.4000.00.20250116120000.NEWSDP.04.01.DAT
+ORG12345.ORG12345.4000.00.20250116120000.NEWSDP.05.01.DAT
+ORG12345.ORG12345.4000.00.20250116120000.NEWSDP.07.01.DAT
+            </div>
+
+            <h4>File 01: Asset Data File (Sample Records)</h4>
+            <div class="code-block">
+&lt;FTSFN&gt;ORG12345.ORG12345.4000.00.20250116120000.NEWSDP.01.01.DAT&lt;/FTSFN&gt;
+H|ORG12345|IncrementalSync|AssetData|20250116120000
+SDP|SDP0001234|LDC_ACCT_123|ESA12345|||
+Meter|MTR9876543|60|01|I|Y||||
+CommunicationModule|AMCD123456|I||||
+            </div>
+
+            <p><strong>Key Points:</strong></p>
+            <ul class="checklist">
+                <li>SDP0001234 is the Universal SDP ID</li>
+                <li>MTR9876543 is the Meter ID with 60-minute interval</li>
+                <li>Channel Config Set = 01 (standard residential)</li>
+                <li>Both meter and comm module set to 'I' (Installed)</li>
+            </ul>
+
+            <h4>File 04: Parameter Data File (Sample)</h4>
+            <div class="code-block">
+&lt;FTSFN&gt;ORG12345.ORG12345.4000.00.20250116120000.NEWSDP.04.01.DAT&lt;/FTSFN&gt;
+H|ORG12345|IncrementalSync|ParameterData|20250116120000
+VEEService|SDP0001234|RES01|20250115100000||
+MeterParameter|MTR9876543|Dials|5|20250115100000||
+            </div>
+
+            <h4>File 05: Relationship Data File (Sample)</h4>
+            <div class="code-block">
+&lt;FTSFN&gt;ORG12345.ORG12345.4000.00.20250116120000.NEWSDP.05.01.DAT&lt;/FTSFN&gt;
+H|ORG12345|IncrementalSync|RelationshipData|20250116120000
+Meter|MTR9876543|SDP|SDP0001234|20250115100000||
+Meter|MTR9876543|CommunicationModule|AMCD123456|20250115100000||
+Organization|SDP0001234|BA|ORG12345|20250115000000||
+Organization|SDP0001234|MO|ORG12345|20250115000000||
+            </div>
+        </div>
+
+        <div id="mistakes" class="section page-break">
+            <div class="section-header">
+                <h2>7. COMMON MISTAKES TO AVOID</h2>
+            </div>
+
+            <div class="warning-box">
+                <h3>❌ Mistake 1: Using EDT instead of EST</h3>
+                <p>All date/time stamps must be in EST year-round. Never use EDT. This is the most common error.</p>
+            </div>
+
+            <div class="warning-box">
+                <h3>❌ Mistake 2: Inconsistent Extracted Date Time</h3>
+                <p>Extracted Date Time must be identical across all files in the set. Different timestamps cause IR10 error.</p>
+            </div>
+
+            <div class="warning-box">
+                <h3>❌ Mistake 3: Missing mandatory files</h3>
+                <p>All 7 files must be in sync set. Even if File 02 has no data, include File Name Record + Header.</p>
+            </div>
+
+            <div class="warning-box">
+                <h3>❌ Mistake 4: Framing Structure not at midnight</h3>
+                <p>Framing Structure Start Date/Time must be midnight EST (HH:MM:SS = 00:00:00). Not following this breaks daily framing process.</p>
+            </div>
+
+            <div class="warning-box">
+                <h3>❌ Mistake 5: Mismatched relationship start times</h3>
+                <p>SDP-to-Meter and Meter-to-Comm relationships must have same Start Date/Time as Dials parameter.</p>
+            </div>
+
+            <div class="warning-box">
+                <h3>❌ Mistake 6: Interval Length doesn't match meter</h3>
+                <p>Interval Length in sync must match what meter actually reports. Mismatch causes meter read processing errors.</p>
+            </div>
+
+            <div class="warning-box">
+                <h3>❌ Mistake 7: Dials doesn't match meter</h3>
+                <p>Number of dials must match digits reported by meter. Incorrect dials causes VEE processing errors (Business Rule 25b).</p>
+            </div>
+
+            <div class="warning-box">
+                <h3>❌ Mistake 8: Missing mandatory files</h3>
+                <p>All 7 files must be in sync set. Missing files trigger IR10 report and entire set is rejected.</p>
+            </div>
+
+            <div class="warning-box">
+                <h3>❌ Mistake 9: Reusing meter from another SDP</h3>
+                <p>If meter was previously used at another SDP, old SDP-to-Meter relationship must be ended first. Business Rule 18 prevents meter from being active at multiple SDPs.</p>
+            </div>
+        </div>
+
+        <div id="postsync" class="section page-break">
+            <div class="section-header">
+                <h2>8. POST-SYNCHRONIZATION</h2>
+            </div>
+
+            <h3>Step 1: Monitor Reports</h3>
+            <p>After submitting synchronization, monitor these reports in order:</p>
+
+            <h4>IR10 - Incomplete Synchronization File Set Report</h4>
+            <ul class="checklist">
+                <li>Generated immediately if file set is incomplete or incorrectly named</li>
+                <li>If you receive IR10, entire sync was rejected - fix issues and resubmit</li>
+            </ul>
+
+            <h4>IR14 - Staging Table Loader Exception Report</h4>
+            <ul class="checklist">
+                <li>Check this first - contains file validation errors</li>
+                <li>Common issues: formatting, invalid codes, data type mismatches</li>
+                <li>If IR14 has errors, sync won't proceed to business rule validation</li>
+            </ul>
+
+            <h4>IR06 - Business Rule Exception Report</h4>
+            <ul class="checklist">
+                <li>Lists business rule violations (if any)</li>
+                <li>Most common: Rule 18 (meter reuse), Rule 25 (dials mismatch), Rule 20 (relationship issues)</li>
+            </ul>
+
+            <h4>IR07 - Synchronization Processing Exception Report</h4>
+            <ul class="checklist">
+                <li>Detailed processing exceptions</li>
+                <li>Review after IR06 to understand specific issues</li>
+            </ul>
+
+            <h3>Step 2: Verify in MDM/R GUI</h3>
+            <ul class="checklist">
+                <li>Search for SDP ID in MDM/R web interface</li>
+                <li>Verify all elements are present and correct</li>
+                <li>Check relationship start dates/times</li>
+                <li>Confirm parameter values</li>
+            </ul>
+
+            <h3>Step 3: Verify Meter Reads Processing</h3>
+            <ul class="checklist">
+                <li>Wait for first meter read submission from AMCC</li>
+                <li>Check that reads are being accepted and processed</li>
+                <li>Verify VEE processing is working correctly</li>
+                <li>Confirm billing quantities are being generated</li>
+            </ul>
+        </div>
+
+        <div id="validation" class="section page-break">
+            <div class="section-header">
+                <h2>9. VALIDATION CHECKLIST</h2>
+            </div>
+
+            <h3>Before Submission</h3>
+            <ul class="checklist">
+                <li>All 7 files present with correct naming convention</li>
+                <li>Extracted Date Time identical in all files</li>
+                <li>Sequence number incremented from last sync</li>
+                <li>All date/time values in EST (not EDT)</li>
+                <li>File Name Record in every file</li>
+                <li>Header Record in every file</li>
+            </ul>
+
+            <h3>SDP Setup Validation</h3>
+            <ul class="checklist">
+                <li>Universal SDP ID is unique and never used before</li>
+                <li>Premise address is complete and accurate</li>
+                <li>ESA ID provided (if applicable)</li>
+            </ul>
+
+            <h3>Meter Configuration Validation</h3>
+            <ul class="checklist">
+                <li>Meter ID matches physical meter</li>
+                <li>Interval Length matches meter configuration</li>
+                <li>Channel Config Set appropriate for meter type</li>
+                <li>Number of Dials matches meter display</li>
+                <li>Install Status set to 'I'</li>
+            </ul>
+
+            <h3>Relationship Validation</h3>
+            <ul class="checklist">
+                <li>SDP-to-Meter relationship has Start Date/Time, End is null</li>
+                <li>Meter-to-Comm relationship has Start Date/Time, End is null</li>
+                <li>Dials parameter Start Date/Time matches relationship starts</li>
+                <li>All relationship start times are same (synchronized)</li>
+            </ul>
+
+            <h3>Parameter Validation</h3>
+            <ul class="checklist">
+                <li>VEE Service code is valid for customer class</li>
+                <li>Framing Structure appropriate for rate class</li>
+                <li>Framing Structure Start Date/Time at midnight EST</li>
+                <li>All mandatory parameters present</li>
+            </ul>
+
+            <h3>File Set Completeness</h3>
+            <ul class="checklist">
+                <li>All 7 files present in manifest</li>
+                <li>File Name Records in all files</li>
+                <li>Header Records in all files</li>
+                <li>Extracted Date Time consistent across all files</li>
+                <li>Sequence Number incremented from previous sync</li>
+            </ul>
+        </div>
+
+        <div id="checklist" class="section">
+            <div class="tips-section">
+                <h2>10. QUICK REFERENCE CHECKLIST</h2>
+                <ul class="checklist">
+                    <li>Verify Universal SDP ID is brand new (never synchronized before)</li>
+                    <li>All date/time values in EST year-round</li>
+                    <li>All 7 files present with File Name Record + Header</li>
+                    <li>Extracted Date Time identical across all files</li>
+                    <li>Meter configuration (interval, channel config, dials) matches physical meter</li>
+                    <li>SDP-to-Meter and Meter-to-Comm relationships start at same time</li>
+                    <li>Dials parameter starts at same time as relationships</li>
+                    <li>Framing Structure starts at midnight EST</li>
+                    <li>VEE Service appropriate for customer class</li>
+                    <li>Billing Agent and AMI Operator relationships included</li>
+                    <li>Communication module properly linked to meter</li>
+                    <li>All mandatory elements present for billing quantities</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="summary" class="section">
+            <div class="section-header">
+                <h2>11. SUMMARY</h2>
+            </div>
+
+            <h3>Key Success Factors</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30%">Factor</th>
+                        <th style="width: 70%">Critical Points</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Timing</strong></td>
+                        <td>All timestamps in EST, relationships synchronized, framing at midnight</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Accuracy</strong></td>
+                        <td>Meter config must match physical, dials must match, interval must match</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Completeness</strong></td>
+                        <td>All 7 files present, all mandatory elements included</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Consistency</strong></td>
+                        <td>Extracted Date Time same across files, relationship times aligned</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Validation</strong></td>
+                        <td>Check IR14 first, then IR06, verify in GUI, confirm meter reads processing</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Next Steps</h3>
+            <ol style="padding-left: 20px; margin: 20px 0;">
+                <li><strong>Prepare Data:</strong> Gather all required information per Pre-Requisites</li>
+                <li><strong>Create Files:</strong> Build all 7 synchronization files</li>
+                <li><strong>Validate:</strong> Use validation checklist before submission</li>
+                <li><strong>Submit:</strong> Send complete file set to MDM/R via FTS</li>
+                <li><strong>Monitor:</strong> Check IR10, IR14, IR06, IR07 reports</li>
+                <li><strong>Verify:</strong> Confirm in GUI and validate meter read processing</li>
+            </ol>
+        </div>
+
+        <div class="footer">
+            <p><a href="index.html" class="back-to-hub" style="margin: 0 auto 15px auto;"> Back to Documentation Hub</a></p>
+            <p><strong>Support:</strong> MDM/R Service Desk - <a href="https://mdmrsupport.service-now.com" style="color: #0066cc;">https://mdmrsupport.service-now.com</a></p>
+            <p><strong>Reference:</strong> Business Scenario 1 (Table 2.3.10-1, page 71) | SME-SPEC-40 Issue 1.10.1</p>
+        </div>
+    </div>
+</body>
+</html>

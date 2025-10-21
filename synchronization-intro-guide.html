@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introduction to MDM/R Synchronization</title>
+    <style>
+        @media print {
+            body { margin: 0; }
+            .page-break { page-break-before: always; }
+            @page { margin: 2cm; }
+            .no-print { display: none; }
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .cover-page {
+            text-align: center;
+            padding: 60px 20px;
+            border-bottom: 4px solid #0066cc;
+            margin-bottom: 40px;
+        }
+        
+        .cover-page h1 {
+            color: #0066cc;
+            font-size: 42px;
+            margin-bottom: 20px;
+        }
+        
+        .cover-page .subtitle {
+            font-size: 22px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .cover-page .metadata {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            display: inline-block;
+            text-align: left;
+        }
+        
+        .toc {
+            background: #f8f9fa;
+            padding: 30px;
+            margin: 30px 0;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .toc h2 {
+            color: #0066cc;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .toc ul li {
+            padding: 10px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .toc ul li:last-child {
+            border-bottom: none;
+        }
+        
+        .toc ul li a {
+            color: #333;
+            text-decoration: none;
+            display: block;
+            transition: color 0.3s, padding-left 0.3s;
+        }
+        
+        .toc ul li a:hover {
+            color: #0066cc;
+            padding-left: 10px;
+        }
+        
+        h1 {
+            color: #0066cc;
+            font-size: 32px;
+            margin: 40px 0 20px 0;
+            padding-top: 20px;
+            border-top: 3px solid #0066cc;
+        }
+        
+        h2 {
+            color: #0066cc;
+            font-size: 24px;
+            margin: 30px 0 15px 0;
+        }
+        
+        h3 {
+            color: #0066cc;
+            font-size: 20px;
+            margin: 20px 0 10px 0;
+        }
+        
+        h4 {
+            color: #333;
+            font-size: 16px;
+            margin: 15px 0 10px 0;
+        }
+        
+        .note {
+            background: #e7f3ff;
+            border-left: 4px solid #0066cc;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .critical {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .tip {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+        
+        thead {
+            background: #0066cc;
+            color: white;
+        }
+        
+        th {
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        tbody tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        tbody tr:hover {
+            background: #e9ecef;
+        }
+        
+        .flowchart {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .flowchart-box {
+            background: white;
+            border: 2px solid #0066cc;
+            padding: 15px;
+            margin: 10px auto;
+            border-radius: 8px;
+            max-width: 600px;
+        }
+        
+        .flowchart-decision {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 15px;
+            margin: 10px auto;
+            border-radius: 8px;
+            max-width: 600px;
+        }
+        
+        .flowchart-arrow {
+            color: #0066cc;
+            font-weight: bold;
+            margin: 10px 0;
+            font-size: 18px;
+        }
+        
+        .code-block {
+            background: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            margin: 15px 0;
+            overflow-x: auto;
+            white-space: pre;
+        }
+        
+        ul.checklist {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        ul.checklist li {
+            padding: 8px 0 8px 30px;
+            position: relative;
+        }
+        
+        ul.checklist li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #28a745;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .section-break {
+            border-top: 2px dashed #ccc;
+            margin: 40px 0;
+        }
+        
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 2px solid #dee2e6;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .back-to-hub {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: background 0.3s, transform 0.2s;
+            margin-bottom: 20px;
+        }
+
+        .back-to-hub:hover {
+            background: linear-gradient(135deg, #0052a3 0%, #003d7a 100%);
+            transform: translateX(-3px);
+        }
+
+        .back-to-hub::before {
+            content: "←";
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .highlight-box {
+            background: #e8f4f8;
+            border: 2px solid #0066cc;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .file-type-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-left: 4px solid #0066cc;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .file-type-card h4 {
+            color: #0066cc;
+            margin-bottom: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            table {
+                font-size: 12px;
+            }
+            
+            th, td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-to-hub">Back to Documentation Hub</a>
+        
+        <div class="cover-page">
+            <h1>Introduction to MDM/R Synchronization</h1>
+            <div class="subtitle">Understanding the Foundation of Master Data Management</div>
+            <div class="metadata">
+                <p><strong>Based on:</strong> MDM/R Synchronization Technical Interface Specification<br>
+                Document ID: SME-SPEC-40, Issue 1.10.1 , December 16, 2024</p>
+            </div>
+        </div>
+
+        <div class="toc">
+            <h2>Table of Contents</h2>
+            <ul>
+                <li><a href="#section1">1. What is MDM/R Synchronization?</a></li>
+                <li><a href="#section2">2. Why Synchronization is Needed</a></li>
+                <li><a href="#section3">3. What Gets Synchronized?</a></li>
+                <li><a href="#section4">4. The 8 File Types Explained</a></li>
+                <li><a href="#section5">5. Incremental vs Full Synchronization</a></li>
+                <li><a href="#section6">6. File Naming Conventions</a></li>
+                <li><a href="#section7">7. The Synchronization Workflow</a></li>
+                <li><a href="#section8">8. Understanding the Process Flow</a></li>
+                <li><a href="#section9">9. Key Concepts and Best Practices</a></li>
+                <li><a href="#section10">10. Getting Started</a></li>
+            </ul>
+        </div>
+
+        <h1 id="section1">1. What is MDM/R Synchronization?</h1>
+
+        <p><strong>MDM/R Synchronization</strong> is the process by which Local Distribution Companies (LDCs) transmit master data about their Service Delivery Points (SDPs), meters, and related configurations to the centralized Meter Data Management and Repository (MDM/R) system.</p>
+
+        <div class="highlight-box">
+            <h3>Simple Definition</h3>
+            <p>Think of synchronization as <strong>keeping two systems in sync</strong>. When you make changes to your meter installations, service agreements, or customer information in your local systems, synchronization is how you communicate those changes to the MDM/R system so it has an accurate, up-to-date copy of your master data.</p>
+        </div>
+
+        <h2>1.1 The Basic Concept</h2>
+
+        <p>Synchronization is a <strong>one-way communication</strong> from your organization to the MDM/R:</p>
+
+        <ul style="padding-left: 20px; margin: 20px 0;">
+            <li><strong>Direction:</strong> LDC → MDM/R (you send, MDM/R receives)</li>
+            <li><strong>Format:</strong> Structured text files (pipe-delimited)</li>
+            <li><strong>Transport:</strong> File Transfer Services (FTS) via AS2 protocol</li>
+            <li><strong>Purpose:</strong> Ensure MDM/R has current, accurate master data for processing meter reads and generating billing quantities</li>
+        </ul>
+
+        <div class="note">
+            <strong>Important Context:</strong><br>
+            The MDM/R system processes meter read data to produce billing quantities. For it to do this correctly, it needs to know about your meters, where they're installed, what their configuration is, and how they relate to service agreements. Synchronization is how you provide this critical information.
+        </div>
+
+        <h1 id="section2">2. Why Synchronization is Needed</h1>
+
+        <h2>2.1 The MDM/R's Role</h2>
+
+        <p>The MDM/R system performs several critical functions:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 30%">Function</th>
+                    <th style="width: 70%">Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Meter Read Processing</strong></td>
+                    <td>Receives and validates raw meter reads from Advanced Metering Infrastructure (AMI)</td>
+                </tr>
+                <tr>
+                    <td><strong>Data Validation (VEE)</strong></td>
+                    <td>Applies Validation, Estimation, and Editing rules to ensure data quality</td>
+                </tr>
+                <tr>
+                    <td><strong>Billing Quantity Generation</strong></td>
+                    <td>Calculates consumption values formatted for billing systems</td>
+                </tr>
+                <tr>
+                    <td><strong>Master Data Storage</strong></td>
+                    <td>Maintains historical records of all meters, configurations, and relationships</td>
+                </tr>
+                <tr>
+                    <td><strong>Multi-Party Access</strong></td>
+                    <td>Provides data access to retailers, billing agents, and other authorized parties</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>2.2 Why Master Data Must Be Synchronized</h2>
+
+        <p>For the MDM/R to perform its functions correctly, it needs to know:</p>
+
+        <ul class="checklist">
+            <li><strong>Which meters exist</strong> and where they are installed</li>
+            <li><strong>How meters are configured</strong> (interval length, channels, CT/PT multipliers)</li>
+            <li><strong>Service delivery point details</strong> (location, service status, rate classes)</li>
+            <li><strong>Relationships between components</strong> (meter-to-SDP, meter-to-communication module)</li>
+            <li><strong>Time-effective history</strong> (when things started, when they ended)</li>
+            <li><strong>Business parameters</strong> (VEE rules, framing structures, rate classes)</li>
+        </ul>
+
+        <div class="critical">
+            <strong>Critical Point:</strong><br>
+            Without accurate synchronization, the MDM/R cannot:
+            <ul style="margin: 10px 0; padding-left: 20px;">
+                <li>Process meter reads correctly</li>
+                <li>Apply the right CT/PT multipliers</li>
+                <li>Generate accurate billing quantities</li>
+                <li>Track meter changes over time</li>
+                <li>Provide data to billing agents and retailers</li>
+            </ul>
+        </div>
+
+        <h1 id="section3">3. What Gets Synchronized?</h1>
+
+        <p>Synchronization transmits three main categories of information to the MDM/R:</p>
+
+        <h2>3.1 Assets</h2>
+
+        <p><strong>Assets</strong> are the physical or logical components in your meter infrastructure:</p>
+
+        <div class="file-type-card">
+            <h4>Service Delivery Point (SDP)</h4>
+            <p>The location where electricity is delivered to a customer. Each SDP has a unique Universal SDP ID (8-digit number) and represents a billing point.</p>
+            <p><strong>Example:</strong> A residential home, commercial building, or industrial facility</p>
+        </div>
+
+        <div class="file-type-card">
+            <h4>Meter</h4>
+            <p>The physical device that measures electricity consumption. Meters have configurations like interval length (15, 30, or 60 minutes) and channel configuration sets that determine what they measure.</p>
+            <p><strong>Example:</strong> An AMI meter with ID "MTR-12345" configured for 60-minute intervals</p>
+        </div>
+
+        <div class="file-type-card">
+            <h4>Communication Module</h4>
+            <p>The device (AMCD ID) that enables the meter to communicate with your Advanced Meter Communication Center (AMCC). This is what transmits meter read data.</p>
+            <p><strong>Example:</strong> A cellular or RF communication module attached to the meter</p>
+        </div>
+
+        <h2>3.2 Parameters</h2>
+
+        <p><strong>Parameters</strong> are configuration values that affect how the MDM/R processes data for an asset:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 30%">Parameter</th>
+                    <th style="width: 70%">Purpose</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Dials</strong></td>
+                    <td>Number of digits displayed on the meter. Used to detect rollover conditions (when meter resets to zero)</td>
+                </tr>
+                <tr>
+                    <td><strong>VEE Service</strong></td>
+                    <td>Validation, Estimation, and Editing rules to apply. Controls data quality processing</td>
+                </tr>
+                <tr>
+                    <td><strong>CT/PT Multiplier</strong></td>
+                    <td>Current Transformer / Potential Transformer ratio. Scales meter reads to actual consumption for high-voltage installations</td>
+                </tr>
+                <tr>
+                    <td><strong>Rate Classes</strong></td>
+                    <td>Distributor Rate Class (DRC) and Commodity Rate Class (CRR) for billing categorization</td>
+                </tr>
+                <tr>
+                    <td><strong>Delivered USDP</strong></td>
+                    <td>For net metering: links a "received" SDP to its corresponding "delivered" SDP</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>3.3 Relationships</h2>
+
+        <p><strong>Relationships</strong> define how assets connect to each other and to organizations. Each relationship has a start date/time and optionally an end date/time, creating a time-effective history.</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 35%">Relationship Type</th>
+                    <th style="width: 65%">Meaning</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>SDP to Meter</strong></td>
+                    <td>A meter is installed at an SDP during a specific time period</td>
+                </tr>
+                <tr>
+                    <td><strong>Meter to Communication Module</strong></td>
+                    <td>A meter communicates through a specific AMCD ID</td>
+                </tr>
+                <tr>
+                    <td><strong>SDP to Account</strong></td>
+                    <td>An SDP is associated with a customer account (move in/move out tracking)</td>
+                </tr>
+                <tr>
+                    <td><strong>SDP to Billing Agent</strong></td>
+                    <td>Which organization can request billing quantities for this SDP</td>
+                </tr>
+                <tr>
+                    <td><strong>SDP to AMI Operator</strong></td>
+                    <td>Which organization submits meter reads for this SDP</td>
+                </tr>
+                <tr>
+                    <td><strong>SDP to Energy Service Provider</strong></td>
+                    <td>Which retailer has a contract with the customer at this SDP</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>3.4 Premise Data</h2>
+
+        <p>Location and geographic information associated with an SDP:</p>
+
+        <ul style="padding-left: 20px; margin: 20px 0;">
+            <li>Street address</li>
+            <li>City, province, postal code</li>
+            <li>Latitude and longitude</li>
+            <li>Time zone (always EST for Ontario)</li>
+        </ul>
+
+        <h2>3.5 Service Agreements</h2>
+
+        <p>Business arrangements that determine billing profiles:</p>
+
+        <ul style="padding-left: 20px; margin: 20px 0;">
+            <li><strong>Framing Structure:</strong> Defines what billing quantities are generated (e.g., TOU, Tiered, Non-Interval)</li>
+            <li><strong>Commodity Type:</strong> Always 'E' for electricity</li>
+            <li><strong>Start/End dates:</strong> Time-effective tracking of service agreement changes</li>
+        </ul>
+
+        <h1 id="section4">4. The 8 File Types Explained</h1>
+
+        <p>An MDM/R synchronization submission consists of a <strong>file set</strong> containing up to 8 different file types. Each file type serves a specific purpose:</p>
+
+        <div class="note">
+            <strong>File Type Identifier:</strong><br>
+            Files are identified by a 2-digit number (00-07) within the file name. This is called the "File Number."
+        </div>
+
+        <h2>4.1 Mandatory Files (Must Always Be Present)</h2>
+
+        <div class="file-type-card">
+            <h4>File 00: Manifest File</h4>
+            <p><strong>Purpose:</strong> Lists all the other files included in this synchronization submission. Acts as a "table of contents."</p>
+            <p><strong>Contains:</strong> The file names of Files 01-07 being submitted</p>
+            <p><strong>Why Mandatory:</strong> MDM/R uses this to verify the file set is complete before processing</p>
+            <p><strong>Example Usage:</strong> Lists the 6 other mandatory files plus optional File 07</p>
+        </div>
+
+        <div class="file-type-card">
+            <h4>File 01: Asset Data File</h4>
+            <p><strong>Purpose:</strong> Defines the physical and logical assets (SDPs, Meters, Communication Modules)</p>
+            <p><strong>Contains:</strong> Asset IDs, meter configurations (interval length, channel config set), service status</p>
+            <p><strong>Why Mandatory:</strong> Assets are the foundation - you can't have relationships or parameters without assets</p>
+            <p><strong>Example Usage:</strong> Creating a new SDP, adding a meter, or updating meter configuration</p>
+        </div>
+
+        <div class="file-type-card">
+            <h4>File 02: Premise Data File</h4>
+            <p><strong>Purpose:</strong> Provides location and geographic information for SDPs</p>
+            <p><strong>Contains:</strong> Address, city, postal code, latitude/longitude, time zone</p>
+            <p><strong>Why Mandatory:</strong> Location data is required for proper SDP identification and reporting</p>
+            <p><strong>Example Usage:</strong> New SDP creation or address corrections</p>
+        </div>
+
+        <div class="file-type-card">
+            <h4>File 03: Service Agreement Data File</h4>
+            <p><strong>Purpose:</strong> Associates framing structures with SDPs</p>
+            <p><strong>Contains:</strong> Framing Structure ID, commodity type, start/end dates</p>
+            <p><strong>Why Mandatory:</strong> Framing structure determines what billing quantities are generated</p>
+            <p><strong>Example Usage:</strong> New SDP, framing structure changes, TOU to Tiered conversions</p>
+        </div>
+
+        <div class="file-type-card">
+            <h4>File 04: Parameter Data File</h4>
+            <p><strong>Purpose:</strong> Provides configuration parameters for assets</p>
+            <p><strong>Contains:</strong> Dials, VEE Service, CT/PT Multiplier, Rate Classes, and other parameters</p>
+            <p><strong>Why Mandatory:</strong> Parameters control how meter data is processed and validated</p>
+            <p><strong>Example Usage:</strong> Setting Dials for new meter, changing VEE Service, adding CT/PT Multiplier</p>
+        </div>
+
+        <div class="file-type-card">
+            <h4>File 05: Relationship Data File</h4>
+            <p><strong>Purpose:</strong> Defines connections between assets and organizations over time</p>
+            <p><strong>Contains:</strong> Relationship types, start/end dates, linked asset IDs</p>
+            <p><strong>Why Mandatory:</strong> Relationships establish the meter-to-SDP connections needed for data processing</p>
+            <p><strong>Example Usage:</strong> Installing a meter at an SDP, meter changes, account changes</p>
+        </div>
+
+        <h2>4.2 Optional Files</h2>
+
+        <div class="file-type-card">
+            <h4>File 07: Component SDP Channel to Channel Data File</h4>
+            <p><strong>Purpose:</strong> Documents channel mappings for complex meter configurations</p>
+            <p><strong>Contains:</strong> Channel-to-channel relationships and formulas</p>
+            <p><strong>Why Optional:</strong> Only needed for specialized configurations; not loaded into MDM/R but kept for documentation</p>
+            <p><strong>Example Usage:</strong> Net metering setups with delivered and received SDPs</p>
+        </div>
+
+        <h2>4.3 Header-Only Files</h2>
+
+        <div class="tip">
+            <strong>Important Concept: "Header-Only" Files</strong><br>
+            Even when you don't have data for a mandatory file, you MUST still submit it with:
+            <ul style="margin: 10px 0; padding-left: 20px;">
+                <li>File Name Record (first line with &lt;FTSFN&gt; tags)</li>
+                <li>Header Record (H| line with metadata)</li>
+                <li>NO detail records</li>
+            </ul>
+            <p>This tells MDM/R "I'm not changing anything in this file type for this sync."</p>
+        </div>
+
+        <h1 id="section5">5. Incremental vs Full Synchronization</h1>
+
+        <p>MDM/R supports two types of synchronization. In practice, LDCs use Incremental Synchronization almost exclusively.</p>
+
+        <h2>5.1 Incremental Synchronization (Standard Method)</h2>
+
+        <div class="highlight-box">
+            <h3>What is Incremental Synchronization?</h3>
+            <p><strong>Incremental Synchronization</strong> sends only the changes that have occurred since your last synchronization. You don't resend everything - just what's new or different.</p>
+        </div>
+
+        <p><strong>Characteristics:</strong></p>
+
+        <ul class="checklist">
+            <li>Identified by File Type <strong>4000</strong></li>
+            <li>Contains only changed data (creates, updates, or ends)</li>
+            <li>Efficient - small file sizes, fast processing</li>
+            <li>Time-stamped with an "Extracted Date Time"</li>
+            <li>Maintains complete history in MDM/R</li>
+        </ul>
+
+        <p><strong>When to Use:</strong></p>
+
+        <ul style="padding-left: 20px; margin: 20px 0;">
+            <li>New meter installations</li>
+            <li>Meter changes or removals</li>
+            <li>Parameter updates (VEE Service, CT/PT Multiplier changes)</li>
+            <li>Framing structure changes</li>
+            <li>Account changes (move in/move out)</li>
+            <li>Address corrections</li>
+            <li>Any other master data changes</li>
+        </ul>
+
+        <p><strong>Example Scenario:</strong> You installed 5 new meters yesterday. Your incremental sync would include only those 5 new SDPs/meters, not all 50,000 SDPs in your system.</p>
+
+        <h2>5.2 Full Synchronization (Rarely Used)</h2>
+
+        <p><strong>Full Synchronization</strong> sends a complete snapshot of all master data, regardless of what has changed.</p>
+
+        <p><strong>Characteristics:</strong></p>
+
+        <ul style="padding-left: 20px; margin: 20px 0;">
+            <li>Identified by File Type <strong>3000</strong></li>
+            <li>Contains data for ALL SDPs and meters</li>
+            <li>Very large files</li>
+            <li>Used only for special circumstances</li>
+        </ul>
+
+        <p><strong>When to Use:</strong></p>
+
+        <ul style="padding-left: 20px; margin: 20px 0;">
+            <li>Initial MDM/R setup (onboarding new LDC)</li>
+            <li>Major system migrations or conversions</li>
+            <li>Data reconciliation exercises (as directed by MDM/R administrators)</li>
+        </ul>
+
+        <div class="warning">
+            <strong>Important:</strong><br>
+            Unless specifically instructed by MDM/R administrators, always use Incremental Synchronization (File Type 4000). This guide focuses on Incremental Synchronization as it's the standard operational method.
+        </div>
+
+        <h1 id="section6">6. File Naming Conventions</h1>
+
+        <p>Every file submitted to MDM/R must follow a strict naming convention. The file name contains important metadata about the file's contents and purpose.</p>
+
+        <h2>6.1 File Name Structure</h2>
+
+        <div class="code-block">ORG_ID.ORG_ID.FILE_TYPE.VERSION.DATETIME.SEQUENCE.FILE_NUMBER.SEGMENT.DAT
+
+<strong>Example:</strong>
+ORG12345.ORG12345.4000.00.20250116143000.ABC123.01.01.DAT</div>
+
+        <h2>6.2 File Name Components Explained</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 25%">Component</th>
+                    <th style="width: 20%">Example</th>
+                    <th style="width: 55%">Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Sending ORG_ID</strong></td>
+                    <td>ORG12345</td>
+                    <td>Your organization's unique 8-character identifier assigned during MDM/R registration</td>
+                </tr>
+                <tr>
+                    <td><strong>Receiving ORG_ID</strong></td>
+                    <td>ORG12345</td>
+                    <td>Usually same as sending ORG_ID for synchronization</td>
+                </tr>
+                <tr>
+                    <td><strong>FILE_TYPE</strong></td>
+                    <td>4000</td>
+                    <td>Always "4000" for Incremental Synchronization</td>
+                </tr>
+                <tr>
+                    <td><strong>VERSION</strong></td>
+                    <td>00</td>
+                    <td>File format version, currently "00"</td>
+                </tr>
+                <tr>
+                    <td><strong>DATETIME</strong></td>
+                    <td>20250116143000</td>
+                    <td>When file was created: yyyyMMddHHmmss (14 digits)</td>
+                </tr>
+                <tr>
+                    <td><strong>SEQUENCE</strong></td>
+                    <td>ABC123</td>
+                    <td>Unique identifier for this file set (1-6 alphanumeric characters). Same for all files in one sync.</td>
+                </tr>
+                <tr>
+                    <td><strong>FILE_NUMBER</strong></td>
+                    <td>01</td>
+                    <td>Which file type: 00 (Manifest), 01 (Asset), 02 (Premise), 03 (Service Agreement), 04 (Parameter), 05 (Relationship), 07 (Component SDP)</td>
+                </tr>
+                <tr>
+                    <td><strong>SEGMENT</strong></td>
+                    <td>01</td>
+                    <td>File segment number (01-99). Used when splitting large files.</td>
+                </tr>
+                <tr>
+                    <td><strong>Extension</strong></td>
+                    <td>DAT</td>
+                    <td>Always "DAT"</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>6.3 Complete File Set Example</h2>
+
+        <p>A typical incremental synchronization submission would have these file names:</p>
+
+        <div class="code-block">ORG12345.ORG12345.4000.00.20250116143000.ABC123.00.01.DAT  (Manifest)
+ORG12345.ORG12345.4000.00.20250116143000.ABC123.01.01.DAT  (Asset)
+ORG12345.ORG12345.4000.00.20250116143000.ABC123.02.01.DAT  (Premise)
+ORG12345.ORG12345.4000.00.20250116143000.ABC123.03.01.DAT  (Service Agreement)
+ORG12345.ORG12345.4000.00.20250116143000.ABC123.04.01.DAT  (Parameter)
+ORG12345.ORG12345.4000.00.20250116143000.ABC123.05.01.DAT  (Relationship)</div>
+
+        <div class="tip">
+            <strong>Key Points:</strong>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+                <li>The <strong>SEQUENCE</strong> value (ABC123) is identical across all files in the set</li>
+                <li>The <strong>FILE_NUMBER</strong> changes (00, 01, 02, 03, 04, 05)</li>
+                <li>All files must have the same DATETIME, FILE_TYPE, and VERSION</li>
+            </ul>
+        </div>
+
+        <h2>6.4 File Segmentation</h2>
+
+        <p>For very large synchronizations, individual files can be split into multiple segments:</p>
+
+        <div class="code-block">ORG12345.ORG12345.4000.00.20250116143000.ABC123.01.01.DAT  (Asset, segment 1)
+ORG12345.ORG12345.4000.00.20250116143000.ABC123.01.02.DAT  (Asset, segment 2)
+ORG12345.ORG12345.4000.00.20250116143000.ABC123.01.03.DAT  (Asset, segment 3)</div>
+
+        <p>All segments must be listed in the Manifest file (File 00).</p>
+
+        <h1 id="section7">7. The Synchronization Workflow</h1>
+
+        <p>Understanding the end-to-end workflow helps you see where synchronization fits in the overall MDM/R ecosystem.</p>
+
+        <h2>7.1 High-Level Workflow</h2>
+
+        <div class="flowchart">
+            <div class="flowchart-box">
+                <strong>Step 1: Change Occurs</strong><br>
+                You install a new meter, change a parameter, or update master data in your local systems
+            </div>
+            
+            <div class="flowchart-arrow">↓</div>
+            
+            <div class="flowchart-box">
+                <strong>Step 2: Extract Data</strong><br>
+                Your systems extract the changed data and create synchronization files following the specifications
+            </div>
+            
+            <div class="flowchart-arrow">↓</div>
+            
+            <div class="flowchart-box">
+                <strong>Step 3: Create File Set</strong><br>
+                Generate the 6 mandatory files (00-05) plus optional File 07 if needed
+            </div>
+            
+            <div class="flowchart-arrow">↓</div>
+            
+            <div class="flowchart-box">
+                <strong>Step 4: Submit via FTS</strong><br>
+                Transfer files to MDM/R using File Transfer Services (AS2 protocol)
+            </div>
+            
+            <div class="flowchart-arrow">↓</div>
+            
+            <div class="flowchart-decision">
+                <strong>Step 5: File Set Validation</strong><br>
+                MDM/R checks if all mandatory files are present and properly named
+            </div>
+            
+            <div class="flowchart-arrow">↓ PASS</div>
+            
+            <div class="flowchart-decision">
+                <strong>Step 6: Content Validation</strong><br>
+                MDM/R validates file format, data types, and field values
+            </div>
+            
+            <div class="flowchart-arrow">↓ PASS</div>
+            
+            <div class="flowchart-box">
+                <strong>Step 7: Business Rules Processing</strong><br>
+                MDM/R applies business logic and updates the Master Directory
+            </div>
+            
+            <div class="flowchart-arrow">↓</div>
+            
+            <div class="flowchart-box" style="background: #e8f5e9; border-color: #4caf50;">
+                <strong>Step 8: Reports Generated</strong><br>
+                IR06 (Updates), IR07 (Exceptions), IR10 (Incomplete), IR14 (Validation Errors)
+            </div>
+        </div>
+
+        <h2>7.2 File Processing Steps in Detail</h2>
+
+        <h3>Step 1: File Set Completeness Check</h3>
+        <ul class="checklist">
+            <li>MDM/R verifies all mandatory files (00-05) are present</li>
+            <li>Verifies file names match manifest entries</li>
+            <li>Checks that SEQUENCE numbers match across all files</li>
+            <li><strong>If fails:</strong> IR10 (Incomplete File Set Report) generated</li>
+        </ul>
+
+        <h3>Step 2: Staging Table Load</h3>
+        <ul class="checklist">
+            <li>Files are loaded into temporary staging tables</li>
+            <li>Format validation occurs (field lengths, data types)</li>
+            <li>Invalid records are rejected at this stage</li>
+            <li><strong>If fails:</strong> IR14 (Staging Table Loader Exception Report) generated</li>
+        </ul>
+
+        <h3>Step 3: Business Rules Validation</h3>
+        <ul class="checklist">
+            <li>MDM/R applies 28 business rules to validate data relationships</li>
+            <li>Checks for logical consistency (e.g., end dates after start dates)</li>
+            <li>Validates required relationships exist</li>
+            <li><strong>If fails:</strong> IR07 (Synchronization Exception Report) generated</li>
+        </ul>
+
+        <h3>Step 4: Master Directory Update</h3>
+        <ul class="checklist">
+            <li>Valid data is applied to the Master Directory</li>
+            <li>Time-effective history is maintained</li>
+            <li>Relationships are established or ended</li>
+            <li><strong>Success:</strong> IR06 (Synchronization Updates Report) generated</li>
+        </ul>
+
+        <h2>7.3 Report Summary</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 15%">Report</th>
+                    <th style="width: 35%">Name</th>
+                    <th style="width: 50%">When Generated</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>IR10</strong></td>
+                    <td>Incomplete File Set Report</td>
+                    <td>When mandatory files are missing or file set is incomplete</td>
+                </tr>
+                <tr>
+                    <td><strong>IR14</strong></td>
+                    <td>Staging Table Loader Exception Report</td>
+                    <td>When file format or data type validation fails during loading</td>
+                </tr>
+                <tr>
+                    <td><strong>IR07</strong></td>
+                    <td>Synchronization Exception Report</td>
+                    <td>When business rules are violated or processing errors occur</td>
+                </tr>
+                <tr>
+                    <td><strong>IR06</strong></td>
+                    <td>Synchronization Updates Report</td>
+                    <td>Lists all successful updates made to the Master Directory</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="note">
+            <strong>Report Priority:</strong><br>
+            Always check reports in this order: IR10 → IR14 → IR07 → IR06<br>
+            If IR10 or IR14 have errors, IR07 and IR06 won't be generated.
+        </div>
+
+        <h1 id="section8">8. Understanding the Process Flow</h1>
+
+        <div class="flowchart">
+            <h3>Complete Synchronization Process</h3>
+            
+            <div class="flowchart-box">
+                <strong>LDC submits File Type 4000</strong><br>
+                Incremental Synchronization file set to the MDM/R<br>
+                via FTS (AS2)
+            </div>
+            
+            <div class="flowchart-arrow">↓ FTS</div>
+            
+            <div class="flowchart-decision">
+                <strong>File Set Checked for Compliance</strong><br>
+                Are all mandatory files present?
+            </div>
+            
+            <div class="flowchart-arrow">→ FAILS → <strong>IR10: Incomplete File Set Report</strong></div>
+            
+            <div class="flowchart-arrow">↓ PASSES</div>
+            
+            <div class="flowchart-decision">
+                <strong>File Content Validated</strong><br>
+                Format, data types, field values correct?
+            </div>
+            
+            <div class="flowchart-arrow">→ FAILS → <strong>IR14: Validation Exception Report</strong></div>
+            
+            <div class="flowchart-arrow">↓ PASSES</div>
+            
+            <div class="flowchart-box" style="background: #fff3cd;">
+                <strong>MDM/R Processes File Set</strong><br>
+                Applies business rules and updates Master Directory
+            </div>
+            
+            <div class="flowchart-arrow">↓ Updates Made → <strong>IR06: Updates Report</strong></div>
+            
+            <div class="flowchart-arrow">↓ Updates Not Made → <strong>IR07: Exception Report</strong></div>
+        </div>
+
+        <h1 id="section9">9. Key Concepts and Best Practices</h1>
+
+        <h2>9.1 Time-Effective Data</h2>
+
+        <div class="highlight-box">
+            <h3>What is Time-Effective Data?</h3>
+            <p>Most elements in MDM/R have a <strong>Start Date/Time</strong> and optionally an <strong>End Date/Time</strong>. This creates a historical record of when things were active.</p>
+            
+            <p><strong>Example:</strong> A meter installed on January 1, 2024 at 10:00 AM and removed on December 31, 2024 at 3:00 PM has:
+            <ul style="margin: 10px 0; padding-left: 20px;">
+                <li>Start Date/Time: 20240101100000</li>
+                <li>End Date/Time: 20241231150000</li>
+            </ul>
+            </p>
+        </div>
+
+        <h2>9.2 Date/Time Format Rules</h2>
+
+        <div class="critical">
+            <strong>CRITICAL: Always Use EST</strong><br>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+                <li>All date/times must be in Eastern Standard Time (EST)</li>
+                <li>Do NOT use Eastern Daylight Time (EDT)</li>
+                <li>This applies year-round, even during daylight saving periods</li>
+                <li>Format: yyyyMMddHHmmss (14 digits)</li>
+                <li>Example: January 16, 2025 at 2:30:00 PM = 20250116143000</li>
+            </ul>
+        </div>
+
+        <h2>9.3 The Extracted Date Time</h2>
+
+        <p>Every file header contains an "Extracted Date Time" - this is when the data was extracted from your source systems.</p>
+
+        <p><strong>Purpose:</strong> MDM/R uses this timestamp to determine if transactions are:</p>
+        <ul style="padding-left: 20px; margin: 20px 0;">
+            <li><strong>Backdated:</strong> Start/End times before the Extracted Date Time</li>
+            <li><strong>Current:</strong> Start/End times equal to the Extracted Date Time</li>
+            <li><strong>Future-dated:</strong> Start/End times after the Extracted Date Time</li>
+        </ul>
+
+        <h2>9.4 Universal SDP ID Assignment</h2>
+
+        <div class="note">
+            <strong>Important Prerequisite:</strong><br>
+            Before you can synchronize a new SDP, you must first obtain a Universal SDP ID using the Universal SDP ID Assignment Request/Response interface (File Types 1000/2000). This is a separate process documented in the Universal SDP ID Assignment Guide.
+        </div>
+
+        <h2>9.5 Business Rules</h2>
+
+        <p>MDM/R enforces 28 business rules during synchronization processing. Common ones include:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 20%">Rule</th>
+                    <th style="width: 80%">Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Rule 1</strong></td>
+                    <td>Universal SDP ID must already exist in MDM/R (assigned via File Type 1000/2000)</td>
+                </tr>
+                <tr>
+                    <td><strong>Rule 20</strong></td>
+                    <td>Meter to Communication Module relationships cannot be ended when removing a meter</td>
+                </tr>
+                <tr>
+                    <td><strong>Rule 26-28</strong></td>
+                    <td>CT/PT Multipliers: Only non-unity values processed; must be explicitly ended; cannot be future-dated</td>
+                </tr>
+                <tr>
+                    <td><strong>Rule 24</strong></td>
+                    <td>Channel configuration changes require ending old meter relationship and starting new one</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>9.6 Best Practices</h2>
+
+        <ul class="checklist">
+            <li><strong>Review reports immediately:</strong> Check IR10, IR14, IR07 after every submission</li>
+            <li><strong>Synchronize promptly:</strong> Submit changes within 24-48 hours of field events</li>
+            <li><strong>Use consistent sequence numbers:</strong> Make them meaningful (e.g., date-based)</li>
+            <li><strong>Test in lower environments:</strong> Validate file formats before production submission</li>
+            <li><strong>Keep audit trails:</strong> Maintain copies of submitted files and reports</li>
+            <li><strong>Document your processes:</strong> Create internal procedures for common scenarios</li>
+            <li><strong>Validate before submitting:</strong> Pre-validate data against business rules</li>
+            <li><strong>Start simple:</strong> Master basic scenarios before complex ones</li>
+        </ul>
+
+        <h1 id="section10">10. Getting Started</h1>
+
+        <h2>10.1 Your Learning Path</h2>
+
+        <p>Now that you understand the fundamentals of synchronization, follow this recommended learning path:</p>
+
+        <div class="flowchart">
+            <div class="flowchart-box" style="background: #e8f5e9; border-color: #4caf50;">
+                <strong>You Are Here:</strong> Introduction to Synchronization<br>
+                ✓ Understand what, why, and how
+            </div>
+            
+            <div class="flowchart-arrow">↓ Next Step</div>
+            
+            <div class="flowchart-box">
+                <strong>1. Universal SDP ID Assignment</strong><br>
+                Learn how to obtain Universal SDP IDs before creating SDPs
+            </div>
+            
+            <div class="flowchart-arrow">↓</div>
+            
+            <div class="flowchart-box">
+                <strong>2. New Meter Installation Guide</strong><br>
+                Master creating brand new SDPs with first-time meter installations
+            </div>
+            
+            <div class="flowchart-arrow">↓</div>
+            
+            <div class="flowchart-box">
+                <strong>3. High Priority Parameters</strong><br>
+                Learn critical parameters: VEE Service, CT/PT Multiplier, Rate Classes
+            </div>
+            
+            <div class="flowchart-arrow">↓</div>
+            
+            <div class="flowchart-box">
+                <strong>4. Meter Change Procedures</strong><br>
+                Handle meter replacements, configuration changes
+            </div>
+            
+            <div class="flowchart-arrow">↓</div>
+            
+            <div class="flowchart-box">
+                <strong>5. IR Reports Troubleshooting</strong><br>
+                Learn how to diagnose and fix synchronization errors
+            </div>
+        </div>
+
+        <h2>10.2 Quick Reference</h2>
+
+        <div class="highlight-box">
+            <h3>Essential Information to Remember</h3>
+            <ul class="checklist">
+                <li><strong>File Type:</strong> Always 4000 for Incremental Synchronization</li>
+                <li><strong>Mandatory Files:</strong> 00, 01, 02, 03, 04, 05 (must all be present)</li>
+                <li><strong>Date/Time:</strong> Always EST, format yyyyMMddHHmmss</li>
+                <li><strong>USDP First:</strong> Obtain Universal SDP ID before first synchronization</li>
+                <li><strong>Check Reports:</strong> IR10 → IR14 → IR07 → IR06</li>
+                <li><strong>Relationships:</strong> Start dates required, end dates optional</li>
+                <li><strong>Time-Effective:</strong> Everything has history tracked by start/end dates</li>
+            </ul>
+        </div>
+
+        <h2>10.3 Additional Resources</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Resource</th>
+                    <th>Purpose</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Technical Specification (SME-SPEC-40)</strong></td>
+                    <td>Complete field-level details for all file formats</td>
+                </tr>
+                <tr>
+                    <td><strong>MDM/R Service Desk</strong></td>
+                    <td>Technical support and guidance</td>
+                </tr>
+                <tr>
+                    <td><strong>Scenario-Specific Guides</strong></td>
+                    <td>Detailed instructions for meter installations, changes, parameters</td>
+                </tr>
+                <tr>
+                    <td><strong>IR Reports Guide</strong></td>
+                    <td>Understanding and resolving synchronization errors</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="section-break"></div>
+
+        <h1>Summary</h1>
+
+        <div class="tip">
+            <strong>Key Takeaways from This Guide:</strong>
+            
+            <p><strong>What:</strong> Synchronization is how you tell MDM/R about your meters, SDPs, and configurations</p>
+            
+            <p><strong>Why:</strong> MDM/R needs accurate master data to process meter reads and generate billing quantities</p>
+            
+            <p><strong>What Gets Synced:</strong> Assets (SDP, Meter, Comm Module), Parameters (Dials, VEE, CT/PT), Relationships (connections between assets), Premise data, Service Agreements</p>
+            
+            <p><strong>How:</strong> 8 file types (6 mandatory + 2 optional) submitted as a file set via FTS</p>
+            
+            <p><strong>Process:</strong> Create files → Submit via FTS → MDM/R validates → Reports generated → Review results</p>
+            
+            <p><strong>Next Steps:</strong> Start with Universal SDP ID Assignment, then progress through scenario-specific guides</p>
+        </div>
+
+        <div class="footer">
+            <p><a href="index.html" class="back-to-hub" style="margin: 0 auto 15px auto;"> Back to Documentation Hub</a></p>
+            <p><strong>Support:</strong> MDM/R Service Desk - <a href="https://mdmrsupport.service-now.com" style="color: #0066cc;">https://mdmrsupport.service-now.com</a></p>
+            <p><strong>Reference:</strong> SME-SPEC-40 Issue 1.10.1 | Section 2: Synchronization Technical Interface Specification</p>
+        </div>
+    </div>
+</body>
+</html>

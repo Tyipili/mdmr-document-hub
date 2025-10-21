@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Synchronization Error Resolution Guide (IR Reports)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .back-to-hub {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .back-to-hub:hover {
+            background: linear-gradient(135deg, #0052a3 0%, #003d7a 100%);
+            transform: translateX(-3px);
+        }
+
+        .back-to-hub::before {
+            content: "←";
+            font-size: 18px;
+            font-weight: bold;
+        }
+ 
+        .cover-page {
+            text-align: center;
+            padding: 60px 20px;
+            border-bottom: 4px solid #0066cc;
+            margin-bottom: 40px;
+        }
+        
+        .cover-page h1 {
+            color: #0066cc;
+            font-size: 42px;
+            margin-bottom: 20px;
+        }
+        
+        .cover-page .subtitle {
+            font-size: 22px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .cover-page .metadata {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            display: inline-block;
+            text-align: left;
+        }
+ 
+        .header {
+            background: linear-gradient(135deg, #0066cc 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 10px;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 18px;
+            opacity: 0.95;
+            margin-bottom: 20px;
+        }
+        
+        .metadata {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            background: rgba(255,255,255,0.1);
+            padding: 15px 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        
+        .metadata-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .metadata-item strong {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .toc {
+            background: #f8f9fa;
+            padding: 30px;
+            margin: 30px 0;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .toc h2 {
+            color: #0066cc;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .toc ul li {
+            padding: 10px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .toc ul li:last-child {
+            border-bottom: none;
+        }
+        
+        .toc ul li a {
+            color: #333;
+            text-decoration: none;
+            display: block;
+            transition: color 0.3s, padding-left 0.3s;
+        }
+        
+        .toc ul li a:hover {
+            color: #0066cc;
+            padding-left: 10px;
+        }
+
+        .section {
+            margin-bottom: 50px;
+        }
+        
+        .section-header {
+            background: linear-gradient(to right, #0066cc, #667eea);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        
+        .section-header h2 {
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .report-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        h3 {
+            color: #0066cc;
+            margin: 30px 0 15px 0;
+            font-size: 22px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+        
+        h4 {
+            color: #333;
+            margin: 20px 0 10px 0;
+            font-size: 18px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        thead {
+            background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+            color: white;
+        }
+        
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+        }
+        
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .error-box {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .flowchart {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+        
+        .step {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 5px;
+            border-left: 4px solid #0066cc;
+        }
+        
+        .step-number {
+            background: #0066cc;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #d63384;
+        }
+        
+        ul, ol {
+            margin: 15px 0 15px 30px;
+        }
+        
+        li {
+            margin: 8px 0;
+        }
+        
+        strong {
+            color: #0066cc;
+        }
+        
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 2px solid #dee2e6;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        @media print {
+            .back-to-hub, .footer {
+                display: none;
+            }
+            
+            .section {
+                page-break-inside: avoid;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 28px;
+            }
+			
+			.cover-page h1 {
+                font-size: 32px;
+            }
+            
+            table {
+                font-size: 14px;
+            }
+            
+            th, td {
+                padding: 10px;
+            }
+
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-to-hub" style="display: inline-flex; margin: 20px 0 0 40px;">Back to Documentation Hub</a>
+        
+        <div class="cover-page">
+            <h1>Synchronization Error Resolution Guide</h1>
+            <div class="subtitle">MDM/R IR Reports - Comprehensive Troubleshooting Reference</div>
+            <div class="metadata">
+                <p><strong>Document Type:</strong> Technical Troubleshooting Guide</p></br>
+                <p><strong>Reports Covered:</strong> IR06, IR07, IR10, IR14, IR17</p>
+            </div>
+        </div>
+
+        <div class="toc">
+            <h2>TABLE OF CONTENTS</h2>
+            <ul>
+                <li><a href="#overview">1. Understanding MDM/R Synchronization Reports</a></li>
+                <li><a href="#workflow">2. Report Order & Troubleshooting Workflow</a></li>
+                <li><a href="#ir17">3. IR17 - FTS Processing Failure Report</a></li>
+                <li><a href="#ir10">4. IR10 - Incomplete Synchronization File Set Report</a></li>
+                <li><a href="#ir14">5. IR14 - Staging Table Loader Exception Report</a></li>
+                <li><a href="#ir07">6. IR07 - Synchronization Exception Report</a></li>
+                <li><a href="#ir06">7. IR06 - Synchronization Updates Report</a></li>
+                <li><a href="#quick-reference">8. Quick Reference Tables</a></li>
+            </ul>
+        </div>
+
+        <div id="overview" class="section">
+            <div class="section-header">
+                <h2>1. Understanding MDM/R Synchronization Reports</h2>
+            </div>
+
+            <h3>Report Purpose and Functionality</h3>
+            
+            <p>The MDM/R system generates five types of reports during the synchronization process. Each report serves a specific purpose at different stages of processing:</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 12%">Report</th>
+                        <th style="width: 25%">Purpose</th>
+                        <th style="width: 20%">When Generated</th>
+                        <th style="width: 18%">Available in GUI</th>
+                        <th style="width: 25%">Indicates Success</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>IR17</strong></td>
+                        <td>File Transfer Services (FTS) processing failures</td>
+                        <td>After AS2 processing, before file validation</td>
+                        <td>No (FTS only)</td>
+                        <td>N/A - Always indicates failure</td>
+                    </tr>
+                    <tr>
+                        <td><strong>IR10</strong></td>
+                        <td>Incomplete or out-of-sequence file sets</td>
+                        <td>During file set compliance check</td>
+                        <td>No (FTS only)</td>
+                        <td>N/A - Always indicates failure</td>
+                    </tr>
+                    <tr>
+                        <td><strong>IR14</strong></td>
+                        <td>File content validation errors (format, data type, structure)</td>
+                        <td>During staging table loader process</td>
+                        <td>No (FTS only)</td>
+                        <td>Code 00 = Success</td>
+                    </tr>
+                    <tr>
+                        <td><strong>IR06</strong></td>
+                        <td>Successful synchronization updates</td>
+                        <td>After MDM/R processes file set content (successful updates)</td>
+                        <td>Yes</td>
+                        <td>Yes - Lists successful updates</td>
+                    </tr>
+                    <tr>
+                        <td><strong>IR07</strong></td>
+                        <td>Business rule violations and processing exceptions</td>
+                        <td>After MDM/R processes file set content (failed updates)</td>
+                        <td>Yes</td>
+                        <td>No - Lists exceptions/failures</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="info-box">
+                <h4>Key Concept: Sequential Processing</h4>
+                <p>The MDM/R synchronization process works in stages. If a file fails at an earlier stage (IR17, IR10, or IR14), the later stages will not execute, and you won't receive IR06/IR07 reports. This is why you must troubleshoot reports in order.</p>
+            </div>
+        </div>
+
+        <div id="workflow" class="section">
+            <div class="section-header">
+                <h2>2. Report Order & Troubleshooting Workflow</h2>
+            </div>
+
+            <h3>The Synchronization Process Flow</h3>
+            
+            <div class="flowchart">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div>
+                        <strong>File Transfer (FTS)</strong><br>
+                        LDC submits File Type 4000 Incremental Synchronization file set via AS2
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div>
+                        <strong>FTS Processing</strong><br>
+                        File passes AS2, then FTS validation (file name syntax, authorization, destination directory)<br>
+                        <em>Failure = IR17 Report Generated</em>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div>
+                        <strong>File Set Compliance</strong><br>
+                        Check for complete file set, correct sequence number, valid manifest file<br>
+                        <em>Failure = IR10 Report Generated</em>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div>
+                        <strong>File Content Validation</strong><br>
+                        Staging Table Loader validates data format, field lengths, data types, dates<br>
+                        <em>Failure = IR14 Report Generated</em>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">5</div>
+                    <div>
+                        <strong>MDM/R Processing</strong><br>
+                        System processes file set content and applies business rules<br>
+                        <em>Success = IR06 Report | Failures = IR07 Report</em>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Troubleshooting Decision Tree</h3>
+            
+            <div class="warning-box">
+                <h4>Critical: Always Start Here</h4>
+                <p><strong>Did you receive an IR17?</strong> If YES, stop and fix FTS issues first. File never made it past file transfer.</p>
+                <p><strong>Did you receive an IR10?</strong> If YES, stop and fix file set issues. Staging table loader won't run.</p>
+                <p><strong>Did you receive an IR14 with errors?</strong> If YES, stop and fix validation issues. MDM/R processing won't run.</p>
+                <p><strong>Only after IR14 code 00 (success)</strong> will you receive IR06 and/or IR07 reports.</p>
+            </div>
+
+            <div class="success-box">
+                <h4>Expected Report Sequence for Successful Synchronization</h4>
+                <ul>
+                    <li>No IR17 received (file transfer successful)</li>
+                    <li>No IR10 received (complete file set, correct sequence)</li>
+                    <li>IR14 received with code 00 (validation passed)</li>
+                    <li>IR06 received (lists all successful updates)</li>
+                    <li>IR07 may or may not be received (only if business rule violations occurred)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="ir17" class="section">
+            <div class="section-header">
+                <h2><span class="report-badge">IR17</span> FTS Processing Failure Report</h2>
+            </div>
+
+            <h3>Report Functionality</h3>
+            <p>The IR17 report is generated when a file successfully passes AS2 processing but then fails one of the subsequent File Transfer Services (FTS) processing steps. This occurs <em>before</em> any synchronization validation begins.</p>
+
+            <div class="warning-box">
+                <h4>Important Note</h4>
+                <p>IR17 is <strong>not</strong> the same as a Message Disposition Notice (MDN). MDNs relate only to AS2 processing. IR17 means the file passed AS2 but failed FTS validation.</p>
+            </div>
+
+            <h3>FTS Error Codes - Complete Reference</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 10%">Code</th>
+                        <th style="width: 35%">Error Message</th>
+                        <th style="width: 55%">Description & Resolution</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="code">E115</span></td>
+                        <td>reading original embedded file name failed</td>
+                        <td>
+                            <strong>Cause:</strong> Could not extract the file name embedded in the body of the file.<br>
+                            <strong>Check:</strong> File name must be enclosed in &lt;FTSFN&gt;, &lt;/FTSFN&gt; tags or missing entirely.<br>
+                            <strong>Resolution:</strong> Verify file name is properly embedded in file body with correct XML tags.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">E116</span></td>
+                        <td>can not obtain original file name</td>
+                        <td>
+                            <strong>Cause:</strong> Could not obtain file name from transport headers.<br>
+                            <strong>Check:</strong> File name not included in transport header by sender, or lost during encryption/decryption.<br>
+                            <strong>Resolution:</strong> Check AS2 configuration to ensure file name is included in transport headers.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">E120</span></td>
+                        <td>non-standard file name &lt;original file name&gt;</td>
+                        <td>
+                            <strong>Cause:</strong> File name syntax validation failure.<br>
+                            <strong>Check:</strong> File name does not match technical interface specifications.<br>
+                            <strong>Resolution:</strong> Verify file naming convention: ORG_ID_1.ORG_ID_2.FILE_ID.REQ_VER.DATE_TIME.DAT
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">E130</span></td>
+                        <td>error reading/validating authorized submissions file &lt;authorization file name&gt;</td>
+                        <td>
+                            <strong>Cause:</strong> FTS configuration error - authorization file cannot be accessed.<br>
+                            <strong>Check:</strong> Internal FTS configuration issue.<br>
+                            <strong>Resolution:</strong> Contact MDM/R Service Desk - this is a system configuration issue.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">E140</span></td>
+                        <td>submission of file &lt;original file name&gt; is not authorized</td>
+                        <td>
+                            <strong>Cause:</strong> Authority validation failed.<br>
+                            <strong>Check:</strong> Your organization is not authorized to submit this file type or for this LDC.<br>
+                            <strong>Resolution:</strong> Verify enrollment and agent relationships are properly configured with MDM/R.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">E150</span></td>
+                        <td>sender id &lt;Sender ORGID&gt; doesn't match org_id_2 from file name &lt;original file name&gt;</td>
+                        <td>
+                            <strong>Cause:</strong> AS2 sender ID doesn't match ORG_ID_2 from file name.<br>
+                            <strong>Check:</strong> Mismatch between AS2 configuration and file naming.<br>
+                            <strong>Resolution:</strong> Ensure ORG_ID_2 in file name matches your AS2 sender ID configuration.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">E160</span></td>
+                        <td>destination directory</td>
+                        <td>
+                            <strong>Cause:</strong> FTS configuration error - destination directory cannot be accessed.<br>
+                            <strong>Check:</strong> Internal FTS configuration issue.<br>
+                            <strong>Resolution:</strong> Contact MDM/R Service Desk - this is a system configuration issue.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">E170</span></td>
+                        <td>file &lt;original file name&gt; already exists</td>
+                        <td>
+                            <strong>Cause:</strong> Destination file already exists.<br>
+                            <strong>Check:</strong> File sent multiple times and already placed in destination directory.<br>
+                            <strong>Resolution:</strong> Check if file was already successfully submitted. If resubmitting, use different timestamp in file name.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">E180</span></td>
+                        <td>copying of &lt;original file name&gt; to &lt;destination file name&gt; failed</td>
+                        <td>
+                            <strong>Cause:</strong> FTS configuration error - file could not be copied to destination.<br>
+                            <strong>Check:</strong> Internal FTS configuration issue.<br>
+                            <strong>Resolution:</strong> Contact MDM/R Service Desk - this is a system configuration issue.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Troubleshooting Steps for IR17</h3>
+            <ol>
+                <li><strong>Identify the error code</strong> in the IR17 report</li>
+                <li><strong>For E115/E116/E120/E150:</strong> These are typically sender-side issues with file naming or AS2 configuration</li>
+                <li><strong>For E130/E140:</strong> These are authorization issues - contact Service Desk to verify enrollment</li>
+                <li><strong>For E160/E180:</strong> These are system-side issues - contact Service Desk immediately</li>
+                <li><strong>For E170:</strong> Check if previous submission was successful; adjust file name timestamp if resubmitting</li>
+            </ol>
+        </div>
+
+        <div id="ir10" class="section">
+            <div class="section-header">
+                <h2><span class="report-badge">IR10</span> Incomplete Synchronization File Set Report</h2>
+            </div>
+
+            <h3>Report Functionality</h3>
+            <p>The IR10 report informs you that a synchronization file set was not accepted by MDM/R. This occurs during the file set compliance check, before content validation begins.</p>
+
+            <div class="info-box">
+                <h4>File Set Holding Period</h4>
+                <p>Synchronization will hold and attempt to process incomplete or out-of-sequence file sets for <strong>up to one hour</strong> after receiving the files. If proper conditions aren't met within this threshold, files are cancelled and IR10 is generated.</p>
+            </div>
+
+            <div class="warning-box">
+                <h4>Sequence Number Impact</h4>
+                <p>When an IR10 report is received for a synchronization file set, the <strong>Sequence Number for the LDC will NOT be advanced</strong>. Synchronization only advances the expected Sequence Number upon successful processing where IR06 and IR07 reports are generated.</p>
+            </div>
+
+            <h3>IR10 Condition Codes - Complete Reference</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 8%">Code</th>
+                        <th style="width: 40%">Condition Description</th>
+                        <th style="width: 52%">Cause & Resolution</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="code">01</span></td>
+                        <td>The synchronization file has been cancelled as the set of files has been incomplete beyond the allowable expiry threshold.<br><br>OR<br><br>No Manifest file submitted within the allowable expiry threshold.</td>
+                        <td>
+                            <strong>Scenario A:</strong> Files received (01, 02, 03, 04, 05, or 07) but no Manifest file within one hour.<br>
+                            <strong>Scenario B:</strong> Manifest file received but not all listed files received within one hour.<br><br>
+                            <strong>Resolution:</strong> Submit a complete synchronization file set with properly formatted Manifest file (File 00) and all required files (minimum: Files 01, 02, 03, 04, 05).
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">02</span></td>
+                        <td>The synchronization file has been submitted out of sequence and will be held until the missing file set(s) have been submitted.</td>
+                        <td>
+                            <strong>Cause:</strong> Sequence Number in Manifest file doesn't match expected Sequence Number for the LDC. File set is being held (not cancelled).<br><br>
+                            <strong>This is a notification only</strong> - file will be processed when:<br>
+                            • Missing file sets are submitted and processed first, OR<br>
+                            • One hour expires (then receives Condition 01 or 03)<br><br>
+                            <strong>Resolution:</strong> Submit missing file sets with correct sequence numbers, or wait for timeout.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">03</span></td>
+                        <td>The synchronization file has been cancelled as it was submitted out of sequence and the missing file sets have been missing beyond the allowable threshold.<br><br>OR<br><br>Sequence Number is not of form Number (6).</td>
+                        <td>
+                            <strong>Cause A:</strong> No value provided for Sequence Number.<br>
+                            <strong>Cause B:</strong> Sequence Number in invalid format (must be exactly 6 digits, e.g., 000001, not 0001 or 00000001).<br>
+                            <strong>Cause C:</strong> Valid format but doesn't match expected Sequence Number after one hour.<br><br>
+                            <strong>Resolution:</strong> Check Manifest file header for Sequence Number format. Ensure it's 6 numeric digits and matches expected sequence. Submit complete file set with correct Sequence Number.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">04</span></td>
+                        <td>Malformed Manifest File<br><br>OR<br><br>One or more mandatory Files (01, 02, 03, 04, 05) are not listed in the Manifest file.<br><br>OR<br><br>File listed in Manifest is not a defined File No.</td>
+                        <td>
+                            <strong>Scenario A:</strong> Manifest file content improperly formatted (header or detail records).<br>
+                            <strong>Scenario B:</strong> Manifest doesn't list all mandatory files (must have 01, 02, 03, 04, 05).<br>
+                            <strong>Scenario C:</strong> File No. in Manifest is invalid (valid values: 01, 02, 03, 04, 05, 07).<br>
+                            <strong>Scenario D:</strong> Multiple IR10s generated - if one has Condition 04 while others have 01 or 03, ignore the Condition 04 (known defect).<br><br>
+                            <strong>Resolution:</strong> Review Manifest file structure against TIS specification. Ensure all mandatory files are listed with valid File No. values.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Understanding Sequence Numbers</h3>
+            
+            <div class="info-box">
+                <h4>Sequence Number Format</h4>
+                <p><strong>Valid format:</strong> Number(6) - exactly 6 numeric digits</p>
+                <p><strong>Examples of valid Sequence Numbers:</strong> 000001, 000023, 123456, 999999</p>
+                <p><strong>Examples of invalid Sequence Numbers:</strong> 0001 (too short), 00000001 (too long), 12AB56 (contains letters)</p>
+                <p><strong>Rollover:</strong> After 999999, next expected Sequence Number is 000001</p>
+            </div>
+
+            <h3>Troubleshooting Steps for IR10</h3>
+            <ol>
+                <li><strong>Check the Condition Code</strong> in the IR10 report</li>
+                <li><strong>Review "Sequence Number Received" vs "Sequence Number Expected"</strong> fields</li>
+                <li><strong>For Condition 01:</strong> Verify all files in set were submitted, especially Manifest file (00)</li>
+                <li><strong>For Condition 02:</strong> Check if this is a duplicate submission or if you skipped a sequence number</li>
+                <li><strong>For Condition 03:</strong> Validate Sequence Number format (must be exactly 6 digits) and value</li>
+                <li><strong>For Condition 04:</strong> Review Manifest file structure and ensure all mandatory files are listed</li>
+                <li><strong>Resubmit with corrections</strong> using the same Sequence Number (it wasn't advanced due to failure)</li>
+            </ol>
+        </div>
+
+        <div id="ir14" class="section">
+            <div class="section-header">
+                <h2><span class="report-badge">IR14</span> Staging Table Loader Exception Report</h2>
+            </div>
+
+            <h3>Report Functionality</h3>
+            <p>The IR14 report provides exceptions for problems encountered during the staging table loading process for Incremental Synchronization file sets. This is the <strong>first content validation stage</strong> - it checks data formats, field lengths, data types, and structural integrity.</p>
+
+            <div class="error-box">
+                <h4>Critical: Check IR14 First</h4>
+                <p>All exception error codes in IR14 (except code 00) will cause the synchronization file set to fail to load. <strong>IR06 and IR07 reports will NOT be generated</strong> if IR14 reports errors. Always resolve IR14 errors before expecting to see IR06/IR07.</p>
+            </div>
+
+            <h3>Understanding IR14 Type Field</h3>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 10%">Type</th>
+                        <th style="width: 25%">Meaning</th>
+                        <th style="width: 65%">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="code">F</span></td>
+                        <td>File Error</td>
+                        <td>Error at file level (e.g., header issues, file structure problems)</td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">L</span></td>
+                        <td>Line/Field Error</td>
+                        <td>Error in a specific field of a detail record. The "Field" column will identify the problematic field.</td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">R</span></td>
+                        <td>Record Count</td>
+                        <td>Summary of total records processed</td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">C</span></td>
+                        <td>Field Count</td>
+                        <td>Summary of total fields processed</td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">S</span></td>
+                        <td>Status</td>
+                        <td>Overall file set status (code 00 = success, code 99 = failure)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>IR14 Error Codes - Complete Reference</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 8%">Code</th>
+                        <th style="width: 12%">Condition</th>
+                        <th style="width: 80%">Description / Cause & Resolution</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="code" style="background: #d4edda; color: #155724;">00</span></td>
+                        <td>SUCCESS</td>
+                        <td>
+                            <strong>The file set was successfully loaded.</strong> This error code will only be populated if Type = "S".<br>
+                            <strong>Next Step:</strong> File set will proceed to MDM/R processing. Expect IR06 and/or IR07 reports.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">01</span></td>
+                        <td>ERROR</td>
+                        <td>
+                            <strong>File header is missing a parameter.</strong><br>
+                            <strong>Check:</strong> Review file header record for all required parameters per TIS specification.<br>
+                            <strong>Resolution:</strong> Add missing parameter to header record.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">02</span></td>
+                        <td>ERROR</td>
+                        <td>
+                            <strong>File header is not consistent for file.</strong> LDC ID or Extracted Date Time values in header record are not the same for each file.<br>
+                            <strong>Check:</strong> Compare LDC_ID and Extracted_Date_Time across all files in the set.<br>
+                            <strong>Resolution:</strong> Ensure all files in set have identical LDC_ID and Extracted_Date_Time in headers.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">03</span></td>
+                        <td>ERROR</td>
+                        <td>
+                            <strong>File header indicates the wrong synchronization type.</strong><br>
+                            <strong>Check:</strong> Verify synchronization type in header matches file content (e.g., Incremental vs Initial).<br>
+                            <strong>Resolution:</strong> Correct synchronization type indicator in file header.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">04</span></td>
+                        <td>ERROR</td>
+                        <td>
+                            <strong>Field does not conform to the required data format/length.</strong><br>
+                            <strong>Check:</strong> Review the specific field identified in the "Field" column against TIS data format requirements.<br>
+                            <strong>Resolution:</strong> Correct field format/length to match specification (e.g., Char(X), Varchar(X), Number(X)).
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">05</span></td>
+                        <td>ERROR</td>
+                        <td>
+                            <strong>Field contains invalid data.</strong> Data was not loaded into database. One or more field errors in a record.<br>
+                            <strong>Check:</strong> Field identified contains data that doesn't match allowed values or format.<br>
+                            <strong>Resolution:</strong> Review allowed values for the field and correct data content.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">07</span></td>
+                        <td>ERROR</td>
+                        <td>
+                            <strong>The Date/Time submitted is invalid</strong> (e.g., February 31, or 26:00:00).<br>
+                            <strong>OR</strong> Date/Time is out of the range configured in MDM/R as acceptable.<br>
+                            <strong>Check:</strong> Validate date/time values are real dates and within acceptable range.<br>
+                            <strong>Resolution:</strong> Correct invalid dates (check for impossible dates like Feb 31) or ensure dates are within system-configured acceptable range.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">09</span></td>
+                        <td>ERROR</td>
+                        <td>
+                            <strong>Header record does not match file number.</strong><br>
+                            <strong>Check:</strong> File number in header doesn't match actual file type being submitted.<br>
+                            <strong>Resolution:</strong> Ensure file header correctly identifies the file number (01-07).
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">10</span></td>
+                        <td>ERROR</td>
+                        <td>
+                            <strong>Universal SDP ID not defined through Universal SDP ID Assignment Process.</strong><br>
+                            <strong>Check:</strong> The Universal SDP ID doesn't exist in MDM/R system.<br>
+                            <strong>Resolution:</strong> Verify Universal SDP ID exists through proper assignment process before synchronization.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">11</span></td>
+                        <td>ERROR</td>
+                        <td>
+                            <strong>Universal SDP ID does not match SDP and LDC ID.</strong><br>
+                            <strong>Check:</strong> Mismatch between Universal SDP ID and the combination of SDP ID + LDC ID.<br>
+                            <strong>Resolution:</strong> Verify correct Universal SDP ID for the given SDP ID and LDC ID combination.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">25</span></td>
+                        <td>ERROR</td>
+                        <td>
+                            <strong>Incorrect number of fields in a file Header Record.</strong><br>
+                            <strong>Check:</strong> Count of delimited fields in header record doesn't match specification.<br>
+                            <strong>Resolution:</strong> Verify header has correct number of pipe-delimited fields per TIS.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">26</span></td>
+                        <td>ERROR</td>
+                        <td>
+                            <strong>Incorrect number of fields in a file Detail Record.</strong><br>
+                            <strong>Check:</strong> Count of delimited fields in detail record doesn't match specification.<br>
+                            <strong>Resolution:</strong> Verify detail record has correct number of pipe-delimited fields per TIS for that record type.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">28</span></td>
+                        <td>ERROR</td>
+                        <td>
+                            <strong>Start Date/Time is greater than the Extracted Date/Time of the file set.</strong> Future Date/Time not allowed for data element.<br>
+                            <strong>Check:</strong> Start Date/Time in record is later than file's Extracted Date/Time.<br>
+                            <strong>Resolution:</strong> Ensure Start Date/Time is not future-dated beyond Extracted Date/Time for this data element.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">29</span></td>
+                        <td>ERROR</td>
+                        <td>
+                            <strong>End Date/Time is greater than the Extracted Date/Time of the file set.</strong> Future Date/Time not allowed for data element.<br>
+                            <strong>Check:</strong> End Date/Time in record is later than file's Extracted Date/Time.<br>
+                            <strong>Resolution:</strong> Ensure End Date/Time is not future-dated beyond Extracted Date/Time for this data element.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">30</span></td>
+                        <td>ERROR</td>
+                        <td>
+                            <strong>Extracted Date/Time is future dated or older than 14 days from System Date.</strong><br>
+                            <strong>Check:</strong> File's Extracted Date/Time is either in the future or more than 14 days old.<br>
+                            <strong>Resolution:</strong> Submit file set with current or recent Extracted Date/Time (within last 14 days).
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">31</span></td>
+                        <td>ERROR</td>
+                        <td>
+                            <strong>One or more files do not contain a blank line at the end of file</strong> OR <strong>contain more than one blank line at end of file.</strong><br>
+                            <strong>Check:</strong> End-of-file formatting issue.<br>
+                            <strong>Resolution:</strong> Ensure each file has exactly one blank line at the end, no more, no less.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">33</span></td>
+                        <td>ERROR</td>
+                        <td>
+                            <strong>Meter to Communication Module Relationship Start Date Time not found.</strong><br>
+                            <strong>OR</strong> Meter to Communication Module Relationship not supplied for an SDP to Meter Relationship in the synchronization file set.<br>
+                            <strong>Check:</strong> Missing or mismatched Meter to Comm Module relationship.<br>
+                            <strong>Resolution:</strong> Ensure every SDP to Meter relationship has corresponding Meter to Comm Module relationship with matching Start Date/Time.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">34</span></td>
+                        <td>ERROR</td>
+                        <td>
+                            <strong>End Date is before Start Date.</strong><br>
+                            <strong>Check:</strong> Logical date error - end date cannot be earlier than start date.<br>
+                            <strong>Resolution:</strong> Correct dates so End Date/Time is after Start Date/Time.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">37</span></td>
+                        <td>ERROR</td>
+                        <td>
+                            <strong>Duplicate Asset detail record found in the Asset Data File in the same Sync file set.</strong><br>
+                            <strong>Check:</strong> Same asset appears more than once with same effective date.<br>
+                            <strong>Resolution:</strong> Remove duplicate records; ensure each asset record is unique within the file set.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">40</span></td>
+                        <td>ERROR</td>
+                        <td>
+                            <strong>Duplicate date-effective records in the same Synchronization file set.</strong><br>
+                            <strong>Check:</strong> Same record appears with same effective date multiple times.<br>
+                            <strong>Resolution:</strong> Remove duplicates; consolidate into single record with correct dates.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">42</span></td>
+                        <td>ERROR</td>
+                        <td>
+                            <strong>Either or both Asset detail records not provided for a Meter to Communication Module Relationship.</strong><br>
+                            <strong>Check:</strong> Relationship references assets that don't exist in the file set.<br>
+                            <strong>Resolution:</strong> Ensure both Meter and Comm Module asset records are present when defining relationship.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">43</span></td>
+                        <td>ERROR</td>
+                        <td>
+                            <strong>ORG ID supplied for an Agent is not defined in the MDM/R.</strong><br>
+                            <strong>Check:</strong> Agent Organization ID doesn't exist or isn't enrolled in MDM/R.<br>
+                            <strong>Resolution:</strong> Verify Agent ORG ID is properly enrolled in MDM/R system before using in synchronization.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">44</span></td>
+                        <td>ERROR</td>
+                        <td>
+                            <strong>Provided value for Delivered USDP cannot reference itself.</strong><br>
+                            <strong>Check:</strong> Universal SDP ID references itself as delivered USDP (circular reference).<br>
+                            <strong>Resolution:</strong> Correct Delivered USDP to reference different, valid Universal SDP ID.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">99</span></td>
+                        <td>FAILURE</td>
+                        <td>
+                            <strong>The file set was received and not loaded.</strong> This error code will only be populated if Type = "S".<br>
+                            <strong>Next Step:</strong> Review all error codes in IR14 report to identify and correct issues, then resubmit.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Common IR14 Error Patterns</h3>
+
+            <div class="info-box">
+                <h4>Date/Time Related Errors (Codes 07, 28, 29, 30, 34)</h4>
+                <ul>
+                    <li>Check for impossible dates (Feb 31, Apr 31, etc.)</li>
+                    <li>Check for impossible times (25:00:00, 13:99:00, etc.)</li>
+                    <li>Ensure Start Date/Time is before End Date/Time</li>
+                    <li>Verify Extracted Date/Time is current (within last 14 days, not future)</li>
+                    <li>Verify record dates are not future-dated beyond Extracted Date/Time when not allowed</li>
+                </ul>
+            </div>
+
+            <div class="warning-box">
+                <h4>Relationship Errors (Codes 33, 42)</h4>
+                <ul>
+                    <li>Every SDP-to-Meter relationship requires corresponding Meter-to-Comm Module relationship</li>
+                    <li>Start Date/Times must match exactly across related records</li>
+                    <li>Asset records must exist before defining relationships</li>
+                    <li>Never remove Meter-to-Comm Module when ending meter (Business Rule violation)</li>
+                </ul>
+            </div>
+
+            <h3>Troubleshooting Steps for IR14</h3>
+            <ol>
+                <li><strong>Check Type "S" record first</strong> - if code 00, file set passed validation; if code 99, file set failed</li>
+                <li><strong>Review all Type "F" and "L" records</strong> - these identify specific errors</li>
+                <li><strong>For Type "L" errors, note the "Field" column</strong> - tells you exactly which field has the problem</li>
+                <li><strong>Group errors by code</strong> - fix all instances of the same error type together</li>
+                <li><strong>Fix structural issues first</strong> (codes 01, 02, 03, 09, 25, 26) before data issues</li>
+                <li><strong>Validate dates comprehensively</strong> - date errors are very common</li>
+                <li><strong>Cross-check relationships</strong> - ensure all required relationships are present and valid</li>
+                <li><strong>Review Type "R" and "C" counts</strong> - helps identify scope of problems (how many records/fields affected)</li>
+                <li><strong>Resubmit corrected file set</strong> with same Sequence Number (wasn't advanced due to failure)</li>
+            </ol>
+        </div>
+
+        <div id="ir07" class="section">
+            <div class="section-header">
+                <h2><span class="report-badge">IR07</span> Synchronization Exception Report</h2>
+            </div>
+
+            <h3>Report Functionality</h3>
+            <p>The IR07 report provides a complete listing of records that failed to update when submitted via Incremental Synchronization because a <strong>business rule violation</strong> or processing error occurred. This report is only generated after IR14 passes with code 00.</p>
+
+            <div class="info-box">
+                <h4>Key Differences: IR14 vs IR07</h4>
+                <p><strong>IR14</strong> validates technical format, data types, structure (e.g., "Is this a valid date?")</p>
+                <p><strong>IR07</strong> validates business rules, data relationships, overlapping conditions (e.g., "Does creating this relationship violate business rules?")</p>
+            </div>
+
+            <h3>Understanding IR07 Error Messages</h3>
+
+            <p>IR07 error messages identify which table or relationship caused the failure. Use the table below to decode error messages and understand what to check:</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 25%">IR07 Error Message Starts With</th>
+                        <th style="width: 35%">Check These Items</th>
+                        <th style="width: 40%">Common Issues</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="code">ACCT-SDP</span></td>
+                        <td>SDP-Account relationships</td>
+                        <td>Overlapping account relationships, missing account records, invalid effective dates</td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">MTR-CHNL</span></td>
+                        <td>Meter-Channel relationships</td>
+                        <td>Invalid channel configuration, overlapping channel relationships, missing meter record</td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">MTR-COMMOD</span></td>
+                        <td>Meter-Communication Module relationships</td>
+                        <td>Overlapping comm module relationships, missing asset records, date mismatches</td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">MTR-PARAM</span></td>
+                        <td>Meter Parameters</td>
+                        <td>Invalid parameter values, overlapping parameter dates, unsupported parameter for meter type</td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">SA</span></td>
+                        <td>Service Agreement records (Energy Purchase Services in MDM/R)</td>
+                        <td>Overlapping service agreements, invalid service type, missing prerequisite data</td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">SDP-CTPT</span></td>
+                        <td>SDP-CT/PT parameters (SDP's CT/PT Device Multiplier in MDM/R)</td>
+                        <td>Overlapping CT/PT multipliers, attempting to change without meter change, invalid multiplier values</td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">SDP-MTR</span></td>
+                        <td>SDP-Meter and Meter-Channel relationships</td>
+                        <td>Most common error - overlapping meter relationships, date mismatches between SDP-Meter and Meter-Channel</td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">SDP-PARAM</span></td>
+                        <td>SDP Parameters</td>
+                        <td>Invalid parameter values, overlapping dates, midnight EST requirement violations (DRC, CRR, Framing)</td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">SERVICE</span></td>
+                        <td>SDP's AMI Operator, Billing Agent, CCA Service Provider, and/or Energy Provider Service relationships</td>
+                        <td>Overlapping service relationships, invalid service provider IDs, missing service records</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Interpreting Specific IR07 Error Messages</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 45%">IR07 Error Message Contains</th>
+                        <th style="width: 55%">What to Check & Resolution</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="code">...ChannelBO..MeterBO...</span></td>
+                        <td>
+                            <strong>Check:</strong> SDP-Meter and Meter-Channel relationships<br>
+                            <strong>Common Cause:</strong> Start Date/Time mismatch between SDP-Meter and Meter-Channel records<br>
+                            <strong>Resolution:</strong> Ensure SDP-Meter, Meter-Channel, and all related Dials have identical Start Date/Time
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">...MeterBO...SdpBO...</span></td>
+                        <td>
+                            <strong>Check:</strong> SDP-Meter and Meter-Channel relationships<br>
+                            <strong>Common Cause:</strong> Attempting to create overlapping relationships or relationship without required channel configuration<br>
+                            <strong>Resolution:</strong> Review Business Rules 18 and 20; ensure proper end-dating of previous relationships
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">Validation failed for "DeviceChannelRelBO...", An active record with no end date already exists</span></td>
+                        <td>
+                            <strong>Cause:</strong> SDP-Meter relationship violates synchronization rules - trying to create new relationship when active one exists<br>
+                            <strong>Resolution:</strong> End-date existing SDP-Meter relationship before creating new one (Business Scenario 18)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">Validation failed for "DeviceChannelRelBO...", Start date of the record is before the end date of another record</span></td>
+                        <td>
+                            <strong>Cause:</strong> Overlapping SDP-Meter relationships - new relationship starts before previous one ends<br>
+                            <strong>Resolution:</strong> Adjust dates to ensure no overlap; gap or contiguous dates are OK, overlap is not
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">Validation failed for "DeviceFunctionRelBO...", An active record with no end date already exists</span></td>
+                        <td>
+                            <strong>Cause:</strong> Meter-Communication Module relationship violates rules - active relationship already exists<br>
+                            <strong>Resolution:</strong> Check Meter-Comm Module relationships; you cannot have multiple active relationships
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">Validation failed for "DeviceMultiplierBO...", An active record with no end date already exists</span></td>
+                        <td>
+                            <strong>Cause:</strong> Scaling Constant (SC) and Meter-Comm Module relationship violation<br>
+                            <strong>Resolution:</strong> Review SC Device Multipliers; end-date existing multiplier before creating new one
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="code">Validation failed for "SvcPtDeviceRelBO...", An active record with no end date already exists</span></td>
+                        <td>
+                            <strong>Cause 1:</strong> SDP-Meter relationship violates rules<br>
+                            <strong>Cause 2:</strong> SDP-CT/PT Parameter violates rules<br>
+                            <strong>Resolution:</strong> Check both SDP-Meter relationships AND SDP CT/PT Multipliers for overlapping active records. Remember: CT/PT changes must occur with meter changes.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Most Common IR07 Scenarios & Solutions</h3>
+
+            <div class="warning-box">
+                <h4>Scenario 1: Overlapping Relationships</h4>
+                <p><strong>Error:</strong> "An active record with no end date already exists"</p>
+                <p><strong>Cause:</strong> Attempting to create new relationship without ending previous one</p>
+                <p><strong>Solution:</strong> End-date the existing relationship in the same sync file set or in previous sync. New relationship can start at same time as old one ends (contiguous dates).</p>
+            </div>
+
+            <div class="warning-box">
+                <h4>Scenario 2: Date Mismatches in Meter Changes</h4>
+                <p><strong>Error:</strong> Multiple errors referencing ChannelBO, MeterBO, or DeviceChannelRelBO</p>
+                <p><strong>Cause:</strong> When installing new meter, SDP-Meter, Meter-Channel, and Dial Start Date/Times don't match exactly</p>
+                <p><strong>Solution:</strong> All three must have identical Start Date/Time. Also ensure Meter-to-Comm Module relationship has same Start Date/Time.</p>
+            </div>
+
+            <div class="warning-box">
+                <h4>Scenario 3: CT/PT Changes Without Meter Change</h4>
+                <p><strong>Error:</strong> Validation failed for SvcPtDeviceRelBO or SDP-CTPT errors</p>
+                <p><strong>Cause:</strong> Attempting to change CT/PT multiplier in isolation</p>
+                <p><strong>Solution:</strong> CT/PT multiplier changes must be performed with a meter change (physical or logical). Use 2-sync approach: Sync 1 removes old meter and CT/PT, Sync 2 adds new meter and CT/PT.</p>
+            </div>
+
+            <div class="warning-box">
+                <h4>Scenario 4: Midnight EST Requirement Violations</h4>
+                <p><strong>Error:</strong> SDP-PARAM errors for DRC, CRR, or Framing Structure</p>
+                <p><strong>Cause:</strong> Changes to Distributor Rate Class, Commodity Rate Class, or Framing Structure don't have midnight EST effective date</p>
+                <p><strong>Solution:</strong> These parameters can only change at midnight EST (00:00:00). Adjust effective date/time to midnight.</p>
+            </div>
+
+            <h3>Troubleshooting Steps for IR07</h3>
+            <ol>
+                <li><strong>Identify the record type</strong> causing the error (SDP, METER, SDP-MTR, etc.)</li>
+                <li><strong>Read the error message carefully</strong> - it often directly states the problem</li>
+                <li><strong>Check the MDM/R GUI</strong> to see current state of the entity (meter, SDP, relationships)</li>
+                <li><strong>Compare submitted data against MDM/R current state</strong> to identify conflicts</li>
+                <li><strong>Review relevant Business Rules</strong> in TIS Section 2.3.10 for detailed requirements</li>
+                <li><strong>For relationship errors, verify ALL related records</strong> are consistent (dates, IDs, statuses)</li>
+                <li><strong>Use Business Scenarios in TIS</strong> as templates for common transactions</li>
+                <li><strong>If multiple errors for same SDP, fix in logical order:</strong> Assets first, then relationships, then parameters</li>
+                <li><strong>Resubmit corrected records</strong> in new sync file set with next Sequence Number (IR07 means some records succeeded)</li>
+            </ol>
+
+            <div class="info-box">
+                <h4>Note on Partial Success</h4>
+                <p>IR07 indicates a <strong>partial success</strong>. Some records updated successfully (listed in IR06) while others failed (listed in IR07). You don't need to resubmit successful records - only correct and resubmit the failed ones.</p>
+            </div>
+        </div>
+
+        <div id="ir06" class="section">
+            <div class="section-header">
+                <h2><span class="report-badge">IR06</span> Synchronization Updates Report</h2>
+            </div>
+
+            <h3>Report Functionality</h3>
+            <p>The IR06 report provides a complete listing of records that were successfully updated via the Incremental Synchronization process. Only attributes that have been updated in the synchronization file set will be reported - unchanged attributes are not included.</p>
+
+            <div class="success-box">
+                <h4>This is a Success Report</h4>
+                <p>Receiving an IR06 report means the synchronization file set passed all validation stages (FTS, file set compliance, staging table loader) and MDM/R successfully processed and applied the updates. This is the confirmation that your changes are now in the MDM/R system.</p>
+            </div>
+
+            <h3>What IR06 Contains</h3>
+
+            <p>The IR06 report includes the following record types, corresponding to the structure of synchronization file sets:</p>
+
+            <ul>
+                <li><strong>Synchronization Status:</strong> Overall summary of the sync file set processing</li>
+                <li><strong>SDP Records:</strong> Service Delivery Point updates</li>
+                <li><strong>Premise Records:</strong> Premise information updates</li>
+                <li><strong>SDP Parameter Records:</strong> SDP parameter changes (VEE Service, CT/PT Multiplier, DRC, CRR, Framing Structure, etc.)</li>
+                <li><strong>SDP to Account Relationship Records:</strong> Account relationship changes</li>
+                <li><strong>Meter Records:</strong> Meter asset updates</li>
+                <li><strong>Meter Parameter Records:</strong> Meter parameter changes (Interval Length, Channel Config Set, etc.)</li>
+                <li><strong>SDP to Meter Relationship Records:</strong> Meter installation/removal records</li>
+                <li><strong>Meter to Channel Relationship Records:</strong> Channel dial configurations</li>
+                <li><strong>Comm Module Records:</strong> Communication module assets</li>
+                <li><strong>Meter to Comm Module Relationship Records:</strong> Comm module associations</li>
+                <li><strong>SDP to CTPT Asset Relationship Records:</strong> CT/PT asset relationships</li>
+                <li><strong>SDP Service Records:</strong> Service provider relationship changes (AMI Operator, Billing Agent, Energy Provider, etc.)</li>
+            </ul>
+
+            <h3>Using IR06 for Verification</h3>
+
+            <p>The IR06 report serves as your confirmation that changes were applied. Best practices for using IR06:</p>
+
+            <ol>
+                <li><strong>Verify Sequence Number:</strong> Confirm the Sequence Number in IR06 matches your submission</li>
+                <li><strong>Cross-check updates:</strong> Review each record type to ensure all expected changes appear</li>
+                <li><strong>Compare with IR07:</strong> If you also received IR07, determine which records succeeded (IR06) vs failed (IR07)</li>
+                <li><strong>Document successful changes:</strong> Keep IR06 reports for audit trail and troubleshooting future issues</li>
+                <li><strong>Verify timing:</strong> Check Report Date/Time to confirm when changes were applied</li>
+            </ol>
+
+            <div class="info-box">
+                <h4>IR06 + IR07 = Partial Success</h4>
+                <p>You can receive both IR06 and IR07 for the same synchronization file set. This means:</p>
+                <ul>
+                    <li>IR06 lists records that <strong>successfully</strong> updated</li>
+                    <li>IR07 lists records that <strong>failed</strong> to update</li>
+                    <li>You only need to resubmit the failed records (from IR07) in your next sync</li>
+                </ul>
+            </div>
+
+            <h3>Report Delivery</h3>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30%">Attribute</th>
+                        <th style="width: 70%">Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Delivery Method</strong></td>
+                        <td>Sent via FTS to LDC and/or designated agents</td>
+                    </tr>
+                    <tr>
+                        <td><strong>GUI Access</strong></td>
+                        <td>Yes - Available through Reports tab in MDM/R GUI</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Timing</strong></td>
+                        <td>Event-based - Generated upon completion of synchronization file set processing</td>
+                    </tr>
+                    <tr>
+                        <td><strong>File Format</strong></td>
+                        <td>Pipe-delimited text file ("|" separator)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>What to Do After Receiving IR06</h3>
+
+            <div class="success-box">
+                <h4>Success Path</h4>
+                <p><strong>If you received ONLY IR06 (no IR07):</strong> Complete success! All records in your synchronization file set were processed and updated in MDM/R. No further action needed for this sync.</p>
+            </div>
+
+            <div class="warning-box">
+                <h4>Partial Success Path</h4>
+                <p><strong>If you received BOTH IR06 and IR07:</strong> Partial success. Review IR07 to identify failed records, correct the issues, and submit a new synchronization file set with only the corrected records. Use the next Sequence Number.</p>
+            </div>
+        </div>
+
+        <div id="quick-reference" class="section">
+            <div class="section-header">
+                <h2>Quick Reference Tables</h2>
+            </div>
+
+            <h3>Report Processing Order & Decision Tree</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 10%">Step</th>
+                        <th style="width: 15%">Report</th>
+                        <th style="width: 35%">What It Checks</th>
+                        <th style="width: 40%">If This Report Has Errors</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td><strong>IR17</strong></td>
+                        <td>FTS processing (file naming, authorization, destination)</td>
+                        <td>Fix FTS issues. File never made it to synchronization. No other reports will be generated.</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td><strong>IR10</strong></td>
+                        <td>File set completeness, sequence number, manifest validity</td>
+                        <td>Fix file set issues. Submit complete file set with correct sequence. Staging table loader won't run. No IR14/IR06/IR07.</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td><strong>IR14</strong></td>
+                        <td>Data format, field lengths, data types, dates, structure</td>
+                        <td>Fix validation errors. File set failed to load into staging. MDM/R processing won't run. No IR06/IR07.</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td><strong>IR06</strong></td>
+                        <td>N/A - Success report listing all successful updates</td>
+                        <td>This is a success report. Review to confirm expected updates. Check if IR07 also received.</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td><strong>IR07</strong></td>
+                        <td>Business rules, overlaps, relationship constraints</td>
+                        <td>Fix business rule violations. Resubmit only failed records in new sync file set with next Sequence Number.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Common Error Patterns & Quick Solutions</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30%">Symptom</th>
+                        <th style="width: 20%">Likely Report</th>
+                        <th style="width: 50%">Quick Solution</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>File never arrived at MDM/R</td>
+                        <td>IR17 or No Reports</td>
+                        <td>Check AS2 connection, file naming syntax, authorization setup. Verify MDN received successfully.</td>
+                    </tr>
+                    <tr>
+                        <td>Missing files in set</td>
+                        <td>IR10 (Code 01)</td>
+                        <td>Submit complete file set with all mandatory files (00-05 at minimum) within one hour window.</td>
+                    </tr>
+                    <tr>
+                        <td>Out of sequence</td>
+                        <td>IR10 (Code 02 or 03)</td>
+                        <td>Check expected Sequence Number in report. Submit missing file sets or wait for timeout, then resubmit with correct sequence.</td>
+                    </tr>
+                    <tr>
+                        <td>Invalid date (Feb 31, 25:00:00)</td>
+                        <td>IR14 (Code 07)</td>
+                        <td>Review all dates for validity. Common error: copy/paste creating impossible dates.</td>
+                    </tr>
+                    <tr>
+                        <td>Wrong field count</td>
+                        <td>IR14 (Code 25 or 26)</td>
+                        <td>Count pipe delimiters. Missing or extra delimiters are common. Review file structure per TIS.</td>
+                    </tr>
+                    <tr>
+                        <td>Duplicate meter error</td>
+                        <td>IR14 (Code 37 or 40)</td>
+                        <td>Remove duplicate asset records. Ensure each asset and relationship appears only once per effective date.</td>
+                    </tr>
+                    <tr>
+                        <td>"Active record already exists"</td>
+                        <td>IR07</td>
+                        <td>End-date existing relationship before creating new one. Cannot have overlapping active relationships.</td>
+                    </tr>
+                    <tr>
+                        <td>Meter channel date mismatch</td>
+                        <td>IR07</td>
+                        <td>Ensure SDP-Meter, Meter-Channel, Meter-Comm Module, and all Dials have identical Start Date/Time when installing meter.</td>
+                    </tr>
+                    <tr>
+                        <td>CT/PT change fails</td>
+                        <td>IR07</td>
+                        <td>CT/PT multiplier changes must occur with meter change. Use 2-sync approach: remove old (Sync 1), add new (Sync 2).</td>
+                    </tr>
+                    <tr>
+                        <td>DRC/CRR/Framing change fails</td>
+                        <td>IR07</td>
+                        <td>These parameters require midnight EST effective date. Change Start Date/Time to XX:00:00:00 (midnight).</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>When to Contact MDM/R Service Desk</h3>
+
+            <div class="error-box">
+                <h4>Contact Service Desk for:</h4>
+                <ul>
+                    <li>IR17 errors E130, E160, E180 (FTS configuration issues)</li>
+                    <li>IR17 error E140 (authorization issues) if you believe you're properly enrolled</li>
+                    <li>Persistent IR10 errors after confirming file set is complete and correctly sequenced</li>
+                    <li>IR14 errors that don't make sense given your file content</li>
+                    <li>IR07 errors that persist after following all business rules and scenarios</li>
+                    <li>Any "null" error message in IR07 (internal system error)</li>
+                    <li>Questions about Sequence Number resets</li>
+                    <li>Suspected MDM/R system issues vs file issues</li>
+                </ul>
+                <p><strong>Service Desk:</strong> <a href="https://mdmrsupport.service-now.com">https://mdmrsupport.service-now.com</a></p>
+            </div>
+
+            <h3>Report Availability Summary</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 15%">Report</th>
+                        <th style="width: 25%">Available in GUI</th>
+                        <th style="width: 30%">Available via FTS</th>
+                        <th style="width: 30%">File Naming</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>IR06</strong></td>
+                        <td>✓ Yes</td>
+                        <td>✓ Yes</td>
+                        <td>ORG_ID_1.ORG_ID_2.IR06.02.DateTime.DAT</td>
+                    </tr>
+                    <tr>
+                        <td><strong>IR07</strong></td>
+                        <td>✓ Yes</td>
+                        <td>✓ Yes</td>
+                        <td>ORG_ID_1.ORG_ID_2.IR07.02.DateTime.DAT</td>
+                    </tr>
+                    <tr>
+                        <td><strong>IR10</strong></td>
+                        <td>✗ No (FTS only)</td>
+                        <td>✓ Yes</td>
+                        <td>ORG_ID_1.ORG_ID_2.IR10.00.DateTime.DAT</td>
+                    </tr>
+                    <tr>
+                        <td><strong>IR14</strong></td>
+                        <td>✗ No (FTS only)</td>
+                        <td>✓ Yes</td>
+                        <td>ORG_ID_1.ORG_ID_2.IR14.00.DateTime.DAT</td>
+                    </tr>
+                    <tr>
+                        <td><strong>IR17</strong></td>
+                        <td>✗ No (FTS only)</td>
+                        <td>✓ Yes</td>
+                        <td>ORG_ID_1.ORG_ID_2.IR17.00.DateTime.DAT</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="footer">
+            <p><a href="index.html" class="back-to-hub" style="margin: 0 auto 20px auto;"> Back to Documentation Hub</a></p>
+            <p><strong>Support:</strong> MDM/R Service Desk - <a href="https://mdmrsupport.service-now.com">https://mdmrsupport.service-now.com</a></p>
+            <p><strong>Reference Documents:</strong> IR06 (SME-SPEC-81 v1.5), IR07 (SME-SPEC-82 v1.4), IR10 (SME-SPEC-84 v1.3), IR14 (SME-SPEC-85 v1.3), IR17 (SME-SPEC-86 v1.0)</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meter Change Guide - MDM/R Synchronization</title>
+    <style>
+        @media print {
+            body { margin: 0; }
+            .page-break { page-break-before: always; }
+            @page { margin: 2cm; }
+            .no-print { display: none; }
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .cover-page {
+            text-align: center;
+            padding: 60px 20px;
+            border-bottom: 4px solid #0066cc;
+            margin-bottom: 40px;
+        }
+        
+        .cover-page h1 {
+            color: #0066cc;
+            font-size: 42px;
+            margin-bottom: 20px;
+        }
+        
+        .cover-page .subtitle {
+            font-size: 22px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .cover-page .metadata {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            display: inline-block;
+            text-align: left;
+        }
+        
+        .toc {
+            background: #f8f9fa;
+            padding: 30px;
+            margin: 30px 0;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .toc h2 {
+            color: #0066cc;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .toc ul li {
+            padding: 10px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .toc ul li:last-child {
+            border-bottom: none;
+        }
+        
+        .toc ul li a {
+            color: #333;
+            text-decoration: none;
+            display: block;
+            transition: color 0.3s, padding-left 0.3s;
+        }
+        
+        .toc ul li a:hover {
+            color: #0066cc;
+            padding-left: 10px;
+        }
+        
+        h1 {
+            color: #0066cc;
+            font-size: 32px;
+            margin: 40px 0 20px 0;
+            padding-top: 20px;
+            border-top: 3px solid #0066cc;
+        }
+        
+        h2 {
+            color: #0066cc;
+            font-size: 24px;
+            margin: 30px 0 15px 0;
+        }
+        
+        h3 {
+            color: #0066cc;
+            font-size: 20px;
+            margin: 20px 0 10px 0;
+        }
+        
+        h4 {
+            color: #333;
+            font-size: 16px;
+            margin: 15px 0 10px 0;
+        }
+        
+        .scenario-box {
+            background: #e8f4f8;
+            border-left: 4px solid #0066cc;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .note {
+            background: #e7f3ff;
+            border-left: 4px solid #0066cc;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .critical {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .tip {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+        
+        thead {
+            background: #0066cc;
+            color: white;
+        }
+        
+        th {
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        tbody tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        tbody tr:hover {
+            background: #e9ecef;
+        }
+        
+        .flowchart {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .flowchart-box {
+            background: white;
+            border: 2px solid #0066cc;
+            padding: 15px;
+            margin: 10px auto;
+            border-radius: 8px;
+            max-width: 600px;
+        }
+        
+        .flowchart-decision {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 15px;
+            margin: 10px auto;
+            border-radius: 8px;
+            max-width: 600px;
+        }
+        
+        .flowchart-arrow {
+            color: #0066cc;
+            font-weight: bold;
+            margin: 10px 0;
+            font-size: 18px;
+        }
+        
+        .code-block {
+            background: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            margin: 15px 0;
+            overflow-x: auto;
+            white-space: pre;
+        }
+        
+        ul.checklist {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        ul.checklist li {
+            padding: 8px 0 8px 30px;
+            position: relative;
+        }
+        
+        ul.checklist li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #28a745;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .section-break {
+            border-top: 2px dashed #ccc;
+            margin: 40px 0;
+        }
+        
+        .comparison-table th {
+            background: #0066cc;
+        }
+        
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 2px solid #dee2e6;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        /* Back to Hub Button Styles */
+        .back-to-hub {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: background 0.3s, transform 0.2s;
+            margin-bottom: 20px;
+        }
+
+        .back-to-hub:hover {
+            background: linear-gradient(135deg, #0052a3 0%, #003d7a 100%);
+            transform: translateX(-3px);
+        }
+
+        .back-to-hub::before {
+            content: "←";
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            table {
+                font-size: 12px;
+            }
+            
+            th, td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-to-hub">Back to Documentation Hub</a>
+        
+        <div class="cover-page">
+            <h1>MDM/R Synchronization Guide</h1>
+            <div class="subtitle">Meter Change Procedures<br>All Scenarios: Physical & Logical Changes</div>
+            <div class="metadata">
+                <p><strong>Based on:</strong> MDM/R Synchronization Technical Interface Specification<br>
+                Document ID: SME-SPEC-40, Issue 1.10.1<br>
+                December 16, 2024</p>
+                <p><strong>Covers:</strong> Business Scenarios 3, 4, 11, 18</p>
+            </div>
+        </div>
+
+        <div class="toc">
+            <h2>Table of Contents</h2>
+            <ul>
+                <li><a href="#section1">1. Overview</a></li>
+                <li><a href="#section2">2. Quick Decision Flowchart</a></li>
+                <li><a href="#section3">3. Pre-Requisites (All Scenarios)</a></li>
+                <li><a href="#section4">4. Scenario A: Physical Meter Change - Same Configuration</a></li>
+                <li><a href="#section5">5. Scenario B: Physical Meter Change - Different Configuration</a></li>
+                <li><a href="#section6">6. Scenario C: Logical Meter Change</a></li>
+                <li><a href="#section7">7. CT/PT Multiplier Changes</a></li>
+                <li><a href="#section8">8. Critical Date/Time Rules</a></li>
+                <li><a href="#section9">9. Common Mistakes to Avoid</a></li>
+                <li><a href="#section10">10. Post-Synchronization</a></li>
+                <li><a href="#section11">11. Quick Reference Checklists</a></li>
+                <li><a href="#section12">12. Summary & Comparison</a></li>
+            </ul>
+        </div>
+
+        <h1 id="section1">1. Overview</h1>
+
+        <p>This guide provides comprehensive instructions for synchronizing <strong>meter changes</strong> to the MDM/R system. A meter change involves removing an existing meter from an SDP and installing a new meter (or restarting the same meter).</p>
+
+        <div class="note">
+            <strong>What This Guide Covers:</strong>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+                <li><strong>Scenario A:</strong> Physical Meter Change - Same Configuration (Most Common - ~80% of cases)</li>
+                <li><strong>Scenario B:</strong> Physical Meter Change - Different Configuration (Requires 2 syncs)</li>
+                <li><strong>Scenario C:</strong> Logical Meter Change (Same physical meter, restart relationship)</li>
+                <li>CT/PT Multiplier changes (optional, can occur with any scenario)</li>
+            </ul>
+        </div>
+
+        <div class="critical">
+            <strong>Key Difference from New Installation:</strong><br>
+            Meter changes require <strong>ending existing relationships</strong> before or while starting new ones. The SDP already exists in MDM/R - you're only changing the meter configuration.
+        </div>
+
+        <h2>1.1 When to Use This Guide</h2>
+
+        <p>Use this guide when:</p>
+        <ul class="checklist">
+            <li>Replacing a failed or damaged meter</li>
+            <li>Upgrading meter technology (e.g., older AMI to newer model)</li>
+            <li>Correcting meter installation errors</li>
+            <li>Performing meter accuracy testing (swap and swap back)</li>
+            <li>Changing meter configuration (interval length, channel config)</li>
+        </ul>
+
+        <div class="warning">
+            <strong>Not Covered in This Guide:</strong>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+                <li>Brand new SDP with first meter (see New Meter Installation Guide)</li>
+                <li>Permanent meter removal with no replacement (see Meter Removal Guide)</li>
+                <li>Meter read data resubmission after changes (separate process)</li>
+            </ul>
+        </div>
+
+        <h1 id="section2">2. Quick Decision Flowchart</h1>
+
+        <div class="flowchart">
+            <h3>Which Meter Change Scenario Do I Need?</h3>
+            
+            <div class="flowchart-box">
+                <strong>START:</strong> I need to change a meter at an existing SDP
+            </div>
+            
+            <div class="flowchart-arrow">↓</div>
+            
+            <div class="flowchart-decision">
+                <strong>QUESTION 1:</strong> Are you physically swapping the meter?<br>
+                (Removing one physical meter and installing a different physical meter)
+            </div>
+            
+            <div class="flowchart-arrow">↓ YES → Continue | NO → Go to <strong>Scenario C (Logical Change)</strong></div>
+            
+            <div class="flowchart-arrow">↓</div>
+            
+            <div class="flowchart-decision">
+                <strong>QUESTION 2:</strong> Does the NEW meter have:<br>
+                • SAME interval length as old meter? AND<br>
+                • SAME channel configuration set as old meter?
+            </div>
+            
+            <div class="flowchart-arrow">↓ YES → <strong>Scenario A (Same Configuration)</strong> | NO → <strong>Scenario B (Different Configuration)</strong></div>
+            
+            <div class="flowchart-arrow">↓</div>
+            
+            <div class="flowchart-decision">
+                <strong>QUESTION 3:</strong> Is there a CT/PT Multiplier change?
+            </div>
+            
+            <div class="flowchart-arrow">↓ YES → Add <strong>Section 7 (CT/PT Changes)</strong> | NO → Proceed with your scenario as-is</div>
+            
+            <div class="flowchart-box" style="background: #e8f5e9; border-color: #4caf50;">
+                <strong>RESULT:</strong> You now know which section to follow!
+            </div>
+        </div>
+
+        <h2>2.1 Scenario Comparison at a Glance</h2>
+
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Scenario A<br>Same Config</th>
+                    <th>Scenario B<br>Different Config</th>
+                    <th>Scenario C<br>Logical Change</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Physical Swap?</strong></td>
+                    <td>Yes - Different meter</td>
+                    <td>Yes - Different meter</td>
+                    <td>No - Same meter</td>
+                </tr>
+                <tr>
+                    <td><strong>Interval Length</strong></td>
+                    <td>Same as old</td>
+                    <td>Different from old</td>
+                    <td>N/A</td>
+                </tr>
+                <tr>
+                    <td><strong>Channel Config Set</strong></td>
+                    <td>Same as old</td>
+                    <td>Different from old</td>
+                    <td>N/A</td>
+                </tr>
+                <tr>
+                    <td><strong># of Syncs Required</strong></td>
+                    <td>ONE</td>
+                    <td>TWO (separate)</td>
+                    <td>ONE</td>
+                </tr>
+                <tr>
+                    <td><strong>Complexity</strong></td>
+                    <td>Medium</td>
+                    <td>High</td>
+                    <td>Low</td>
+                </tr>
+                <tr>
+                    <td><strong>Common Use</strong></td>
+                    <td>80% of meter changes</td>
+                    <td>15% of meter changes</td>
+                    <td>5% of meter changes</td>
+                </tr>
+                <tr>
+                    <td><strong>Business Scenario Reference</strong></td>
+                    <td>BS 3 (page 73)</td>
+                    <td>BS 18 (pages 80-81)</td>
+                    <td>BS 4 (page 74)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h1 id="section3">3. Pre-Requisites (All Scenarios)</h1>
+
+        <h2>3.1 Before You Begin</h2>
+
+        <ul class="checklist">
+            <li>SDP already exists in MDM/R (Universal SDP ID assigned)</li>
+            <li>Old meter is currently synchronized and active in MDM/R</li>
+            <li>New meter has been physically installed (for physical changes)</li>
+            <li>New meter is communicating with AMCC</li>
+            <li>You know the old meter's current configuration (Interval Length, Channel Configuration Set, Meter ID, AMCD ID)</li>
+            <li>You know the new meter's configuration (for physical changes)</li>
+            <li>You know if CT/PT Multiplier is changing</li>
+            <li>You have identified which scenario applies (A, B, or C)</li>
+        </ul>
+
+        <h2>3.2 Information You'll Need</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Information Type</th>
+                    <th>Details Required</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Universal SDP ID</strong></td>
+                    <td>8-digit USDP ID (already assigned to this SDP)</td>
+                </tr>
+                <tr>
+                    <td><strong>Old Meter Details</strong></td>
+                    <td>Meter ID, AMCD ID, Interval Length, Channel Config Set, Dials, Installation Date/Time</td>
+                </tr>
+                <tr>
+                    <td><strong>New Meter Details</strong></td>
+                    <td>Meter ID, AMCD ID, Interval Length, Channel Config Set, Dials</td>
+                </tr>
+                <tr>
+                    <td><strong>Swap Date/Time</strong></td>
+                    <td>Actual date/time of meter removal and installation</td>
+                </tr>
+                <tr>
+                    <td><strong>CT/PT Status</strong></td>
+                    <td>Current value (if non-unity), new value (if changing)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="warning">
+            <strong>Important - Same Day Swap Emphasis:</strong><br>
+            This guide assumes you are removing the old meter and installing the new meter on the <strong>same day</strong>. The synchronization should occur after both the removal and installation are complete.
+        </div>
+
+        <h1 id="section4">4. Scenario A: Physical Meter Change - Same Configuration</h1>
+
+        <div class="scenario-box">
+            <strong>Scenario A Definition:</strong>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+                <li>Physically removing one meter and installing a different meter</li>
+                <li>New meter has SAME interval length as old meter</li>
+                <li>New meter has SAME channel configuration set as old meter</li>
+                <li>Can be completed in ONE synchronization</li>
+                <li>Most common scenario (~80% of meter changes)</li>
+            </ul>
+            <strong>Reference:</strong> Business Scenario 3 (Table 2.3.10-3, page 73)
+        </div>
+
+        <h2>4.1 What Happens in Scenario A</h2>
+
+        <p>In a single synchronization, you will:</p>
+        <ol style="padding-left: 20px; margin: 20px 0;">
+            <li>End the SDP to Old Meter relationship</li>
+            <li>Keep the Old Meter to Communication Module relationship (do NOT end it)</li>
+            <li>Start the SDP to New Meter relationship</li>
+            <li>Start the New Meter to Communication Module relationship</li>
+            <li>Start Dials parameter for new meter</li>
+        </ol>
+
+        <div class="critical">
+            <strong>⚠ CRITICAL RULE: Never End Meter to Comm Module When Removing Meter</strong>
+            <p>When ending a meter relationship, you MUST provide the Meter to Communication Module relationship with the current Start Date/Time and NO End Date/Time. This is a common mistake that violates Business Rule 20.</p>
+        </div>
+
+        <h2>4.2 Elements Required for Scenario A</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 15%">File</th>
+                    <th style="width: 25%">Element</th>
+                    <th style="width: 20%">Action</th>
+                    <th style="width: 40%">Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Asset (01)</strong></td>
+                    <td>Old Meter</td>
+                    <td>Provide</td>
+                    <td>With OLD configuration (same as when installed)</td>
+                </tr>
+                <tr>
+                    <td><strong>Asset (01)</strong></td>
+                    <td>Old Comm Module</td>
+                    <td>Provide</td>
+                    <td>Old AMCD ID</td>
+                </tr>
+                <tr>
+                    <td><strong>Asset (01)</strong></td>
+                    <td>SDP</td>
+                    <td>Provide</td>
+                    <td>Existing SDP (for context)</td>
+                </tr>
+                <tr>
+                    <td><strong>Asset (01)</strong></td>
+                    <td>New Meter</td>
+                    <td>Provide</td>
+                    <td>With SAME configuration as old meter</td>
+                </tr>
+                <tr>
+                    <td><strong>Asset (01)</strong></td>
+                    <td>New Comm Module</td>
+                    <td>Provide</td>
+                    <td>New AMCD ID</td>
+                </tr>
+                <tr>
+                    <td><strong>Parameter (04)</strong></td>
+                    <td>Dials (New Meter)</td>
+                    <td><strong>START</strong></td>
+                    <td>Match new meter installation time</td>
+                </tr>
+                <tr>
+                    <td><strong>Relationship (05)</strong></td>
+                    <td>SDP to Old Meter</td>
+                    <td><strong>END-DATE</strong></td>
+                    <td>Current Start + End Date/Time</td>
+                </tr>
+                <tr>
+                    <td><strong>Relationship (05)</strong></td>
+                    <td>Old Meter to Comm</td>
+                    <td>Provide, leave END null</td>
+                    <td>Current Start, End = null (CRITICAL)</td>
+                </tr>
+                <tr>
+                    <td><strong>Relationship (05)</strong></td>
+                    <td>SDP to New Meter</td>
+                    <td><strong>START</strong></td>
+                    <td>New meter installation time</td>
+                </tr>
+                <tr>
+                    <td><strong>Relationship (05)</strong></td>
+                    <td>New Meter to Comm</td>
+                    <td><strong>START</strong></td>
+                    <td>Same as SDP to Meter start</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="tip">
+            <strong>Timing Tip for Scenario A:</strong><br>
+            The End Date/Time for old meter and Start Date/Time for new meter should reflect actual field events:
+            <ul style="margin: 10px 0; padding-left: 20px;">
+                <li>End Date/Time: When old meter was physically removed</li>
+                <li>Start Date/Time: When new meter was physically installed and energized</li>
+            </ul>
+            <p>These times are typically minutes apart (more common for same-day swap)</p>
+        </div>
+
+        <h2>4.3 Example Records - Scenario A</h2>
+
+        <p><strong>Situation:</strong> Replacing meter MTR-OLD-001 with MTR-NEW-001 at SDP 00123456. Both meters are 60-minute interval, Channel Config Set 01. Swap occurred on January 15, 2025.</p>
+
+        <h3>File 01: Asset File</h3>
+        <div class="code-block">
+&lt;FTSFN&gt;ORG12345.ORG12345.4000.00.20250116080000.SWAP01.01.01.DAT&lt;/FTSFN&gt;
+H|ORG12345|IncrementalSync|Asset|20250116080000
+
+<span style="color: #cc0000;">// OLD METER - Provide so relationships can be ended</span>
+Meter|MTR-OLD-001|P||||||60|01|1.00|||
+Communication Module|AMCD-OLD-001|02||||||||||
+
+<span style="color: #007700;">// NEW METER - Start with same configuration</span>
+SDP|00123456|SDP-ABC-001|P|Y|Y|||||||||
+Meter|MTR-NEW-001|P||||||60|01|1.00|||
+Communication Module|AMCD-NEW-001|02||||||||||
+        </div>
+
+        <h3>File 04: Parameter File</h3>
+        <div class="code-block">
+&lt;FTSFN&gt;ORG12345.ORG12345.4000.00.20250116080000.SWAP01.04.01.DAT&lt;/FTSFN&gt;
+H|ORG12345|IncrementalSync|Parameter|20250116080000
+
+<span style="color: #007700;">// NEW METER - Dials parameter</span>
+Parameter|MTR-NEW-001|Dials|6|20250115103000|
+        </div>
+
+        <h3>File 05: Relationship File</h3>
+        <div class="code-block">
+&lt;FTSFN&gt;ORG12345.ORG12345.4000.00.20250116080000.SWAP01.05.01.DAT&lt;/FTSFN&gt;
+H|ORG12345|IncrementalSync|Relationship|20250116080000
+
+<span style="color: #cc0000;">// OLD METER - End SDP to Meter relationship</span>
+Relationship|00123456|SDP|MTR-OLD-001|METER|20230308140000|20250115101500
+
+<span style="color: #cc0000;">// OLD METER - Keep Meter to Comm Module (leave end null)</span>
+Relationship|MTR-OLD-001|METER|AMCD-OLD-001|COMMUNICATION MODULE|20230308140000|
+
+<span style="color: #007700;">// NEW METER - Start SDP to Meter relationship</span>
+Relationship|00123456|SDP|MTR-NEW-001|METER|20250115103000|
+
+<span style="color: #007700;">// NEW METER - Start Meter to Comm Module relationship</span>
+Relationship|MTR-NEW-001|METER|AMCD-NEW-001|COMMUNICATION MODULE|20250115103000|
+        </div>
+
+        <div class="section-break"></div>
+
+        <h1 id="section5">5. Scenario B: Physical Meter Change - Different Configuration</h1>
+
+        <div class="scenario-box">
+            <strong>Scenario B Definition:</strong>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+                <li>Physically removing one meter and installing a different meter</li>
+                <li>New meter has DIFFERENT interval length and/or channel configuration set</li>
+                <li><strong>MUST be completed in TWO separate synchronizations</strong></li>
+                <li>Less common but more complex (~15% of cases)</li>
+            </ul>
+            <strong>Reference:</strong> Business Scenario 18 (Table 2.3.10-18, pages 80-81)
+        </div>
+
+        <div class="critical">
+            <strong>WHY TWO SYNCHRONIZATIONS ARE REQUIRED:</strong><br>
+            When interval length or channel configuration set changes, the MDM/R must:
+            <ol style="padding-left: 20px;">
+                <li>End all channel relationships for the old configuration</li>
+                <li>Create new channel relationships for the new configuration</li>
+            </ol>
+            <p>These operations cannot happen simultaneously. File 07 (Component SDP) contains channel-to-channel mappings that are configuration-specific and must be cleanly separated.</p>
+        </div>
+
+        <h2>5.1 Two-Sync Process Overview</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 20%">Sync</th>
+                    <th style="width: 40%">Purpose</th>
+                    <th style="width: 40%">Key Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Sync 1</strong></td>
+                    <td>Remove old meter with old configuration</td>
+                    <td>End SDP to Meter relationship; Provide old meter with OLD config</td>
+                </tr>
+                <tr>
+                    <td><strong>Wait Period</strong></td>
+                    <td>Verify Sync 1 processed successfully</td>
+                    <td>Review IR14, IR06, IR07; Check GUI</td>
+                </tr>
+                <tr>
+                    <td><strong>Sync 2</strong></td>
+                    <td>Add new meter with new configuration</td>
+                    <td>Start SDP to Meter relationship; Provide new meter with NEW config</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>5.2 Synchronization 1 - Remove Old Meter</h2>
+
+        <h3>Before Sync 1</h3>
+        <ul class="checklist">
+            <li>Old meter has different interval length OR channel config set than new meter</li>
+            <li>Know old meter's CURRENT configuration</li>
+            <li>Old meter removed</li>
+        </ul>
+
+        <h3>Files for Sync 1</h3>
+        <ul class="checklist">
+            <li>File 00: Manifest</li>
+            <li>File 01: Asset (old meter with OLD configuration, old comm module)</li>
+            <li>File 02: Premise (header only)</li>
+            <li>File 03: Service Agreement (header only)</li>
+            <li>File 04: Parameter (header only, or end Dials if required)</li>
+            <li>File 05: Relationship (end SDP-to-Old-Meter, provide Old-Meter-to-Comm)</li>
+            <li>File 07: Component SDP (header only)</li>
+        </ul>
+
+        <h3>Critical Checks Sync 1</h3>
+        <ul class="checklist">
+            <li>Old meter provided with OLD interval length (not new)</li>
+            <li>Old meter provided with OLD channel config set (not new)</li>
+            <li>SDP to Meter relationship ended</li>
+            <li>Meter to Comm Module NOT ended</li>
+        </ul>
+
+        <h3>Between Syncs</h3>
+        <ul class="checklist">
+            <li>Wait for Sync 1 processing to complete</li>
+            <li>Review IR14, IR06, IR07 reports</li>
+            <li>Verify in GUI old meter relationship ended</li>
+            <li>New meter installed (if not already)</li>
+        </ul>
+
+        <h2>5.3 Synchronization 2 - Add New Meter</h2>
+
+        <h3>Files for Sync 2</h3>
+        <ul class="checklist">
+            <li>File 00: Manifest</li>
+            <li>File 01: Asset (SDP, new meter with NEW configuration, new comm module)</li>
+            <li>File 02: Premise (header only)</li>
+            <li>File 03: Service Agreement (header only)</li>
+            <li>File 04: Parameter (new meter Dials, CT/PT if applicable)</li>
+            <li>File 05: Relationship (start SDP-to-New-Meter, start New-Meter-to-Comm)</li>
+            <li>File 07: Component SDP (header only)</li>
+        </ul>
+
+        <h3>Critical Checks Sync 2</h3>
+        <ul class="checklist">
+            <li>New meter provided with NEW interval length</li>
+            <li>New meter provided with NEW channel config set</li>
+            <li>New meter Start = Meter to Comm Start = Dials Start</li>
+            <li>Start Date/Time on or after old meter End Date/Time</li>
+        </ul>
+
+        <div class="warning">
+            <strong>⚠ Important Timing Note:</strong><br>
+            Do NOT submit Sync 2 until Sync 1 has been processed successfully by MDM/R. Review all reports and verify the old meter relationship has been properly ended before proceeding.
+        </div>
+
+        <div class="section-break"></div>
+
+        <h1 id="section6">6. Scenario C: Logical Meter Change</h1>
+
+        <div class="scenario-box">
+            <strong>Scenario C Definition:</strong>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+                <li>NOT a physical meter swap (same meter stays installed)</li>
+                <li>End and restart the SDP to Meter relationship for the SAME meter</li>
+                <li>Used for administrative corrections or logical resets</li>
+                <li>Can be completed in ONE synchronization</li>
+                <li>Least common scenario (~5% of cases)</li>
+            </ul>
+            <strong>Reference:</strong> Business Scenario 4 (Table 2.3.10-4, page 74)
+        </div>
+
+        <h2>6.1 When to Use Logical Meter Change</h2>
+
+        <p>Use Scenario C when you need to:</p>
+        <ul class="checklist">
+            <li>Reset meter data collection after a communication issue</li>
+            <li>Correct a synchronization timing error</li>
+            <li>Mark a logical boundary in meter history for administrative purposes</li>
+            <li>Re-establish meter relationship after resolving data issues</li>
+        </ul>
+
+        <div class="note">
+            <strong>Note:</strong> This is NOT used for physical meter swaps. The same physical meter remains installed at the SDP.
+        </div>
+
+        <h2>6.2 Elements Required</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 15%">File</th>
+                    <th style="width: 25%">Element</th>
+                    <th style="width: 20%">Action</th>
+                    <th style="width: 40%">Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Asset (01)</strong></td>
+                    <td>Meter</td>
+                    <td>Provide</td>
+                    <td>Same meter, same configuration</td>
+                </tr>
+                <tr>
+                    <td><strong>Relationship (05)</strong></td>
+                    <td>SDP to Meter (ending)</td>
+                    <td><strong>END-DATE</strong></td>
+                    <td>Current Start + End Date/Time</td>
+                </tr>
+                <tr>
+                    <td><strong>Relationship (05)</strong></td>
+                    <td>Meter to Comm Module</td>
+                    <td>Provide, leave END null</td>
+                    <td>Current Start, End = null (unchanged)</td>
+                </tr>
+                <tr>
+                    <td><strong>Relationship (05)</strong></td>
+                    <td>SDP to Meter (restarting)</td>
+                    <td><strong>START</strong></td>
+                    <td>New Start (typically same as or after End)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>6.3 Example Records - Scenario C</h2>
+
+        <div class="code-block">
+&lt;FTSFN&gt;ORG12345.ORG12345.4000.00.20250116080000.LOGIC1.05.01.DAT&lt;/FTSFN&gt;
+H|ORG12345|IncrementalSync|Relationship|20250116080000
+
+<span style="color: #cc0000;">// END the existing SDP to Meter relationship</span>
+Relationship|00123456|SDP|MTR-001|METER|20230308140000|20250115120000
+
+<span style="color: #000099;">// KEEP Meter to Comm Module unchanged</span>
+Relationship|MTR-001|METER|AMCD-001|COMMUNICATION MODULE|20230308140000|
+
+<span style="color: #007700;">// RESTART the SDP to Meter relationship (same meter)</span>
+Relationship|00123456|SDP|MTR-001|METER|20250115120000|
+        </div>
+
+        <div class="section-break"></div>
+
+        <h1 id="section7">7. CT/PT Multiplier Changes</h1>
+
+        <div class="critical">
+            <strong>Important:</strong> CT/PT Multiplier changes can occur with ANY of the three meter change scenarios (A, B, or C). This section provides the additional steps required when CT/PT is changing.
+        </div>
+
+        <h2>7.1 CT/PT Multiplier Rules</h2>
+
+        <div class="note">
+            <strong>Business Rules 26-28 (pages 67-68):</strong>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+                <li>Only non-unity values (NOT 1 or 0) are processed by MDM/R</li>
+                <li>Non-unity CT/PT Multipliers MUST be explicitly ended</li>
+                <li>CT/PT changes CANNOT be future-dated</li>
+                <li>A CT/PT Multiplier change MUST be accompanied by a meter relationship change</li>
+            </ul>
+        </div>
+
+        <h2>7.2 What to Synchronize for CT/PT Changes</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Scenario</th>
+                    <th>Current CT/PT</th>
+                    <th>New CT/PT</th>
+                    <th>What to Synchronize</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Adding CT/PT</strong></td>
+                    <td>Unity (none)</td>
+                    <td>Non-unity (e.g., 100)</td>
+                    <td>Start new CT/PT parameter</td>
+                </tr>
+                <tr>
+                    <td><strong>Removing CT/PT</strong></td>
+                    <td>Non-unity (e.g., 100)</td>
+                    <td>Unity (none)</td>
+                    <td>End existing CT/PT parameter</td>
+                </tr>
+                <tr>
+                    <td><strong>Changing CT/PT</strong></td>
+                    <td>Non-unity (e.g., 100)</td>
+                    <td>Different non-unity (e.g., 200)</td>
+                    <td>End old + Start new CT/PT parameters</td>
+                </tr>
+                <tr>
+                    <td><strong>No CT/PT Change</strong></td>
+                    <td>Unity</td>
+                    <td>Unity</td>
+                    <td>Nothing (no CT/PT sync needed)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="section-break"></div>
+
+        <h1 id="section8">8. Critical Date/Time Rules</h1>
+
+        <div class="critical">
+            <h3>⚠ All Date/Times MUST Be in EST</h3>
+            <p>All date/time values in synchronization files MUST be in Eastern Standard Time (EST), not Eastern Daylight Time (EDT). This applies year-round, even during daylight saving time periods.</p>
+        </div>
+
+        <h2>8.1 Key Timing Requirements</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Element</th>
+                    <th>Timing Rule</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Old Meter End Time</strong></td>
+                    <td>Should reflect actual meter removal time</td>
+                </tr>
+                <tr>
+                    <td><strong>New Meter Start Time</strong></td>
+                    <td>Should reflect actual meter installation time</td>
+                </tr>
+                <tr>
+                    <td><strong>Dials Start Time</strong></td>
+                    <td>Must equal new meter SDP-to-Meter start time</td>
+                </tr>
+                <tr>
+                    <td><strong>Meter-to-Comm Start</strong></td>
+                    <td>Must equal new meter SDP-to-Meter start time</td>
+                </tr>
+                <tr>
+                    <td><strong>CT/PT Start/End</strong></td>
+                    <td>Must align with meter relationship changes</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="section-break"></div>
+
+        <h1 id="section9">9. Common Mistakes to Avoid</h1>
+
+        <div class="warning">
+            <h3>❌ Mistake 1: Ending Meter to Comm Module</h3>
+            <p>Never end the Meter to Communication Module relationship when removing a meter. This violates Business Rule 20.</p>
+        </div>
+
+        <div class="warning">
+            <h3>❌ Mistake 2: Wrong Configuration in Sync 1 (Scenario B)</h3>
+            <p>In Scenario B Sync 1, provide the OLD meter with its OLD configuration (not the new configuration).</p>
+        </div>
+
+        <div class="warning">
+            <h3>❌ Mistake 3: Submitting Sync 2 Before Sync 1 Completes</h3>
+            <p>For Scenario B, always wait for Sync 1 to process successfully before submitting Sync 2.</p>
+        </div>
+
+        <div class="warning">
+            <h3>❌ Mistake 4: Misaligned Relationship Start Times</h3>
+            <p>New meter's SDP-to-Meter, Meter-to-Comm, and Dials must all have identical Start Date/Time.</p>
+        </div>
+
+        <div class="warning">
+            <h3>❌ Mistake 5: Not Ending Non-Unity CT/PT</h3>
+            <p>Non-unity CT/PT Multipliers MUST be explicitly ended. They don't automatically end with meter change.</p>
+        </div>
+
+        <div class="section-break"></div>
+
+        <h1 id="section10">10. Post-Synchronization</h1>
+
+        <h2>10.1 Verify Reports</h2>
+
+        <ol style="padding-left: 20px; margin: 20px 0;">
+            <li><strong>IR10:</strong> Check for file set completeness issues</li>
+            <li><strong>IR14:</strong> Review for validation errors (check this first)</li>
+            <li><strong>IR06:</strong> Check for business rule violations</li>
+            <li><strong>IR07:</strong> Review processing exceptions</li>
+        </ol>
+
+        <h2>10.2 Verify in MDM/R GUI</h2>
+
+        <ul class="checklist">
+            <li>Search for SDP ID</li>
+            <li>Confirm old meter relationship ended</li>
+            <li>Confirm new meter relationship active</li>
+            <li>Verify all parameters correct</li>
+        </ul>
+
+        <h2>10.3 Verify Meter Reads</h2>
+
+        <ul class="checklist">
+            <li>Confirm new meter reads being received</li>
+            <li>Verify VEE processing working</li>
+            <li>Check billing quantities generation</li>
+        </ul>
+
+        <div class="section-break"></div>
+
+        <h1 id="section11">11. Quick Reference Checklists</h1>
+
+        <h2>11.1 Scenario A Checklist</h2>
+
+        <div class="scenario-box">
+            <strong>Scenario A: Physical Meter Change - Same Configuration</strong>
+        </div>
+
+        <h3>Before Synchronization</h3>
+        <ul class="checklist">
+            <li>Old meter removed, new meter installed (same day)</li>
+            <li>Both meters have SAME interval length</li>
+            <li>Both meters have SAME channel configuration set</li>
+            <li>New meter communicating with AMCC</li>
+            <li>Know exact removal and installation times</li>
+        </ul>
+
+        <h3>Critical Checks</h3>
+        <ul class="checklist">
+            <li>Old meter SDP to Meter relationship has End Date/Time</li>
+            <li>Old meter Meter to Comm Module has NO End Date/Time</li>
+            <li>New meter SDP to Meter Start = Meter to Comm Start = Dials Start</li>
+            <li>All date/times in EST</li>
+            <li>New meter interval length and channel config set match old</li>
+        </ul>
+
+        <h2>11.2 Scenario B Checklist</h2>
+
+        <div class="scenario-box">
+            <strong>Scenario B: Physical Meter Change - Different Configuration (2 Syncs)</strong>
+        </div>
+
+        <h3>Sync 1 Critical Checks</h3>
+        <ul class="checklist">
+            <li>Old meter provided with OLD interval length (not new)</li>
+            <li>Old meter provided with OLD channel config set (not new)</li>
+            <li>SDP to Meter relationship ended</li>
+            <li>Meter to Comm Module NOT ended</li>
+        </ul>
+
+        <h3>Sync 2 Critical Checks</h3>
+        <ul class="checklist">
+            <li>New meter provided with NEW interval length</li>
+            <li>New meter provided with NEW channel config set</li>
+            <li>New meter Start = Meter to Comm Start = Dials Start</li>
+            <li>Sync 1 completed successfully before submitting Sync 2</li>
+        </ul>
+
+        <h2>11.3 Scenario C Checklist</h2>
+
+        <div class="scenario-box">
+            <strong>Scenario C: Logical Meter Change</strong>
+        </div>
+
+        <h3>Critical Checks</h3>
+        <ul class="checklist">
+            <li>Same Meter ID in both end and restart records</li>
+            <li>End Date/Time on interval boundary</li>
+            <li>New Start Date/Time equals or immediately follows End Date/Time</li>
+            <li>Meter to Comm Module unchanged (no end date)</li>
+            <li>Configuration unchanged</li>
+        </ul>
+
+        <div class="section-break"></div>
+
+        <h1 id="section12">12. Summary & Comparison</h1>
+
+        <h2>12.1 Scenario Summary Table</h2>
+
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Characteristic</th>
+                    <th>Scenario A</th>
+                    <th>Scenario B</th>
+                    <th>Scenario C</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Physical Swap?</strong></td>
+                    <td>Yes</td>
+                    <td>Yes</td>
+                    <td>No</td>
+                </tr>
+                <tr>
+                    <td><strong>Configuration Change?</strong></td>
+                    <td>No (same)</td>
+                    <td>Yes (different)</td>
+                    <td>No</td>
+                </tr>
+                <tr>
+                    <td><strong>Syncs Required</strong></td>
+                    <td>1</td>
+                    <td>2 (separate)</td>
+                    <td>1</td>
+                </tr>
+                <tr>
+                    <td><strong>End SDP to Meter?</strong></td>
+                    <td>Yes</td>
+                    <td>Yes (Sync 1)</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td><strong>End Meter to Comm?</strong></td>
+                    <td>No</td>
+                    <td>No</td>
+                    <td>No</td>
+                </tr>
+                <tr>
+                    <td><strong>Common Use %</strong></td>
+                    <td>~80%</td>
+                    <td>~15%</td>
+                    <td>~5%</td>
+                </tr>
+                <tr>
+                    <td><strong>Complexity</strong></td>
+                    <td>Medium</td>
+                    <td>High</td>
+                    <td>Low</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>12.2 Key Takeaways</h2>
+
+        <div class="tip">
+            <strong>Most Important Points:</strong>
+            <ol style="padding-left: 20px;">
+                <li><strong>Configuration Determines Syncs:</strong> If interval length or channel config set changes, you MUST use 2 syncs (Scenario B)</li>
+                <li><strong>Only End SDP to Meter:</strong> Never end Meter to Comm Module when removing meter</li>
+                <li><strong>Match Start Times:</strong> New meter's SDP to Meter, Meter to Comm, and Dials must have identical Start Date/Time</li>
+                <li><strong>CT/PT Explicit End:</strong> Non-unity CT/PT Multipliers must be explicitly ended when changing or removing</li>
+                <li><strong>Verify Before Proceeding:</strong> For Scenario B, wait for Sync 1 to complete successfully before submitting Sync 2</li>
+            </ol>
+        </div>
+
+        <div class="footer">
+            <p><a href="index.html" class="back-to-hub" style="margin: 0 auto 15px auto;"> Back to Documentation Hub</a></p>
+            <p><strong>Support:</strong> MDM/R Service Desk - <a href="https://mdmrsupport.service-now.com" style="color: #0066cc;">https://mdmrsupport.service-now.com</a></p>
+            <p><strong>Reference:</strong> Business Scenarios 3, 4, 11, 18 | SME-SPEC-40 Issue 1.10.1</p>
+        </div>
+    </div>
+</body>
+</html>

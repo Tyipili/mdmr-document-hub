@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal SDP ID Assignment Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .back-to-hub {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .back-to-hub:hover {
+            background: linear-gradient(135deg, #0052a3 0%, #003d7a 100%);
+            transform: translateX(-3px);
+        }
+
+        .back-to-hub::before {
+            content: "←";
+            font-size: 18px;
+            font-weight: bold;
+        }
+ 
+        .cover-page {
+            text-align: center;
+            padding: 60px 20px;
+            border-bottom: 4px solid #0066cc;
+            margin-bottom: 40px;
+        }
+        
+        .cover-page h1 {
+            color: #0066cc;
+            font-size: 42px;
+            margin-bottom: 20px;
+        }
+        
+        .cover-page .subtitle {
+            font-size: 22px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .cover-page .metadata {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            display: inline-block;
+            text-align: left;
+        }
+ 
+        .header {
+            background: linear-gradient(135deg, #0066cc 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 10px;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 18px;
+            opacity: 0.95;
+            margin-bottom: 20px;
+        }
+        
+        .metadata {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            background: rgba(255,255,255,0.1);
+            padding: 15px 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        
+        .metadata-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .metadata-item strong {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .toc {
+            background: #f8f9fa;
+            padding: 30px;
+            margin: 30px 0;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .toc h2 {
+            color: #0066cc;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .toc ul li {
+            padding: 10px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .toc ul li:last-child {
+            border-bottom: none;
+        }
+        
+        .toc ul li a {
+            color: #333;
+            text-decoration: none;
+            display: block;
+            transition: color 0.3s, padding-left 0.3s;
+        }
+        
+        .toc ul li a:hover {
+            color: #0066cc;
+            padding-left: 10px;
+        }
+        
+        .section {
+            margin-bottom: 50px;
+        }
+        
+        .section-header {
+            background: linear-gradient(to right, #0066cc, #667eea);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        
+        .section-header h2 {
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .report-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        h3 {
+            color: #0066cc;
+            margin: 30px 0 15px 0;
+            font-size: 22px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+        
+        h4 {
+            color: #333;
+            margin: 20px 0 10px 0;
+            font-size: 18px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        thead {
+            background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+            color: white;
+        }
+        
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+        }
+        
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .error-box {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .flowchart {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+        
+        .step {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 5px;
+            border-left: 4px solid #0066cc;
+        }
+        
+        .step-number {
+            background: #0066cc;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #d63384;
+        }
+        
+        ul, ol {
+            margin: 15px 0 15px 30px;
+        }
+        
+        li {
+            margin: 8px 0;
+        }
+        
+        strong {
+            color: #0066cc;
+        }
+        
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 2px solid #dee2e6;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        @media print {
+            .back-to-hub, .footer {
+                display: none;
+            }
+            
+            .section {
+                page-break-inside: avoid;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 28px;
+            }
+			
+			.cover-page h1 {
+                font-size: 32px;
+            }
+            
+            table {
+                font-size: 14px;
+            }
+            
+            th, td {
+                padding: 10px;
+            }
+
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-to-hub">Back to Documentation Hub</a>
+        
+        <div class="cover-page">
+            <h1>Universal SDP ID Assignment Guide</h1>
+            <div class="subtitle">Complete Process Guide - Request, Response & Reporting</div>
+            <div class="metadata">
+                    <p><strong>Document Type: </strong>
+                    <span>Foundational Process Guide</span></p>
+                    <p><strong>File Types: </strong>
+                    <span>1000 (Request), 2000 (Response), IR01 (Report)</span></p>
+                    <p><strong>Reference: </strong>
+                    <span>SME-SPEC-39, SME-SPEC-79</span></p>
+                    <p><strong>Version: </strong>
+                    <span>1.0</span></p>
+            </div>
+        </div>
+
+        <div class="toc">
+            <h2>TABLE OF CONTENTS</h2>
+            <ul>
+                <li><a href="#overview">1. Understanding Universal SDP IDs</a></li>
+                <li><a href="#when-to-request">2. When to Request USDP IDs</a></li>
+                <li><a href="#prerequisites">3. Prerequisites & Requirements</a></li>
+                <li><a href="#process-flow">4. The USDP Assignment Process Flow</a></li>
+                <li><a href="#request-file">5. Creating the Request File (File Type 1000)</a></li>
+                <li><a href="#response-file">6. Understanding the Response File (File Type 2000)</a></li>
+                <li><a href="#ir01-report">7. Interpreting the IR01 Report</a></li>
+                <li><a href="#troubleshooting">8. Troubleshooting Common Issues</a></li>
+                <li><a href="#best-practices">9. Best Practices & Tips</a></li>
+                <li><a href="#examples">10. Complete Examples</a></li>
+            </ul>
+        </div>
+
+        <div id="overview" class="section">
+            <div class="section-header">
+                <h2>1. Understanding Universal SDP IDs</h2>
+            </div>
+
+            <h3>What is a Universal SDP ID (USDP)?</h3>
+            <p>A Universal SDP ID is an <strong>Ontario-wide unique 8-digit identifier</strong> assigned by the MDM/R that identifies a Service Delivery Point (SDP) across all LDCs and market participants in the province.</p>
+
+            <div class="info-box">
+                <h4>Key Characteristics</h4>
+                <ul>
+                    <li><strong>Format:</strong> Fixed 8-digit number (e.g., 00037482)</li>
+                    <li><strong>Uniqueness:</strong> Unique across all of Ontario, not just within your LDC</li>
+                    <li><strong>Assignment:</strong> Can only be assigned by MDM/R through File Type 1000/2000 process</li>
+                    <li><strong>Permanence:</strong> Once assigned, the USDP ID remains with that SDP for its lifetime</li>
+                    <li><strong>Prerequisite:</strong> Must be assigned BEFORE you can create the SDP in MDM/R through synchronization</li>
+                </ul>
+            </div>
+
+            <h3>USDP ID vs SDP ID</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 20%">Identifier Type</th>
+                        <th style="width: 40%">Universal SDP ID (USDP)</th>
+                        <th style="width: 40%">SDP ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Purpose</strong></td>
+                        <td>Ontario-wide unique identifier for province-wide market operations</td>
+                        <td>Your LDC's internal identifier for the service delivery point</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Assigned By</strong></td>
+                        <td>MDM/R (via File Type 1000/2000 process)</td>
+                        <td>Your LDC's systems</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Format</strong></td>
+                        <td>Fixed Number(8), zero-padded (e.g., 00037482)</td>
+                        <td>Varchar(50), any format your LDC uses</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Uniqueness</strong></td>
+                        <td>Unique across all Ontario LDCs</td>
+                        <td>Unique only within your LDC</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Used In</strong></td>
+                        <td>All MDM/R transactions, market settlements, retailer operations</td>
+                        <td>Your internal systems and synchronization file sets</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Relationship</strong></td>
+                        <td colspan="2">ONE SDP ID maps to ONE USDP ID. This mapping is established during USDP assignment and maintained throughout the SDP's lifetime.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="when-to-request" class="section">
+            <div class="section-header">
+                <h2>2. When to Request USDP IDs</h2>
+            </div>
+
+            <h3>Critical Timing: Request BEFORE Synchronization</h3>
+            
+            <div class="error-box">
+                <h4>⚠️ CRITICAL PREREQUISITE</h4>
+                <p><strong>You MUST obtain a Universal SDP ID BEFORE you can create a new SDP in the MDM/R through synchronization.</strong> If you attempt to synchronize a new SDP without first obtaining its USDP ID, the synchronization will fail with error code 10 in the IR14 report: "Universal SDP ID not defined through Universal SDP ID Assignment Process."</p>
+            </div>
+
+            <h3>Request USDP IDs When:</h3>
+            <ul class="checklist">
+                <li><strong>New Construction:</strong> New homes, buildings, or facilities are being connected to your distribution system</li>
+                <li><strong>Service Upgrades:</strong> Existing location is being upgraded to create a new metering point</li>
+                <li><strong>Subdivisions:</strong> Multiple new SDPs in a new development</li>
+                <li><strong>Service Splits:</strong> One SDP is being divided into multiple separate SDPs</li>
+                <li><strong>Historical Cleanup:</strong> Identifying SDPs that exist in your system but were never properly registered in MDM/R</li>
+                <li><strong>Bulk Requests:</strong> You can request thousands of USDP IDs in a single file for planned projects</li>
+            </ul>
+
+            <h3>Recommended Workflow</h3>
+            <div class="flowchart">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div>
+                        <strong>Identify New SDPs in Your System</strong><br>
+                        Determine which locations need Universal SDP IDs (new construction, upgrades, etc.)
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div>
+                        <strong>Create File Type 1000 Request</strong><br>
+                        Submit request file with your LDC_ID and internal SDP_ID for each location
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div>
+                        <strong>MDM/R Processes Request (15-min cycles)</strong><br>
+                        Receive File Type 2000 Response and IR01 Report
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div>
+                        <strong>Map USDP IDs to Your SDP IDs</strong><br>
+                        Update your internal systems with the assigned Universal SDP IDs
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">5</div>
+                    <div>
+                        <strong>Create SDPs via Synchronization</strong><br>
+                        Now you can synchronize these SDPs to MDM/R using File Type 4000 with both SDP_ID and Universal_SDP_ID
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="prerequisites" class="section">
+            <div class="section-header">
+                <h2>3. Prerequisites & Requirements</h2>
+            </div>
+
+            <h3>Before You Can Request USDP IDs</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 25%">Requirement</th>
+                        <th style="width: 75%">Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>MDM/R Enrollment</strong></td>
+                        <td>Your LDC must be enrolled with MDM/R and assigned an Organization ID (ORG_ID) in format ORGxxxxx</td>
+                    </tr>
+                    <tr>
+                        <td><strong>AS2 Connection</strong></td>
+                        <td>File Transfer Services (FTS) must be configured with AS2 connectivity to MDM/R. Reference SME_MAN_9001 for AS2 setup.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Agent Authorization</strong></td>
+                        <td>If using an agent to submit requests on your behalf, the agent relationship must be registered with MDM/R</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Internal SDP IDs</strong></td>
+                        <td>You must have internal SDP identifiers in your systems. These can be any format (up to 50 characters) but must be unique within your LDC.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>LDC ID Format</strong></td>
+                        <td>Must be exactly 8 characters: Char(8) format, example: ORG12345</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Required Information for Each Request</h3>
+            <ul>
+                <li><strong>LDC_ID:</strong> Your organization identifier (Char 8)</li>
+                <li><strong>SDP_ID:</strong> Your internal identifier for the SDP (Varchar 50, unique within your LDC)</li>
+            </ul>
+
+            <div class="warning-box">
+                <h4>Important Notes</h4>
+                <ul>
+                    <li>You can request multiple USDP IDs in a single file (hundreds or thousands)</li>
+                    <li>If you request a USDP ID for an SDP_ID that already has one, it will be flagged as "already issued" (not an error)</li>
+                    <li>Invalid LDC_ID will cause request to fail - verify your ORG_ID is correct</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="process-flow" class="section">
+            <div class="section-header">
+                <h2>4. The USDP Assignment Process Flow</h2>
+            </div>
+
+            <h3>Overview of the Request/Response Cycle</h3>
+
+            <div class="flowchart">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div>
+                        <strong>LDC Submits File Type 1000</strong><br>
+                        Universal SDP ID Assignment Request via FTS (AS2)
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div>
+                        <strong>FTS Processing</strong><br>
+                        File passes AS2, undergoes FTS validation (file naming, authorization)
+                        <br><em>Failure = IR17 Report</em>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div>
+                        <strong>MDM/R Processes Request</strong><br>
+                        Validates LDC_ID, checks for duplicates, assigns new USDP IDs
+                        <br><em>Processes every 15 minutes from 00:00 to 23:45 EST</em>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div>
+                        <strong>MDM/R Generates Outputs</strong><br>
+                        Creates File Type 2000 Response + IR01 Summary Report
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">5</div>
+                    <div>
+                        <strong>LDC Receives Files</strong><br>
+                        File Type 2000 with assigned USDP IDs + IR01 report with summary statistics via FTS and GUI
+                    </div>
+                </div>
+            </div>
+
+            <h3>Processing Schedule & Timing</h3>
+
+            <div class="info-box">
+                <h4>15-Minute Processing Windows</h4>
+                <p>The USDP Assignment process runs as a scheduled script every <strong>15 minutes</strong> from <strong>00:00:00 EST to 23:45:00 EST</strong> daily.</p>
+                <ul>
+                    <li><strong>Processing Windows:</strong> :00, :15, :30, :45 of each hour</li>
+                    <li><strong>Last Run:</strong> 23:45 EST - no processing from 23:45 to midnight</li>
+                    <li><strong>Batching:</strong> Multiple requests submitted within the same 15-minute window are processed together</li>
+                    <li><strong>Report Generation:</strong> One IR01 report is generated per 15-minute cycle, containing summary records for all requests processed in that window</li>
+                </ul>
+            </div>
+
+            <div class="warning-box">
+                <h4>Timing Considerations</h4>
+                <ul>
+                    <li><strong>Late Submission:</strong> If your request completes processing after midnight (or the day after submission), you may receive an empty IR01 report with message: "There are no POD Id requests to report for the given condition"</li>
+                    <li><strong>Best Practice:</strong> Submit requests earlier in the day to ensure same-day processing and reporting</li>
+                    <li><strong>Expect Response:</strong> Within 15 minutes during business hours, you should receive File Type 2000 and IR01</li>
+                </ul>
+            </div>
+
+            <h3>File Flow Summary</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 15%">File Type</th>
+                        <th style="width: 25%">Direction</th>
+                        <th style="width: 30%">Purpose</th>
+                        <th style="width: 30%">Delivery Method</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>1000</strong></td>
+                        <td>LDC → MDM/R</td>
+                        <td>Request assignment of Universal SDP IDs</td>
+                        <td>FTS (AS2)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>2000</strong></td>
+                        <td>MDM/R → LDC</td>
+                        <td>Response containing assigned USDP IDs</td>
+                        <td>FTS (AS2)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>IR01</strong></td>
+                        <td>MDM/R → LDC</td>
+                        <td>Summary exception report with statistics</td>
+                        <td>FTS (AS2) + GUI</td>
+                    </tr>
+                    <tr>
+                        <td><strong>IR17</strong></td>
+                        <td>MDM/R → LDC</td>
+                        <td>FTS processing failure (if FTS errors occur)</td>
+                        <td>FTS (AS2) only</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="request-file" class="section">
+            <div class="section-header">
+                <h2>5. Creating the Request File (File Type 1000)</h2>
+            </div>
+
+            <h3>File Naming Convention</h3>
+            <p>File Type 1000 follows the standard MDM/R file naming convention:</p>
+            <div class="code-block">&lt;ORG_ID_1&gt;.&lt;ORG_ID_2&gt;.1000.&lt;REQ_VER&gt;.&lt;DATE_TIME&gt;.DAT</div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 20%">Element</th>
+                        <th style="width: 30%">Format</th>
+                        <th style="width: 50%">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>ORG_ID_1</strong></td>
+                        <td>Char(8)</td>
+                        <td>The LDC Organization ID (e.g., ORG11111)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>ORG_ID_2</strong></td>
+                        <td>Char(8)</td>
+                        <td>The submitting organization ID (LDC or authorized agent, e.g., ORG22222)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>1000</strong></td>
+                        <td>Fixed</td>
+                        <td>File Type identifier for USDP Assignment Request</td>
+                    </tr>
+                    <tr>
+                        <td><strong>REQ_VER</strong></td>
+                        <td>Number(2)</td>
+                        <td>Request version (currently 00)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>DATE_TIME</strong></td>
+                        <td>yyyyMMddHHmmss</td>
+                        <td>Date and time file was created (EST)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>.DAT</strong></td>
+                        <td>Fixed</td>
+                        <td>File extension</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>File Naming Examples</h3>
+            <div class="code-block">Example 1 - LDC submits directly:
+ORG11111.ORG11111.1000.00.20250116120000.DAT
+
+Example 2 - Agent submits on behalf of LDC:
+ORG11111.ORG22222.1000.00.20250116120000.DAT</div>
+
+            <h3>File Structure & Format</h3>
+            <p>File Type 1000 is a pipe-delimited (|) text file. Refer to the <strong>MDM/R Universal SDP ID Assignment Technical Interface Specification (SME-SPEC-39)</strong> for complete file format details including:</p>
+            
+            <ul>
+                <li><strong>File Name Record:</strong> Embedded file name in &lt;FTSFN&gt; tags</li>
+                <li><strong>Header Record:</strong> Contains LDC_ID and other metadata</li>
+                <li><strong>Detail Records:</strong> One record per SDP_ID for which you're requesting a USDP ID</li>
+            </ul>
+
+            <div class="info-box">
+                <h4>Key Points for Request File Creation</h4>
+                <ul class="checklist">
+                    <li>File must be pipe (|) delimited</li>
+                    <li>All dates/times must be in EST (never EDT)</li>
+                    <li>LDC_ID must be exactly 8 characters (Char 8)</li>
+                    <li>SDP_ID can be up to 50 characters (Varchar 50)</li>
+                    <li>Each SDP_ID must be unique within your LDC</li>
+                    <li>You can include hundreds or thousands of requests in one file</li>
+                    <li>File must not use pipe character (|) within data fields</li>
+                </ul>
+            </div>
+
+            <h3>Required Data Elements</h3>
+            <p>For each SDP you're requesting a USDP ID for, you must provide:</p>
+            <ol>
+                <li><strong>LDC_ID:</strong> Your organization identifier (must match enrolled ORG_ID)</li>
+                <li><strong>SDP_ID:</strong> Your internal identifier for this service delivery point</li>
+            </ol>
+
+            <div class="warning-box">
+                <h4>Common Request File Mistakes</h4>
+                <ul>
+                    <li>❌ Using invalid/unregistered LDC_ID → Will create "Number of invalid LDC IDs" exception</li>
+                    <li>❌ Incomplete data (missing required fields) → Will create "Number of Incomplete Data Requests" exception</li>
+                    <li>❌ Requesting USDP ID for SDP_ID that already has one → Will show as "Number of already issued Ids" (not an error, just informational)</li>
+                    <li>❌ Using EDT instead of EST for timestamps</li>
+                    <li>❌ Including pipe character (|) in SDP_ID or other data fields</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="response-file" class="section">
+            <div class="section-header">
+                <h2>6. Understanding the Response File (File Type 2000)</h2>
+            </div>
+
+            <h3>Response File Overview</h3>
+            <p>File Type 2000 is generated by MDM/R and sent back to you via FTS. It contains the assigned Universal SDP IDs mapped to your SDP IDs.</p>
+
+            <h3>File Naming Convention</h3>
+            <p>Response files follow the same naming pattern as requests but with File Type 2000:</p>
+            <div class="code-block">&lt;ORG_ID_1&gt;.&lt;ORG_ID_2&gt;.2000.&lt;REQ_VER&gt;.&lt;DATE_TIME&gt;.DAT</div>
+
+            <h3>Response File Content</h3>
+            <p>The response file maps your SDP_IDs to the newly assigned Universal SDP IDs:</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30%">Data Element</th>
+                        <th style="width: 20%">Format</th>
+                        <th style="width: 50%">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>LDC_ID</strong></td>
+                        <td>Char(8)</td>
+                        <td>Your organization identifier</td>
+                    </tr>
+                    <tr>
+                        <td><strong>SDP_ID</strong></td>
+                        <td>Varchar(50)</td>
+                        <td>Your internal SDP identifier (from request)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Universal_SDP_ID</strong></td>
+                        <td>Fixed Number(8)</td>
+                        <td>The newly assigned Universal SDP ID (e.g., 00037482)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="success-box">
+                <h4>Using the Response File</h4>
+                <p><strong>Action Required:</strong> You must update your internal systems to map each SDP_ID to its assigned Universal_SDP_ID. This mapping is permanent and must be maintained for the lifetime of the SDP.</p>
+                <p><strong>Next Steps:</strong> Once you have the Universal SDP IDs, you can proceed to create these SDPs in MDM/R through the Incremental Synchronization process (File Type 4000).</p>
+            </div>
+
+            <h3>Response File Not Created?</h3>
+            <div class="error-box">
+                <h4>When Response File is NOT Generated</h4>
+                <p>If your request had critical errors, File Type 2000 may not be created. In this case:</p>
+                <ul>
+                    <li>The IR01 report will have "Output File Name" field = <strong>null</strong></li>
+                    <li>The "Status" in IR01 will show <strong>ERROR</strong></li>
+                    <li>Check IR01 for specific error counts (invalid LDC IDs, incomplete data, etc.)</li>
+                    <li>Correct the issues and resubmit File Type 1000</li>
+                </ul>
+            </div>
+
+            <h3>Parsing the Response</h3>
+            <p>Refer to <strong>SME-SPEC-39 (MDM/R Universal SDP ID Assignment Technical Interface Specification)</strong> for complete details on:</p>
+            <ul>
+                <li>Response file structure (header record, detail records)</li>
+                <li>Field formats and delimiters</li>
+                <li>Data types and lengths</li>
+                <li>Record sequencing</li>
+            </ul>
+        </div>
+
+        <div id="ir01-report" class="section">
+            <div class="section-header">
+                <h2>7. Interpreting the IR01 Report</h2>
+            </div>
+
+            <h3>Report Purpose</h3>
+            <p>The <strong>Universal SDP ID Assignment Request Summary Exception Report (IR01)</strong> provides summary statistics for each File Type 1000 request processed, including success counts and error counts.</p>
+
+            <h3>Report Delivery</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30%">Delivery Method</th>
+                        <th style="width: 70%">Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>FTS (AS2)</strong></td>
+                        <td>Sent via File Transfer Services to the submitting organization</td>
+                    </tr>
+                    <tr>
+                        <td><strong>GUI</strong></td>
+                        <td>Available through the MDM/R Reports tab for LDC authorized users</td>
+                    </tr>
+                    <tr>
+                        <td><strong>File Name</strong></td>
+                        <td>ORG_ID_1.ORG_ID_2.IR01.00.yyyyMMddHHmmss.DAT</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>IR01 Report Format</h3>
+
+            <h4>Header Information</h4>
+            <ul>
+                <li><strong>Report File name:</strong> IR01 file name</li>
+                <li><strong>Report Name:</strong> Universal SDP ID Assignment Request Summary Exception Report</li>
+                <li><strong>Report Organization:</strong> LDC Organization ID</li>
+                <li><strong>Report Date/Time:</strong> When report was generated (yyyy-MM-dd HH:mm:ss GMT-05:00)</li>
+            </ul>
+
+            <h4>Detail Record Fields</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30%">Field Name</th>
+                        <th style="width: 20%">Format</th>
+                        <th style="width: 50%">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Request Date</strong></td>
+                        <td>yyyy-MM-dd HH:mm:ss</td>
+                        <td>Date and time the request was sent to MDM/R</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Input File Name</strong></td>
+                        <td>Varchar(250)</td>
+                        <td>Name of your File Type 1000 request file</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Output File Name</strong></td>
+                        <td>Varchar(250)</td>
+                        <td>Name of File Type 2000 response (null if response not created due to errors)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Status</strong></td>
+                        <td>Varchar(7)</td>
+                        <td><span class="badge badge-success">SUCCESS</span> or <span class="badge badge-error">ERROR</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>LDC Id</strong></td>
+                        <td>Char(8)</td>
+                        <td>Organization ID of the LDC</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Number of requested Ids</strong></td>
+                        <td>Number(8,0)</td>
+                        <td>Total number of USDP IDs requested in the file</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Number of issued Ids</strong></td>
+                        <td>Number(8,0)</td>
+                        <td>Total number of NEW USDP IDs assigned in the response</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Number of already issued Ids</strong></td>
+                        <td>Number(8,0)</td>
+                        <td>SDP_IDs that already had USDP IDs assigned (duplicates - informational)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Number of invalid LDC IDs</strong></td>
+                        <td>Number(8,0)</td>
+                        <td>Exceptions due to invalid/unregistered LDC_ID</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Number of Incomplete Data Requests</strong></td>
+                        <td>Number(8,0)</td>
+                        <td>Exceptions due to missing required fields</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Interpreting Status Values</h3>
+
+            <h4>Status: SUCCESS</h4>
+            <div class="success-box">
+                <p><strong>Meaning:</strong> All records in the file were processed successfully.</p>
+                <p><strong>What to Check:</strong></p>
+                <ul>
+                    <li>Number of issued Ids = Number you expected</li>
+                    <li>Number of already issued Ids = Expected duplicates (if any)</li>
+                    <li>Output File Name has a valid File Type 2000 file name</li>
+                </ul>
+                <p><strong>Next Steps:</strong> Retrieve File Type 2000, parse the USDP IDs, update your internal systems</p>
+            </div>
+
+            <h4>Status: ERROR</h4>
+            <div class="error-box">
+                <p><strong>Meaning:</strong> The file was processed with errors.</p>
+                <p><strong>What to Check:</strong></p>
+                <ul>
+                    <li><strong>Number of invalid LDC IDs > 0:</strong> LDC_ID is not recognized by MDM/R. Verify your ORG_ID.</li>
+                    <li><strong>Number of Incomplete Data Requests > 0:</strong> One or more records missing required data fields. Review file format against SME-SPEC-39.</li>
+                    <li><strong>Output File Name = null:</strong> Response file was NOT created due to errors.</li>
+                </ul>
+                <p><strong>Next Steps:</strong> Correct the errors identified and resubmit File Type 1000</p>
+            </div>
+
+            <h3>Understanding "Already Issued" IDs</h3>
+            <div class="info-box">
+                <h4>Not an Error - Informational</h4>
+                <p>The "Number of already issued Ids" field counts SDP_IDs that already have Universal SDP IDs assigned. This is <strong>NOT an error</strong> - it simply means:</p>
+                <ul>
+                    <li>You previously requested a USDP ID for this SDP_ID</li>
+                    <li>The mapping already exists in MDM/R</li>
+                    <li>The original USDP ID assignment remains valid</li>
+                    <li>This can happen if you resubmit a request or if there was confusion about which SDPs needed USDP IDs</li>
+                </ul>
+                <p><strong>Action:</strong> Verify in your systems whether you have the USDP ID for these SDP_IDs. If not, you may need to retrieve it from historical records or contact MDM/R Support.</p>
+            </div>
+
+            <h3>Multiple Requests in One IR01</h3>
+            <div class="warning-box">
+                <h4>15-Minute Batching</h4>
+                <p>If multiple File Type 1000 requests are processed within the same 15-minute window, the IR01 report will contain <strong>multiple detail records</strong> - one for each request file. Each detail record will have its own Input File Name, Status, and counts.</p>
+            </div>
+
+            <h3>Empty IR01 Report</h3>
+            <div class="warning-box">
+                <h4>Timing Issue Message</h4>
+                <p>If you receive a message: <strong>"There are no POD Id requests to report for the given condition"</strong></p>
+                <p><strong>Cause:</strong> Your request was submitted at a time when the USDP ID generation completed after midnight or the day after submission.</p>
+                <p><strong>Resolution:</strong> Check for File Type 2000 response. If you have the response file, the assignment was successful despite the empty report. For future requests, submit earlier in the day.</p>
+            </div>
+        </div>
+
+        <div id="troubleshooting" class="section">
+            <div class="section-header">
+                <h2>8. Troubleshooting Common Issues</h2>
+            </div>
+
+            <h3>Problem: Received IR17 Instead of IR01</h3>
+            <div class="error-box">
+                <h4>FTS Processing Failure</h4>
+                <p><strong>Cause:</strong> Your File Type 1000 failed FTS validation before reaching the USDP assignment process.</p>
+                <p><strong>Common FTS Errors:</strong></p>
+                <ul>
+                    <li><strong>E120:</strong> File name syntax violation - verify file naming convention</li>
+                    <li><strong>E140:</strong> Not authorized to submit File Type 1000 - check enrollment status</li>
+                    <li><strong>E150:</strong> AS2 sender ID doesn't match ORG_ID_2 in file name</li>
+                </ul>
+                <p><strong>Resolution:</strong> Review <a href="ir-reports-troubleshooting.html#ir17">IR17 troubleshooting section</a> in the IR Reports guide for detailed FTS error resolutions.</p>
+            </div>
+
+            <h3>Problem: IR01 Status = ERROR with Invalid LDC IDs</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30%">Symptom</th>
+                        <th style="width: 70%">Resolution</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Number of invalid LDC IDs > 0</td>
+                        <td>
+                            <strong>Cause:</strong> LDC_ID in your request does not match any enrolled organization in MDM/R.<br>
+                            <strong>Check:</strong> Verify your ORG_ID is correct (should be ORGxxxxx format, exactly 8 characters).<br>
+                            <strong>Action:</strong> Correct the LDC_ID in your File Type 1000 and resubmit. If you believe your ORG_ID is correct, contact MDM/R Service Desk to verify enrollment status.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Problem: IR01 Status = ERROR with Incomplete Data</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30%">Symptom</th>
+                        <th style="width: 70%">Resolution</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Number of Incomplete Data Requests > 0</td>
+                        <td>
+                            <strong>Cause:</strong> One or more detail records in your File Type 1000 are missing required data fields.<br>
+                            <strong>Common Issues:</strong>
+                            <ul>
+                                <li>Missing SDP_ID</li>
+                                <li>Missing LDC_ID</li>
+                                <li>Incorrect number of pipe-delimited fields</li>
+                                <li>Empty/null values in required fields</li>
+                            </ul>
+                            <strong>Action:</strong> Review SME-SPEC-39 for complete File Type 1000 format. Ensure all required fields are present and properly delimited. Validate your file generation process and resubmit.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Problem: No Response File (Output File Name = null)</h3>
+            <div class="error-box">
+                <p><strong>Cause:</strong> Critical errors prevented response file generation.</p>
+                <p><strong>Check IR01 for:</strong></p>
+                <ul>
+                    <li>Status = ERROR</li>
+                    <li>Number of invalid LDC IDs > 0 (most common)</li>
+                    <li>Number of Incomplete Data Requests > 0</li>
+                </ul>
+                <p><strong>Resolution:</strong> Fix the errors indicated in IR01 counts and resubmit File Type 1000.</p>
+            </div>
+
+            <h3>Problem: All Requests Show "Already Issued"</h3>
+            <div class="info-box">
+                <h4>Not a Problem - Already Have USDP IDs</h4>
+                <p><strong>Meaning:</strong> All SDP_IDs in your request already have Universal SDP IDs assigned.</p>
+                <p><strong>This means:</strong></p>
+                <ul>
+                    <li>You previously requested USDP IDs for these SDP_IDs</li>
+                    <li>The USDP IDs are already established in MDM/R</li>
+                    <li>You should have the USDP IDs in your internal systems (or in a previous File Type 2000 response)</li>
+                </ul>
+                <p><strong>Action:</strong> Check your historical records for the USDP ID assignments. If you cannot locate them, contact MDM/R Service Desk for assistance in retrieving the existing mappings.</p>
+            </div>
+
+            <h3>Problem: Some Requests Issued, Some Already Issued</h3>
+            <div class="success-box">
+                <h4>Partial Success - Normal Scenario</h4>
+                <p><strong>Meaning:</strong> You submitted a mix of new SDP_IDs (which received new USDP IDs) and SDP_IDs that already had USDP IDs.</p>
+                <p><strong>This is normal when:</strong></p>
+                <ul>
+                    <li>Doing bulk requests that include both new and existing SDPs</li>
+                    <li>You're not certain which SDPs already have USDP IDs</li>
+                    <li>Resubmitting a corrected file that had some successes initially</li>
+                </ul>
+                <p><strong>Action:</strong> File Type 2000 will include USDP IDs for all records (both newly issued and already issued). Update your systems with any new assignments.</p>
+            </div>
+
+            <h3>Problem: Empty IR01 Report Received</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30%">Symptom</th>
+                        <th style="width: 70%">Resolution</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Message: "There are no POD Id requests to report for the given condition"</td>
+                        <td>
+                            <strong>Cause:</strong> Request processing completed after midnight or the day after submission.<br>
+                            <strong>Impact:</strong> USDP IDs may still have been assigned successfully.<br>
+                            <strong>Action:</strong>
+                            <ol>
+                                <li>Check for File Type 2000 response file</li>
+                                <li>If File Type 2000 exists, assignments were successful</li>
+                                <li>If no File Type 2000, resubmit request earlier in the day</li>
+                            </ol>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Problem: Cannot Use USDP ID in Synchronization</h3>
+            <div class="error-box">
+                <h4>IR14 Error Code 10</h4>
+                <p><strong>Symptom:</strong> Synchronization fails with IR14 error code 10: "Universal SDP ID not defined through Universal SDP ID Assignment Process"</p>
+                <p><strong>Cause:</strong> You're trying to create an SDP in MDM/R using a Universal SDP ID that was never assigned (or was assigned incorrectly).</p>
+                <p><strong>Resolution:</strong></p>
+                <ol>
+                    <li>Verify the USDP ID format is correct: Fixed Number(8), zero-padded (e.g., 00037482, not 37482)</li>
+                    <li>Check that you received this USDP ID in a File Type 2000 response</li>
+                    <li>Verify IR01 status was SUCCESS for the request</li>
+                    <li>If USDP ID is from "already issued" category, verify it's the correct one</li>
+                    <li>If still failing, contact MDM/R Service Desk to verify USDP ID exists in system</li>
+                </ol>
+            </div>
+
+            <h3>Problem: Mismatch Between Request Count and Issued Count</h3>
+            <div class="warning-box">
+                <h4>Math Check</h4>
+                <p><strong>Formula:</strong> Number of requested Ids = Number of issued Ids + Number of already issued Ids + Number of invalid LDC IDs + Number of Incomplete Data Requests</p>
+                <p><strong>If numbers don't add up:</strong></p>
+                <ul>
+                    <li>Review your File Type 1000 structure</li>
+                    <li>Ensure each detail record represents one SDP_ID request</li>
+                    <li>Check for duplicate SDP_ID entries in your request file</li>
+                    <li>Verify file format against SME-SPEC-39</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="best-practices" class="section">
+            <div class="section-header">
+                <h2>9. Best Practices & Tips</h2>
+            </div>
+
+            <h3>Planning & Timing</h3>
+            <ul class="checklist">
+                <li><strong>Request Early:</strong> Submit USDP ID requests well before you need to synchronize the SDPs (days or weeks ahead for bulk projects)</li>
+                <li><strong>Bulk Requests:</strong> For large projects (subdivisions, new developments), request all USDP IDs in one file to simplify tracking</li>
+                <li><strong>Submit During Business Hours:</strong> Submit between 9 AM and 4 PM EST to ensure same-day processing and avoid midnight timing issues</li>
+                <li><strong>Allow 15-30 Minutes:</strong> Expect File Type 2000 and IR01 within one or two 15-minute processing cycles</li>
+            </ul>
+
+            <h3>File Creation</h3>
+            <ul class="checklist">
+                <li><strong>Validate Before Submission:</strong> Check file format, field counts, and data types before submitting</li>
+                <li><strong>Use Consistent Naming:</strong> Follow MDM/R file naming convention exactly (case-sensitive)</li>
+                <li><strong>EST Always:</strong> All timestamps must be in EST, never EDT - even during daylight saving time</li>
+                <li><strong>Avoid Special Characters:</strong> Do not use pipe (|) character in SDP_ID or other data fields</li>
+                <li><strong>Document Requests:</strong> Keep records of which SDP_IDs were included in each File Type 1000 for troubleshooting</li>
+            </ul>
+
+            <h3>Data Management</h3>
+            <ul class="checklist">
+                <li><strong>Maintain Mapping:</strong> Store the SDP_ID to USDP ID mapping permanently in your database</li>
+                <li><strong>Archive Response Files:</strong> Keep all File Type 2000 response files for historical reference and audit purposes</li>
+                <li><strong>Track IR01 Reports:</strong> Monitor IR01 reports to identify trends in errors or duplicate requests</li>
+                <li><strong>Unique SDP IDs:</strong> Ensure your internal SDP_IDs are truly unique within your LDC before requesting USDP IDs</li>
+            </ul>
+
+            <h3>Error Prevention</h3>
+            <ul class="checklist">
+                <li><strong>Verify ORG_ID:</strong> Confirm your LDC_ID (ORG_ID) is correct and enrolled before first submission</li>
+                <li><strong>Test with Small Batch:</strong> For first-time submissions, test with a small batch (5-10 SDPs) before bulk requests</li>
+                <li><strong>Check "Already Issued":</strong> Before requesting, verify your internal systems to avoid unnecessary "already issued" responses</li>
+                <li><strong>Monitor FTS:</strong> Ensure AS2 connection is stable before submitting large batches</li>
+            </ul>
+
+            <h3>Integration Workflow</h3>
+            <ul class="checklist">
+                <li><strong>Automate Parsing:</strong> Build automated processes to parse File Type 2000 and update internal databases</li>
+                <li><strong>Workflow Sequence:</strong> Build business processes that enforce: Request USDP → Receive Response → Update Systems → Then Synchronize SDP</li>
+                <li><strong>Exception Handling:</strong> Implement automated alerts for ERROR status in IR01</li>
+                <li><strong>Reconciliation:</strong> Regularly reconcile your SDP_ID to USDP_ID mappings against MDM/R</li>
+            </ul>
+
+            <h3>Common Pitfalls to Avoid</h3>
+            <div class="error-box">
+                <h4>❌ Don't Do These</h4>
+                <ul>
+                    <li><strong>Synchronize Before Getting USDP ID:</strong> Always get USDP ID first, then synchronize</li>
+                    <li><strong>Reuse USDP IDs:</strong> Never assign the same USDP ID to multiple SDPs in your system</li>
+                    <li><strong>Change SDP_ID After Assignment:</strong> Once mapped to a USDP ID, don't change the SDP_ID in your system</li>
+                    <li><strong>Request Without Verifying LDC_ID:</strong> Always confirm your ORG_ID before bulk requests</li>
+                    <li><strong>Ignore "Already Issued":</strong> These indicate existing USDP IDs - track them down rather than re-requesting</li>
+                    <li><strong>Submit at 11:50 PM:</strong> Avoid late submissions that may process after midnight</li>
+                </ul>
+            </div>
+
+            <h3>Getting Help</h3>
+            <ul class="checklist">
+                <li><strong>Documentation:</strong> Reference SME-SPEC-39 for complete file format specifications</li>
+                <li><strong>Service Desk:</strong> Contact <a href="https://mdmrsupport.service-now.com">MDM/R Service Desk</a> for enrollment issues, missing USDP IDs, or system problems</li>
+                <li><strong>Test Environment:</strong> If available, use test environment for first-time file creation</li>
+                <li><strong>Peer Review:</strong> For large bulk requests, have another team member review file before submission</li>
+            </ul>
+        </div>
+
+        <div id="examples" class="section">
+            <div class="section-header">
+                <h2>10. Complete Examples</h2>
+            </div>
+
+            <h3>Example 1: Request 3 New USDP IDs</h3>
+            
+            <h4>Scenario</h4>
+            <p>Your LDC (ORG11111) is creating 3 new SDPs for a new subdivision. You need Universal SDP IDs before you can synchronize them to MDM/R.</p>
+
+            <h4>File Type 1000 - Request File Name</h4>
+            <div class="code-block">ORG11111.ORG11111.1000.00.20250116120000.DAT</div>
+
+            <h4>File Content (Conceptual - Refer to SME-SPEC-39 for Exact Format)</h4>
+            <div class="code-block">&lt;FTSFN&gt;ORG11111.ORG11111.1000.00.20250116120000.DAT&lt;/FTSFN&gt;
+H|ORG11111|[...header fields...]
+ORG11111|NEWSDP_001
+ORG11111|NEWSDP_002
+ORG11111|NEWSDP_003</div>
+
+            <h4>Expected File Type 2000 - Response</h4>
+            <div class="code-block">ORG11111.ORG11111.2000.00.20250116120530.DAT
+
+Contents (conceptual):
+ORG11111|NEWSDP_001|00123456
+ORG11111|NEWSDP_002|00123457
+ORG11111|NEWSDP_003|00123458</div>
+
+            <h4>Expected IR01 Report</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Field</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Status</td>
+                        <td><span class="badge badge-success">SUCCESS</span></td>
+                    </tr>
+                    <tr>
+                        <td>Number of requested Ids</td>
+                        <td>3</td>
+                    </tr>
+                    <tr>
+                        <td>Number of issued Ids</td>
+                        <td>3</td>
+                    </tr>
+                    <tr>
+                        <td>Number of already issued Ids</td>
+                        <td>0</td>
+                    </tr>
+                    <tr>
+                        <td>Number of invalid LDC IDs</td>
+                        <td>0</td>
+                    </tr>
+                    <tr>
+                        <td>Number of Incomplete Data Requests</td>
+                        <td>0</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>Next Steps</h4>
+            <ol>
+                <li>Update your internal systems:
+                    <ul>
+                        <li>NEWSDP_001 → USDP ID: 00123456</li>
+                        <li>NEWSDP_002 → USDP ID: 00123457</li>
+                        <li>NEWSDP_003 → USDP ID: 00123458</li>
+                    </ul>
+                </li>
+                <li>Create synchronization file set (File Type 4000) with these USDP IDs to create the SDPs in MDM/R</li>
+            </ol>
+
+            <h3>Example 2: Mixed Request - Some New, Some Duplicate</h3>
+
+            <h4>Scenario</h4>
+            <p>You're not sure if you already requested USDP IDs for some SDPs. You submit a request that includes 2 new SDPs and 1 that already has a USDP ID.</p>
+
+            <h4>File Type 1000 Request</h4>
+            <div class="code-block">ORG11111.ORG11111.1000.00.20250116130000.DAT
+
+Request includes:
+ORG11111|NEWSDP_004
+ORG11111|NEWSDP_005
+ORG11111|OLDSDP_123  ← Already has USDP ID</div>
+
+            <h4>Expected IR01 Report</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Field</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Status</td>
+                        <td><span class="badge badge-success">SUCCESS</span></td>
+                    </tr>
+                    <tr>
+                        <td>Number of requested Ids</td>
+                        <td>3</td>
+                    </tr>
+                    <tr>
+                        <td>Number of issued Ids</td>
+                        <td>2</td>
+                    </tr>
+                    <tr>
+                        <td>Number of already issued Ids</td>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <td>Number of invalid LDC IDs</td>
+                        <td>0</td>
+                    </tr>
+                    <tr>
+                        <td>Number of Incomplete Data Requests</td>
+                        <td>0</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>Expected File Type 2000 Response</h4>
+            <div class="code-block">Will include all 3 mappings:
+ORG11111|NEWSDP_004|00123459  ← Newly assigned
+ORG11111|NEWSDP_005|00123460  ← Newly assigned
+ORG11111|OLDSDP_123|00037482  ← Previously assigned (unchanged)</div>
+
+            <h3>Example 3: Error - Invalid LDC ID</h3>
+
+            <h4>Scenario</h4>
+            <p>You accidentally use an incorrect LDC_ID in your request file.</p>
+
+            <h4>File Type 1000 Request</h4>
+            <div class="code-block">Incorrect LDC_ID used in file content:
+ORG99999|NEWSDP_006  ← ORG99999 is not enrolled</div>
+
+            <h4>Expected IR01 Report</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Field</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Status</td>
+                        <td><span class="badge badge-error">ERROR</span></td>
+                    </tr>
+                    <tr>
+                        <td>Output File Name</td>
+                        <td>null (no response file created)</td>
+                    </tr>
+                    <tr>
+                        <td>Number of requested Ids</td>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <td>Number of issued Ids</td>
+                        <td>0</td>
+                    </tr>
+                    <tr>
+                        <td>Number of already issued Ids</td>
+                        <td>0</td>
+                    </tr>
+                    <tr>
+                        <td>Number of invalid LDC IDs</td>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <td>Number of Incomplete Data Requests</td>
+                        <td>0</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>Resolution</h4>
+            <ol>
+                <li>Verify your correct ORG_ID (should be ORG11111)</li>
+                <li>Correct the LDC_ID in your File Type 1000</li>
+                <li>Resubmit the request</li>
+            </ol>
+
+            <h3>Example 4: Agent Submits on Behalf of LDC</h3>
+
+            <h4>Scenario</h4>
+            <p>ABC Agent Limited (ORG22222) is authorized to submit USDP ID requests on behalf of Acme Hydro (ORG11111).</p>
+
+            <h4>File Type 1000 - Request File Name</h4>
+            <div class="code-block">ORG11111.ORG22222.1000.00.20250116140000.DAT
+           ↑        ↑
+           LDC    Agent</div>
+
+            <p><strong>Note:</strong> ORG_ID_1 = LDC, ORG_ID_2 = Agent who is submitting</p>
+
+            <h4>Expected File Type 2000 Response</h4>
+            <div class="code-block">ORG11111.ORG22222.2000.00.20250116140215.DAT
+
+Sent to: Agent (ORG22222) via FTS</div>
+
+            <h4>Expected IR01 Report</h4>
+            <div class="code-block">ORG11111.ORG22222.IR01.00.20250116140215.DAT
+
+Sent to: Agent (ORG22222) via FTS and available to LDC (ORG11111) in GUI</div>
+        </div>
+
+        <div class="footer">
+            <p><a href="index.html" class="back-to-hub" style="margin: 0 auto 20px auto;"> Back to Documentation Hub</a></p>
+            <p><strong>Support:</strong> MDM/R Service Desk - <a href="https://mdmrsupport.service-now.com">https://mdmrsupport.service-now.com</a></p>
+            <p><strong>Reference Documents: </strong>SME-SPEC-39: MDM/R Universal SDP ID Assignment Technical Interface Specification</BR>
+			SME-SPEC-79: Universal SDP ID Assignment Request Summary Exception Report (IR01)</BR>
+                SME-SPEC-86: MDM/R FTS Processing Failure Report (IR17)</p>
+        </div>
+    </div>
+</body>
+</html>
